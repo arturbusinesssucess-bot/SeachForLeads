@@ -709,3 +709,8 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 @media (prefers-reduced-motion: reduce) {
   .hero-more { transition: none; }
 }
+
+
+/* Hide the small blue labels on the landing page. */
+.site-shell .eyebrow,
+.site-shell .micro-proof { display: none; }
