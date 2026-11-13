@@ -1,9 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import {
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   getAuth,
   onAuthStateChanged,
+  sendPasswordResetEmail,
+  setPersistence,
   signInWithEmailAndPassword,
+  signInWithPopup,
   updateProfile,
 } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
@@ -13,8 +19,14 @@ const title = document.querySelector("#auth-title");
 const copy = document.querySelector("#auth-copy");
 const submit = document.querySelector("#auth-submit");
 const message = document.querySelector("#auth-message");
+const passwordInput = document.querySelector("#auth-password");
+const passwordToggle = document.querySelector("#auth-password-toggle");
+const rememberCheckbox = document.querySelector("#auth-remember");
+const forgotPassword = document.querySelector("#auth-forgot-password");
+const googleButton = document.querySelector("#auth-google");
 const tabs = [...document.querySelectorAll("[data-auth-mode]")];
 const signupFields = [...document.querySelectorAll("[data-signup-only]")];
+const loginFields = [...document.querySelectorAll("[data-login-only]")];
 let mode = new URLSearchParams(window.location.search).get("mode") === "signup" ? "signup" : "login";
 let auth = null;
 
@@ -35,6 +47,8 @@ function setMode(nextMode) {
     field.hidden = !signup;
     field.querySelector("input")?.toggleAttribute("required", signup);
   });
+  loginFields.forEach((field) => { field.hidden = signup; });
+  passwordInput.autocomplete = signup ? "new-password" : "current-password";
   title.textContent = signup ? "Crie seu acesso ao radar." : "Volte para o radar.";
   copy.textContent = signup ? "Comece seus 14 dias grátis e desbloqueie a análise completa." : "Entre para continuar sua busca de leads.";
   submit.innerHTML = `${signup ? "Criar conta" : "Entrar"} <span aria-hidden="true">↗</span>`;
@@ -48,6 +62,10 @@ function firebaseErrorMessage(error) {
     "auth/invalid-email": "Confira o formato do e-mail.",
     "auth/weak-password": "Use uma senha com pelo menos 6 caracteres.",
     "auth/too-many-requests": "Muitas tentativas. Aguarde um pouco e tente de novo.",
+    "auth/popup-closed-by-user": "A janela do Google foi fechada antes de concluir o acesso.",
+    "auth/popup-blocked": "Permita a janela de acesso do Google no navegador e tente novamente.",
+    "auth/operation-not-allowed": "Ative o provedor escolhido nas configurações do Firebase Authentication.",
+    "auth/unauthorized-domain": "Adicione este domínio aos domínios autorizados no Firebase Authentication.",
   };
   return messages[error?.code] || "Não foi possível concluir o acesso agora. Tente novamente.";
 }
@@ -62,8 +80,55 @@ if (isFirebaseConfigured) {
     if (user) window.location.href = "qualify.html";
   });
 } else {
-  setMessage("Configure o Firebase em firebase-config.js para ativar o acesso.", "error");
+  setMessage();
 }
+
+passwordToggle.addEventListener("click", () => {
+  const isVisible = passwordInput.type === "text";
+  passwordInput.type = isVisible ? "password" : "text";
+  passwordToggle.setAttribute("aria-pressed", String(!isVisible));
+  passwordToggle.setAttribute("aria-label", isVisible ? "Mostrar senha" : "Ocultar senha");
+});
+
+forgotPassword.addEventListener("click", async () => {
+  if (!auth) {
+    setMessage("Configure o Firebase antes de recuperar sua senha.", "error");
+    return;
+  }
+  const email = document.querySelector("#auth-email").value.trim();
+  if (!email) {
+    setMessage("Digite seu e-mail para receber o link de recuperação.", "error");
+    document.querySelector("#auth-email").focus();
+    return;
+  }
+  forgotPassword.disabled = true;
+  setMessage("Enviando link de recuperação…");
+  try {
+    await sendPasswordResetEmail(auth, email);
+    setMessage("Se este e-mail estiver cadastrado, você receberá um link para redefinir a senha.", "success");
+  } catch (error) {
+    setMessage(firebaseErrorMessage(error), "error");
+  } finally {
+    forgotPassword.disabled = false;
+  }
+});
+
+googleButton.addEventListener("click", async () => {
+  if (!auth) {
+    setMessage("Configure o Firebase antes de continuar com o Google.", "error");
+    return;
+  }
+  googleButton.disabled = true;
+  setMessage("Conectando com o Google…");
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+    setMessage("Acesso liberado. Abrindo seu radar…", "success");
+  } catch (error) {
+    setMessage(firebaseErrorMessage(error), "error");
+  } finally {
+    googleButton.disabled = false;
+  }
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -82,6 +147,7 @@ form.addEventListener("submit", async (event) => {
   submit.disabled = true;
   setMessage("Verificando seu acesso…");
   try {
+    await setPersistence(auth, rememberCheckbox.checked ? browserLocalPersistence : browserSessionPersistence);
     if (mode === "signup") {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       if (name) await updateProfile(result.user, { displayName: name });
@@ -96,4 +162,3 @@ form.addEventListener("submit", async (event) => {
     submit.disabled = false;
   }
 });
-
