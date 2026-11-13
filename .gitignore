@@ -1,0 +1,7 @@
+outputs/
+work/
+public/*.png
+.vercel/
+node_modules/
+*.log
+
