@@ -716,13 +716,14 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 .site-shell .micro-proof { display: none; }
 
 
-/* GradFlow Glass Fold shader adapted to the light login palette.
+/* GradFlow Glass Fold shader, using the original dark blue palette.
    Original shader: https://github.com/meerbahadin/gradflow (MIT, Meer Bahadin). */
 .auth-intro {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: #f5f5f3;
+  background: #06081e;
+  color: #f2f6fb;
 }
 .auth-intro .auth-glass-fold {
   position: absolute;
@@ -734,3 +735,9 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
   pointer-events: none;
 }
 .auth-intro > * { position: relative; z-index: 1; }
+.auth-intro .auth-brand { color: #f2f6fb; }
+.auth-intro .auth-brand img { filter: none; }
+.auth-intro h1 { color: #f2f6fb; }
+.auth-intro .auth-social-proof p { color: #9aa8b9; }
+.auth-intro .auth-social-proof strong { color: #f2f6fb; }
+.auth-intro .auth-avatars img { border-color: #06081e; }
