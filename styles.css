@@ -479,3 +479,67 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
   .steps-list { grid-template-columns: 1fr; }
   .steps-list li, .steps-list li:not(:first-child), .steps-list li:last-child { min-height: 0; }
 }
+
+/* Landing refinement: preserve the brand, make content easier to scan. */
+.hero {
+  grid-template-columns: minmax(0, 1.08fr) minmax(330px, .92fr);
+  gap: clamp(28px, 5vw, 78px);
+  min-height: 560px;
+  padding-top: clamp(32px, 4vw, 52px);
+  padding-bottom: 48px;
+}
+.hero-copy { max-width: 650px; }
+.hero h1 {
+  max-width: 650px;
+  margin-top: 22px;
+  font-size: clamp(46px, 5.6vw, 78px);
+  line-height: .98;
+  letter-spacing: -.062em;
+}
+.hero-lede { max-width: 530px; margin-bottom: 30px; line-height: 1.55; }
+.hero-visual { min-height: 550px; }
+.mascot-stage { width: min(100%, 470px); }
+.eyebrow > span { display: none; }
+.benefit-grid { gap: 14px; margin-top: 44px; }
+.benefit-card, .benefit-card-featured, .benefit-card-accent {
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: none;
+}
+.benefit-card-featured { background: var(--surface-2); }
+.benefit-card-accent { border-color: var(--line-bright); background: var(--surface-3); }
+.benefit-card:hover { border-color: var(--line-bright); transform: translateY(-2px); }
+.card-number, .card-caption { display: none; }
+.audience-list > div { grid-template-columns: 1fr; gap: 7px; }
+.audience-list span { display: none; }
+.audience-list small { grid-column: 1; }
+.steps-list li, .steps-list li:not(:first-child), .steps-list li:last-child {
+  min-height: 215px;
+  border-color: var(--line);
+  background: var(--surface);
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+.steps-list li:hover, .audience-list > div:hover { border-color: var(--line-bright); transform: translateY(-2px); }
+.audience-list > div { transition: border-color 180ms ease, transform 180ms ease; }
+.faq-card { background: var(--surface); box-shadow: none; }
+.faq-card:hover { border-color: var(--line-bright); }
+.final-cta { border-color: var(--line); background: var(--surface); }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: minmax(0, 1fr) minmax(260px, .8fr); gap: 24px; }
+  .hero-visual { min-height: 460px; }
+  .hero h1 { font-size: clamp(44px, 6.6vw, 66px); }
+}
+@media (max-width: 640px) {
+  .hero { display: flex; flex-direction: column; align-items: stretch; padding-top: 24px; }
+  .hero-visual { order: -1; min-height: 0; max-height: 340px; }
+  .mascot-stage { width: min(72vw, 280px); }
+  .hero h1 { font-size: clamp(42px, 12.6vw, 62px); }
+  .hero-lede { margin-bottom: 22px; font-size: 16px; }
+  .benefit-grid { grid-template-columns: 1fr; }
+  .benefit-card, .benefit-card-featured, .benefit-card-accent { min-height: 230px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .benefit-card, .steps-list li, .audience-list > div { transition: none; }
+  .benefit-card:hover, .steps-list li:hover, .audience-list > div:hover { transform: none; }
+}
