@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#06080d" />
+    <title>Entrar — SearchForLeads</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="auth-page">
+    <header class="topbar auth-topbar" aria-label="Navegação">
+      <a class="brand" href="index.html" aria-label="Voltar para o SearchForLeads">
+        <span class="brand-mark" aria-hidden="true">⌕</span>
+        <span class="brand-name">Search<span>For</span>Leads</span>
+      </a>
+      <a class="back-link" href="index.html">Voltar para a home</a>
+    </header>
+
+    <main class="auth-screen">
+      <section class="auth-layout" aria-labelledby="auth-title">
+        <div class="auth-visual">
+          <div class="eyebrow"><span>01</span> acesso ao radar</div>
+          <h1>Seu próximo lead começa com um bom sinal.</h1>
+          <p>Entre para continuar sua busca ou crie uma conta e teste o SearchForLeads por 14 dias.</p>
+          <div class="auth-signal"><span></span><strong>radar pronto</strong><small>dados organizados para a próxima decisão</small></div>
+        </div>
+
+        <div class="auth-card">
+          <div class="auth-switcher" role="tablist" aria-label="Acesso">
+            <button class="auth-tab is-active" type="button" data-auth-mode="login" role="tab" aria-selected="true">Entrar</button>
+            <button class="auth-tab" type="button" data-auth-mode="signup" role="tab" aria-selected="false">Criar conta</button>
+          </div>
+          <h2 id="auth-title">Volte para o radar.</h2>
+          <p class="auth-copy" id="auth-copy">Entre para continuar sua busca de leads.</p>
+
+          <form class="auth-form" id="auth-form">
+            <div class="auth-field" data-signup-only hidden>
+              <label for="auth-name">Seu nome</label>
+              <input id="auth-name" type="text" autocomplete="name" placeholder="Como podemos te chamar?" />
+            </div>
+            <div class="auth-field">
+              <label for="auth-email">Seu e-mail</label>
+              <input id="auth-email" type="email" autocomplete="email" placeholder="voce@empresa.com" required />
+            </div>
+            <div class="auth-field">
+              <label for="auth-password">Senha</label>
+              <input id="auth-password" type="password" autocomplete="current-password" placeholder="Mínimo de 6 caracteres" minlength="6" required />
+            </div>
+            <div class="auth-field" data-signup-only hidden>
+              <label for="auth-confirm">Confirme sua senha</label>
+              <input id="auth-confirm" type="password" autocomplete="new-password" placeholder="Repita sua senha" minlength="6" />
+            </div>
+            <p class="auth-message" id="auth-message" role="alert" aria-live="polite"></p>
+            <button class="qualify-button auth-page-submit" type="submit" id="auth-submit">Entrar <span aria-hidden="true">↗</span></button>
+          </form>
+          <p class="auth-footnote" id="auth-footnote">Ainda não tem uma conta? Crie uma para começar seus 14 dias grátis.</p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="auth.js"></script>
+  </body>
+</html>
+
