@@ -586,3 +586,39 @@ body.landing-page .footer-bottomline a { color: #aaa49a; }
 
 /* Use normal capitalization for form field labels. */
 .auth-page .auth-field label { font-family: "Inter", sans-serif; font-size: 13px; letter-spacing: 0; text-transform: none; }
+
+/* Keep the mascot still and use a quiet hover caption. */
+
+body.landing-page .mascot-image,
+body.landing-page .mascot-stage:hover .mascot-image,
+body.landing-page .mascot-stage:focus-visible .mascot-image,
+body.landing-page .mascot-stage.is-touched .mascot-image {
+  transform: none !important;
+  filter: none !important;
+  transition: none;
+}
+body.landing-page .speech-bubble {
+  display: block !important;
+  top: auto;
+  right: 0;
+  bottom: 18%;
+  width: min(230px, 72%);
+  padding: 10px 12px;
+  border: 0;
+  border-left: 2px solid #b4a386;
+  border-radius: 0;
+  background: rgba(16, 15, 13, .94);
+  box-shadow: none;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+body.landing-page .speech-bubble::after,
+body.landing-page .speech-tag { display: none; }
+body.landing-page .speech-copy { color: #e8e2d8; font-size: 13px; line-height: 1.45; }
+body.landing-page .mascot-stage:hover .speech-bubble,
+body.landing-page .mascot-stage:focus-visible .speech-bubble,
+body.landing-page .mascot-stage.is-touched .speech-bubble {
+  opacity: 1;
+  transform: none;
+}
