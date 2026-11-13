@@ -741,3 +741,5 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 .auth-intro .auth-social-proof p { color: #9aa8b9; }
 .auth-intro .auth-social-proof strong { color: #f2f6fb; }
 .auth-intro .auth-avatars img { border-color: #06081e; }
+
+.auth-intro .auth-brand .brand-for { color: #65b7ff; }
