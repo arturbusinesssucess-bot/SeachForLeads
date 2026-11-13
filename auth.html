@@ -11,22 +11,27 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="auth-page">
-    <header class="topbar auth-topbar" aria-label="Navegação">
-      <a class="brand" href="index.html" aria-label="Voltar para o SearchForLeads">
-        <span class="brand-mark" aria-hidden="true">⌕</span>
-        <span class="brand-name">Search<span>For</span>Leads</span>
-      </a>
-      <a class="back-link" href="index.html">Voltar para a home</a>
-    </header>
-
     <main class="auth-screen">
-      <section class="auth-layout" aria-labelledby="auth-title">
-        <div class="auth-card">
-          <div class="auth-form-kicker"><span class="auth-form-dot"></span> ACESSO AO SEU RADAR</div>
-          <div class="auth-switcher" role="tablist" aria-label="Acesso">
-            <button class="auth-tab is-active" type="button" data-auth-mode="login" role="tab" aria-selected="true">Entrar</button>
-            <button class="auth-tab" type="button" data-auth-mode="signup" role="tab" aria-selected="false">Criar conta</button>
+      <section class="auth-layout" aria-label="Acesso ao SearchForLeads">
+        <aside class="auth-intro">
+          <a class="auth-brand" href="index.html" aria-label="SearchForLeads, voltar para a página inicial">
+            <img src="public/logo.webp" alt="" />
+            <span>SearchForLeads</span>
+          </a>
+          <div class="auth-intro-bottom">
+            <h1>Encontre leads com mais contexto.</h1>
+            <div class="auth-social-proof">
+              <div class="auth-avatars" aria-hidden="true">
+                <span><svg viewBox="0 0 40 40"><circle cx="20" cy="14" r="7"/><path d="M7 37c.8-8 5.4-12 13-12s12.2 4 13 12"/></svg></span>
+                <span><svg viewBox="0 0 40 40"><circle cx="20" cy="14" r="7"/><path d="M7 37c.8-8 5.4-12 13-12s12.2 4 13 12"/></svg></span>
+                <span><svg viewBox="0 0 40 40"><circle cx="20" cy="14" r="7"/><path d="M7 37c.8-8 5.4-12 13-12s12.2 4 13 12"/></svg></span>
+              </div>
+              <p><strong>200+</strong> pessoas já entraram para encontrar novos leads</p>
+            </div>
           </div>
+        </aside>
+
+        <section class="auth-card" aria-labelledby="auth-title">
           <h2 id="auth-title">Volte para o radar.</h2>
           <p class="auth-copy" id="auth-copy">Entre para continuar sua busca de leads.</p>
 
@@ -40,7 +45,10 @@
               <input id="auth-email" type="email" autocomplete="email" placeholder="voce@empresa.com" required />
             </div>
             <div class="auth-field">
-              <label for="auth-password">Senha</label>
+              <div class="auth-password-label-row">
+                <label for="auth-password">Senha</label>
+                <button class="auth-text-action" id="auth-forgot-password" type="button" data-login-only>Esqueci?</button>
+              </div>
               <div class="auth-password-wrap">
                 <input id="auth-password" type="password" autocomplete="current-password" placeholder="Digite sua senha" minlength="6" required />
                 <button class="auth-password-toggle" id="auth-password-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false">
@@ -53,10 +61,6 @@
               <label for="auth-confirm">Confirme sua senha</label>
               <input id="auth-confirm" type="password" autocomplete="new-password" placeholder="Repita sua senha" minlength="6" />
             </div>
-            <div class="auth-options" data-login-only>
-              <label class="auth-remember" for="auth-remember"><input id="auth-remember" type="checkbox" checked /><span>Manter conectado</span></label>
-              <button class="auth-text-action" id="auth-forgot-password" type="button">Esqueci a senha</button>
-            </div>
             <p class="auth-message" id="auth-message" role="alert" aria-live="polite"></p>
             <button class="qualify-button auth-page-submit" type="submit" id="auth-submit"><span>Entrar</span><span aria-hidden="true">↗</span></button>
           </form>
@@ -65,12 +69,8 @@
             <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3a12 12 0 1 1-3.4-13l5.7-5.7A20 20 0 1 0 44 24c0-1.3-.1-2.6-.4-3.9Z"/><path fill="#FF3D00" d="M6.3 14.7 13 19.5C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3l5.7-5.7A20 20 0 0 0 6.3 14.7Z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2A12 12 0 0 1 12.7 28l-6.5 5A20 20 0 0 0 24 44Z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.2C42 35 44 30 44 24c0-1.3-.1-2.6-.4-3.9Z"/></svg>
             Continuar com Google
           </button>
-          <p class="auth-footnote" id="auth-footnote">Novo por aqui? <button type="button" data-auth-mode="signup">Crie sua conta</button> e teste por 14 dias.</p>
-        </div>
-
-        <div class="auth-visual">
-          <img class="auth-mascot" src="public/mascot-hero.webp" alt="Mascote cachorro azul do SearchForLeads, em pé" />
-        </div>
+          <p class="auth-footnote" id="auth-footnote"><span id="auth-mode-caption">Ainda não tem conta?</span> <button type="button" id="auth-mode-toggle">Comece grátis</button></p>
+        </section>
       </section>
     </main>
 

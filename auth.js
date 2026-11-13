@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import {
   browserLocalPersistence,
-  browserSessionPersistence,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   getAuth,
@@ -21,10 +20,11 @@ const submit = document.querySelector("#auth-submit");
 const message = document.querySelector("#auth-message");
 const passwordInput = document.querySelector("#auth-password");
 const passwordToggle = document.querySelector("#auth-password-toggle");
-const rememberCheckbox = document.querySelector("#auth-remember");
 const forgotPassword = document.querySelector("#auth-forgot-password");
 const googleButton = document.querySelector("#auth-google");
-const tabs = [...document.querySelectorAll("[data-auth-mode]")];
+const modeToggle = document.querySelector("#auth-mode-toggle");
+const modeCaption = document.querySelector("#auth-mode-caption");
+const tabs = [...document.querySelectorAll(".auth-tab[data-auth-mode]")];
 const signupFields = [...document.querySelectorAll("[data-signup-only]")];
 const loginFields = [...document.querySelectorAll("[data-login-only]")];
 let mode = new URLSearchParams(window.location.search).get("mode") === "signup" ? "signup" : "login";
@@ -52,6 +52,8 @@ function setMode(nextMode) {
   title.textContent = signup ? "Crie seu acesso ao radar." : "Volte para o radar.";
   copy.textContent = signup ? "Comece seus 14 dias grátis e desbloqueie a análise completa." : "Entre para continuar sua busca de leads.";
   submit.innerHTML = `${signup ? "Criar conta" : "Entrar"} <span aria-hidden="true">↗</span>`;
+  modeCaption.textContent = signup ? "Já tem uma conta?" : "Ainda não tem conta?";
+  modeToggle.textContent = signup ? "Entrar" : "Comece grátis";
   setMessage("");
 }
 
@@ -71,6 +73,7 @@ function firebaseErrorMessage(error) {
 }
 
 tabs.forEach((tab) => tab.addEventListener("click", () => setMode(tab.dataset.authMode)));
+modeToggle.addEventListener("click", () => setMode(mode === "login" ? "signup" : "login"));
 setMode(mode);
 
 if (isFirebaseConfigured) {
@@ -147,7 +150,7 @@ form.addEventListener("submit", async (event) => {
   submit.disabled = true;
   setMessage("Verificando seu acesso…");
   try {
-    await setPersistence(auth, rememberCheckbox.checked ? browserLocalPersistence : browserSessionPersistence);
+    await setPersistence(auth, browserLocalPersistence);
     if (mode === "signup") {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       if (name) await updateProfile(result.user, { displayName: name });
