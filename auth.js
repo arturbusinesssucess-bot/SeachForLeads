@@ -80,7 +80,7 @@ if (isFirebaseConfigured) {
   const app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   onAuthStateChanged(auth, (user) => {
-    if (user) window.location.href = "qualify.html";
+    if (user) window.location.href = "app/";
   });
 } else {
   setMessage();
@@ -158,7 +158,7 @@ form.addEventListener("submit", async (event) => {
       await signInWithEmailAndPassword(auth, email, password);
     }
     setMessage("Acesso liberado. Abrindo seu radar…", "success");
-    window.setTimeout(() => { window.location.href = "qualify.html"; }, 450);
+    window.setTimeout(() => { window.location.href = "app/"; }, 450);
   } catch (error) {
     setMessage(firebaseErrorMessage(error), "error");
   } finally {
