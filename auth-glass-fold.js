@@ -41,8 +41,9 @@ if (!gl) {
       vec2 q = Rot(0.6) * centered(uv) * 2.0;
       float t = time * 0.6;
       float pixel = 2.0 / max(u_resolution.y, 1.0);
-      vec3 base = mix(vec3(0.965, 0.977, 0.994), vec3(0.914, 0.943, 0.980),
-                      clamp(length(centered(uv)) * 1.05, 0.0, 1.0));
+      vec3 color2 = vec3(0.0235, 0.0314, 0.1176);
+      vec3 base = mix(color2, color2 * 0.45,
+                      clamp(length(centered(uv)) * 1.3, 0.0, 1.0));
       vec3 color = base;
       for (int i = 0; i < 6; i++) {
         float fi = float(i);
@@ -58,12 +59,12 @@ if (!gl) {
         float rim = exp(-back * 80.0);
         float inner = exp(-pow((back - 0.045) / 0.014, 2.0));
         float bloom = exp(-abs(s) * 20.0);
-        vec3 blue = vec3(0.20, 0.43, 0.91);
-        vec3 ice = vec3(0.67, 0.84, 1.0);
-        vec3 tint = mix(blue, ice, clamp(fresnel * 0.6 + 0.18
+        vec3 color1 = vec3(0.1176, 0.2353, 0.7843);
+        vec3 color3 = vec3(0.5882, 0.8431, 1.0);
+        vec3 tint = mix(color1, color3, clamp(fresnel * 0.6 + 0.08
                     + 0.14 * sin(fi * 2.1 + q.x * 0.8 + t * 0.2), 0.0, 1.0));
-        vec3 light = tint * pane * (body * 0.28 + fresnel * 0.27)
-                   + ice * (pane * (rim * 0.60 + inner * 0.12) + bloom * 0.07);
+        vec3 light = tint * pane * (body * 0.42 + fresnel * 0.4)
+                   + color3 * (pane * (rim * 0.6 + inner * 0.12) + bloom * 0.1);
         color += light * (1.0 - color);
       }
       return clamp(color, 0.0, 1.0);
