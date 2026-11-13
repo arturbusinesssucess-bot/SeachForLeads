@@ -543,3 +543,64 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
   .benefit-card, .steps-list li, .audience-list > div { transition: none; }
   .benefit-card:hover, .steps-list li:hover, .audience-list > div:hover { transform: none; }
 }
+
+/* Center the section links and show Scout's line as a short chat. */
+.topnav {
+  position: absolute;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+.speech-bubble {
+  top: auto;
+  right: 0;
+  bottom: 18%;
+  display: grid;
+  gap: 10px;
+  width: min(330px, 78%);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: translateY(8px);
+}
+.speech-bubble::after { display: none; }
+.mascot-stage:hover .speech-bubble,
+.mascot-stage:focus-visible .speech-bubble,
+.mascot-stage.is-touched .speech-bubble { transform: translateY(0); }
+.chat-message {
+  width: fit-content;
+  max-width: 88%;
+  padding: 11px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.chat-message-user {
+  justify-self: end;
+  border-bottom-right-radius: 7px;
+  background: var(--blue);
+  color: var(--white);
+}
+.chat-message-scout {
+  justify-self: start;
+  border: 1px solid var(--line-bright);
+  border-bottom-left-radius: 7px;
+  background: var(--surface-2);
+  color: var(--white);
+}
+.chat-sender {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--blue-bright);
+  font-size: 10px;
+  font-weight: 600;
+}
+.speech-copy { font-size: 14px; }
+@media (max-width: 700px) {
+  .speech-bubble { width: min(300px, 86%); bottom: 14%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .speech-bubble { transition: none; }
+}
