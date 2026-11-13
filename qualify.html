@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#06080d" />
+    <title>Comece sua busca — SearchForLeads</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="qualify-page">
+    <header class="topbar" aria-label="Navegação">
+      <a class="brand" href="index.html" aria-label="Voltar para o SearchForLeads">
+        <span class="brand-mark" aria-hidden="true">⌕</span>
+        <span class="brand-name">Search<span>For</span>Leads</span>
+      </a>
+      <a class="back-link" href="index.html">Voltar para a home</a>
+    </header>
+
+    <main class="qualify-main">
+      <div class="qualify-shell">
+        <div class="qualify-kicker">Seu próximo lead começa aqui</div>
+        <h1>Vamos entender o que você procura.</h1>
+        <p class="qualify-intro">Responda algumas perguntas rápidas. Assim, o radar consegue filtrar empresas com mais contexto para o seu negócio.</p>
+
+        <div class="qualify-card">
+          <div class="qualify-progress" aria-live="polite">
+            <span>Passo <strong id="step-number">1</strong> de 4</span>
+            <div class="qualify-progress-track" aria-hidden="true"><span id="step-progress"></span></div>
+          </div>
+
+          <form id="qualify-form">
+            <section class="qualify-step" data-step="1">
+              <h2>O que você vende?</h2>
+              <p>Descreva sua solução em uma frase simples.</p>
+              <div class="qualify-field">
+                <label for="offer">Sua oferta</label>
+                <textarea id="offer" name="offer" placeholder="Ex.: software de gestão para clínicas pequenas" required></textarea>
+              </div>
+            </section>
+
+            <section class="qualify-step" data-step="2" hidden>
+              <h2>Quem é o cliente ideal?</h2>
+              <p>Conte para o radar quem costuma comprar de você.</p>
+              <div class="qualify-field">
+                <label for="customer">Perfil do cliente</label>
+                <input id="customer" name="customer" type="text" placeholder="Ex.: donos de clínicas com 5 a 30 funcionários" required />
+              </div>
+              <div class="qualify-field">
+                <label for="segment">Segmento principal</label>
+                <select id="segment" name="segment" required>
+                  <option value="">Selecione um segmento</option>
+                  <option>Saúde</option><option>Tecnologia</option><option>Serviços profissionais</option><option>Educação</option><option>Varejo</option><option>Outro</option>
+                </select>
+              </div>
+            </section>
+
+            <section class="qualify-step" data-step="3" hidden>
+              <h2>Onde você quer encontrar leads?</h2>
+              <p>Escolha uma região para deixar a primeira busca mais precisa.</p>
+              <div class="qualify-field">
+                <label for="location">Cidade, estado ou país</label>
+                <input id="location" name="location" type="text" placeholder="Ex.: São Paulo, SP" required />
+              </div>
+              <div class="qualify-field">
+                <label for="company-size">Tamanho das empresas</label>
+                <select id="company-size" name="company-size" required>
+                  <option value="">Selecione uma faixa</option>
+                  <option>1–10 pessoas</option><option>11–50 pessoas</option><option>51–200 pessoas</option><option>Mais de 200 pessoas</option>
+                </select>
+              </div>
+            </section>
+
+            <section class="qualify-step" data-step="4" hidden>
+              <h2>Qual sinal importa primeiro?</h2>
+              <p>Escolha o tipo de oportunidade que você quer priorizar.</p>
+              <div class="qualify-options">
+                <label class="qualify-option"><input type="radio" name="signal" value="crescimento" required /> Crescimento recente</label>
+                <label class="qualify-option"><input type="radio" name="signal" value="contratacao" /> Novas contratações</label>
+                <label class="qualify-option"><input type="radio" name="signal" value="tecnologia" /> Mudança de tecnologia</label>
+                <label class="qualify-option"><input type="radio" name="signal" value="demanda" /> Demanda ativa</label>
+              </div>
+            </section>
+
+            <div class="qualify-actions">
+              <button class="qualify-back" id="previous-step" type="button" hidden>Voltar</button>
+              <button class="qualify-button" id="next-step" type="button">Continuar <span aria-hidden="true">↗</span></button>
+            </div>
+          </form>
+
+          <div class="qualify-success" id="qualify-success" hidden>
+            <div class="qualify-success-mark" aria-hidden="true">✓</div>
+            <h2>Perfeito. O radar está pronto.</h2>
+            <p>Recebemos seu perfil de busca. Na próxima etapa, vamos cruzar esses sinais para montar sua primeira fila de leads.</p>
+            <a class="qualify-button" href="index.html">Voltar para a home <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="qualify.js" defer></script>
+  </body>
+</html>
+
