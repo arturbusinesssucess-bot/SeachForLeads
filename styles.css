@@ -604,3 +604,12 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 @media (prefers-reduced-motion: reduce) {
   .speech-bubble { transition: none; }
 }
+
+/* Keep only Scout's message, in the light blue brand color. */
+.chat-message-user, .chat-sender { display: none; }
+.chat-message-scout {
+  border: 0;
+  background: var(--blue-bright);
+  color: var(--ink);
+}
+.speech-copy { color: inherit; }
