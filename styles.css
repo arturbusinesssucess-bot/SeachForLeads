@@ -613,3 +613,28 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
   color: var(--ink);
 }
 .speech-copy { color: inherit; }
+
+/* Mascot-free brand: keep the magnifier and center the hero message. */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  justify-items: center;
+  min-height: 560px;
+}
+.hero-copy {
+  width: min(100%, 860px);
+  max-width: 860px;
+  margin-inline: auto;
+  text-align: center;
+}
+.hero .eyebrow { justify-content: center; }
+.hero #hero-title, .hero-lede { margin-inline: auto; }
+.hero-lede { max-width: 660px; }
+.hero-start { margin-inline: auto; }
+.micro-proof { justify-content: center; }
+.footer-brand-mark { border: 0; border-radius: 0; object-fit: contain; }
+@media (max-width: 700px) {
+  .hero { min-height: 500px; }
+  .hero-copy { margin-inline: auto; }
+}
