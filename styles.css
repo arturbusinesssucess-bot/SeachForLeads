@@ -622,3 +622,6 @@ body.landing-page .mascot-stage.is-touched .speech-bubble {
   opacity: 1;
   transform: none;
 }
+
+/* The FAQ question text is the card's primary heading. */
+body.landing-page .faq-card > span { display: none; }
