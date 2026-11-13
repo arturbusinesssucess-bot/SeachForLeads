@@ -286,6 +286,17 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 .final-cta p { margin: 0; color: var(--muted); font-size: 16px; }
 .final-cta .primary-button { flex: 0 0 auto; min-width: 190px; }
 
+.motion-ready .animar .fx-stagger > *, .motion-ready .animar.fx-stagger > * { opacity: 0; transform: translateY(20px); }
+.motion-ready .animar .fx-slide-l { opacity: 0; transform: translateX(-36px); }
+.motion-ready .animar .fx-slide-r { opacity: 0; transform: translateX(36px); }
+.motion-ready .animar.run .fx-stagger > *, .motion-ready .animar.run.fx-stagger > * { animation: entrance-up 600ms cubic-bezier(.16,1,.3,1) forwards; animation-delay: calc(var(--i, 0) * 90ms); }
+.motion-ready .animar.run .fx-slide-l, .motion-ready .animar.run .fx-slide-r { animation: entrance-side 650ms cubic-bezier(.16,1,.3,1) forwards; animation-delay: calc(var(--i, 0) * 110ms); }
+@keyframes entrance-up { to { opacity: 1; transform: translateY(0); } }
+@keyframes entrance-side { to { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .motion-ready .animar .fx-stagger > *, .motion-ready .animar.fx-stagger > *, .motion-ready .animar .fx-slide-l, .motion-ready .animar .fx-slide-r { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+
 .auth-page { min-height: 100vh; background: #06080d; }
 .auth-topbar { max-width: 1240px; border-bottom: 1px solid var(--line); }
 .auth-screen { min-height: calc(100vh - 86px); display: grid; place-items: center; padding: 70px 20px 90px; }
