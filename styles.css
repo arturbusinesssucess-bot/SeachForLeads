@@ -583,3 +583,6 @@ body.landing-page .footer-bottomline a { color: #aaa49a; }
 .auth-page .auth-brand img { width: 44px; height: 44px; filter: none; object-fit: contain; }
 .auth-page .auth-avatars img { display: block; width: 40px; height: 40px; margin-left: -7px; border: 2px solid #f5f5f3; border-radius: 50%; object-fit: cover; }
 @media (max-width: 820px) { .auth-page .auth-brand img { width: 38px; height: 38px; } .auth-page .auth-avatars img { width: 34px; height: 34px; } }
+
+/* Use normal capitalization for form field labels. */
+.auth-page .auth-field label { font-family: "Inter", sans-serif; font-size: 13px; letter-spacing: 0; text-transform: none; }
