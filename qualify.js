@@ -1,3 +1,7 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
+
 const form = document.querySelector("#qualify-form");
 const steps = [...document.querySelectorAll(".qualify-step")];
 const previous = document.querySelector("#previous-step");
@@ -23,6 +27,20 @@ function currentStepIsValid() {
     if (!field.checkValidity()) { field.reportValidity(); return false; }
   }
   return true;
+}
+
+function showAuthRequired() {
+  form.hidden = true;
+  success.hidden = false;
+  success.innerHTML = `<div class="qualify-success-mark" aria-hidden="true">↗</div><h2>Entre para continuar.</h2><p>Faça login ou crie sua conta na landing para salvar seu perfil e liberar a análise de leads.</p><a class="qualify-button" href="index.html">Voltar para entrar <span aria-hidden="true">↗</span></a>`;
+}
+
+if (isFirebaseConfigured) {
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  onAuthStateChanged(auth, (user) => {
+    if (!user) showAuthRequired();
+  });
 }
 
 next.addEventListener("click", () => {
