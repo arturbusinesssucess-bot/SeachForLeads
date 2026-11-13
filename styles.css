@@ -714,3 +714,35 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 /* Hide the small blue labels on the landing page. */
 .site-shell .eyebrow,
 .site-shell .micro-proof { display: none; }
+
+
+/* Animated blue gradient on the white login panel. */
+.auth-intro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.auth-intro::before {
+  position: absolute;
+  z-index: -1;
+  inset: -24%;
+  background:
+    radial-gradient(ellipse at 24% 28%, rgba(45, 116, 255, .25), transparent 34%),
+    radial-gradient(ellipse at 78% 72%, rgba(101, 183, 255, .22), transparent 38%),
+    linear-gradient(135deg, #f8f8f6 4%, #f5f5f3 54%, #eef4ff 100%);
+  content: "";
+  animation: auth-intro-gradient 10s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.auth-intro > * {
+  position: relative;
+  z-index: 1;
+}
+@keyframes auth-intro-gradient {
+  0% { transform: translate(-2%, -1%) scale(1); }
+  50% { transform: translate(2%, 1.5%) scale(1.045); }
+  100% { transform: translate(-1%, 2%) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-intro::before { animation: none; }
+}
