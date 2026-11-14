@@ -98,8 +98,27 @@ document.querySelectorAll(".crm-filter").forEach((button) => {
     document.querySelectorAll(".crm-filter").forEach((filter) => filter.classList.toggle("is-active", filter === button));
   });
 });
-document.querySelector("#crm-filter").addEventListener("input", () => {
-  document.querySelector("#crm-empty").hidden = Boolean(document.querySelector("#crm-filter").value.trim());
+const crmFilter = document.querySelector("#crm-filter");
+const crmRows = document.querySelector("#crm-rows");
+const crmEmpty = document.querySelector("#crm-empty");
+const crmEmptyTitle = document.querySelector("#crm-empty-title");
+const crmEmptyDescription = document.querySelector("#crm-empty-description");
+crmFilter.addEventListener("input", () => {
+  const query = crmFilter.value.trim().toLocaleLowerCase("pt-BR");
+  const rows = [...crmRows.querySelectorAll("tr")];
+  const visibleRows = rows.filter((row) => {
+    const matches = !query || row.textContent.toLocaleLowerCase("pt-BR").includes(query);
+    row.hidden = !matches;
+    return matches;
+  });
+  crmEmpty.hidden = visibleRows.length > 0;
+  if (rows.length && query && !visibleRows.length) {
+    crmEmptyTitle.textContent = "Nenhum lead corresponde à busca";
+    crmEmptyDescription.textContent = "Tente outro nome de empresa ou cidade.";
+  } else {
+    crmEmptyTitle.textContent = "Nenhum lead por aqui ainda";
+    crmEmptyDescription.textContent = "Faça uma busca, escolha as empresas com potencial e salve-as para acompanhar os próximos passos.";
+  }
 });
 
 document.querySelector("#sign-out").addEventListener("click", async () => {
