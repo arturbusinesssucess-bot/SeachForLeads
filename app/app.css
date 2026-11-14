@@ -52,6 +52,19 @@
 .welcome-row h1 > span, .page-heading h1 > span { color: var(--app-blue-light); }
 .welcome-copy, .page-heading > p:last-child { margin: 10px 0 0; color: var(--app-muted); font-size: 13px; line-height: 1.6; }
 .home-search-button { min-height: 42px; flex: 0 0 auto; padding: 0 15px; font-size: 11px; }
+.pwa-install-card { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 14px; margin: 0 0 18px; border: 1px solid #252d39; border-radius: 9px; padding: 15px 16px; background: #0d1015; }
+.pwa-install-card[hidden] { display: none; }
+.pwa-install-mark { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid #28384d; border-radius: 9px; background: #101722; }
+.pwa-install-mark img { width: 29px; height: 29px; object-fit: contain; }
+.pwa-install-copy { min-width: 0; }
+.pwa-install-copy .panel-overline { margin-bottom: 5px; }
+.pwa-install-copy h2 { margin: 0; color: #e9edf2; font-size: 13px; font-weight: 570; letter-spacing: -.02em; }
+.pwa-install-copy > p:not(.panel-overline) { margin: 5px 0 0; color: var(--app-muted); font-size: 10px; line-height: 1.5; }
+.pwa-install-copy .pwa-install-help:not([hidden]) { margin-top: 8px; color: #c3cbd6; }
+.pwa-install-actions { display: flex; align-items: center; gap: 8px; }
+.pwa-install-button { min-height: 36px; padding: 0 12px; font-size: 10px; white-space: nowrap; }
+.pwa-install-dismiss { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 6px; background: transparent; color: #87909b; font-size: 20px; cursor: pointer; }
+.pwa-install-dismiss:hover { background: #171b22; color: #f2f3f5; }
 .stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
 .stat-card { display: grid; min-height: 133px; align-content: start; gap: 7px; border: 1px solid var(--app-line); border-radius: 9px; padding: 17px 18px; background: var(--app-surface); }
 .stat-card > span { color: #a5acb6; font-size: 11px; }
@@ -152,6 +165,12 @@
   .welcome-row h1, .page-heading h1 { font-size: 30px; }
   .welcome-copy, .page-heading > p:last-child { max-width: 440px; font-size: 12px; }
   .home-search-button { width: fit-content; }
+  .pwa-install-card { grid-template-columns: 36px minmax(0, 1fr) auto; gap: 10px; padding: 12px; }
+  .pwa-install-mark { width: 36px; height: 36px; }
+  .pwa-install-mark img { width: 25px; height: 25px; }
+  .pwa-install-actions { gap: 3px; }
+  .pwa-install-button { min-height: 34px; padding-inline: 9px; font-size: 9px; }
+
   .stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .stat-card { min-height: 117px; padding: 14px; }
   .stat-card:last-child { grid-column: 1 / -1; min-height: 93px; }
