@@ -123,6 +123,8 @@ if (isFirebaseConfigured) {
     }
     const name = user.displayName?.trim() || user.email?.split("@")[0] || "Sua conta";
     document.querySelector("#account-name").textContent = name;
+    const firstName = name.trim().split(/\s+/)[0].split(/[._-]/)[0] || "você";
+    document.querySelector("#home-greeting-name").textContent = firstName.charAt(0).toLocaleUpperCase("pt-BR") + firstName.slice(1);
     document.querySelector("#account-email").textContent = user.email || "";
     document.querySelector("#account-avatar").textContent = Array.from(name)[0]?.toLocaleUpperCase("pt-BR") || "S";
     authView.dataset.auth = "ready";
