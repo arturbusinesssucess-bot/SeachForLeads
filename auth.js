@@ -52,7 +52,7 @@ function setMode(nextMode) {
   passwordInput.autocomplete = signup ? "new-password" : "current-password";
   title.textContent = signup ? "Crie seu acesso ao radar." : "Volte para o radar.";
   copy.textContent = signup ? "Comece seus 14 dias grátis e desbloqueie a análise completa." : "Entre para continuar sua busca de leads.";
-  submit.innerHTML = `${signup ? "Criar conta" : "Entrar"} <span aria-hidden="true">↗</span>`;
+  submit.textContent = signup ? "Criar conta" : "Entrar";
   modeCaption.textContent = signup ? "Já tem uma conta?" : "Ainda não tem conta?";
   modeToggle.textContent = signup ? "Entrar" : "Comece grátis";
   setMessage("");
