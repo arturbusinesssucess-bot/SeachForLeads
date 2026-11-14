@@ -743,3 +743,15 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 .auth-intro .auth-avatars img { border-color: #06081e; }
 
 .auth-intro .auth-brand .brand-for { color: #65b7ff; }
+
+
+/* Keep only the clickable brand above the qualification form. */
+.qualify-brand-bar {
+  display: flex;
+  width: calc(100% - 48px);
+  max-width: 1400px;
+  min-height: 60px;
+  align-items: center;
+  margin: 14px auto 0;
+  padding: 0;
+}
