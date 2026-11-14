@@ -1046,3 +1046,64 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 @media (prefers-reduced-motion: reduce) {
   .privacy-notice { transition: none; }
 }
+
+/* Motion powered radar artwork for the landing hero */
+.hero { align-items: center; }
+.hero-visual { min-height: 520px; align-self: stretch; }
+.radar-visual { position: relative; width: min(100%,520px); overflow: hidden; border: 1px solid rgba(95,150,218,.24); border-radius: 22px; padding: 17px 17px 13px; background: radial-gradient(ellipse at 50% 43%,rgba(31,78,139,.2),transparent 54%),linear-gradient(145deg,#0d1520,#080c13 72%); box-shadow: 0 30px 90px rgba(0,0,0,.38),0 0 50px rgba(34,111,211,.08),inset 0 1px 0 rgba(255,255,255,.045); }
+.radar-visual::before { position: absolute; inset: 0; background: linear-gradient(rgba(100,157,221,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(100,157,221,.05) 1px,transparent 1px); background-size: 27px 27px; content: ""; mask-image: linear-gradient(180deg,black,transparent 75%); pointer-events: none; }
+.radar-topline,.radar-bottomline { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #72869f; font-family: var(--mono); font-size: 8px; font-weight: 600; letter-spacing: .11em; }
+.radar-topline b { color: #b4c7dc; font-weight: 600; }
+.radar-live { display: inline-flex; align-items: center; gap: 6px; color: #8dbfff; font-size: 7px; }
+.radar-live i,.radar-bottomline i { width: 5px; height: 5px; border-radius: 50%; background: #79b9ff; box-shadow: 0 0 10px rgba(100,181,255,.9); }
+.radar-display { position: relative; height: 410px; margin: 8px -4px 1px; overflow: hidden; }
+.radar-grid { position: absolute; inset: 6% 4% 5%; border: 1px solid rgba(95,157,227,.13); border-radius: 50%; background: radial-gradient(circle at center,rgba(24,78,145,.18),rgba(9,17,28,.08) 57%,transparent 73%); }
+.radar-orbit { position: absolute; top: 50%; left: 50%; aspect-ratio: 1; border: 1px solid rgba(99,169,245,.17); border-radius: 50%; transform: translate(-50%,-50%); }
+.radar-orbit-outer { width: 78%; border-color: rgba(97,166,240,.2); }
+.radar-orbit-middle { width: 54%; border-color: rgba(97,166,240,.16); }
+.radar-orbit-inner { width: 30%; border-color: rgba(97,166,240,.15); }
+.radar-axis { position: absolute; top: 50%; left: 9%; width: 82%; height: 1px; background: linear-gradient(90deg,transparent,rgba(100,160,226,.18),transparent); }
+.radar-axis-y { transform: rotate(90deg); }
+.radar-sweep { position: absolute; top: 11%; left: 11%; width: 78%; aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from 0deg,transparent 0 74%,rgba(78,162,255,.02) 77%,rgba(78,162,255,.42) 96%,transparent 100%); mask-image: radial-gradient(circle,transparent 0 12%,#000 13% 100%); transform-origin: center; }
+.radar-center { position: absolute; top: 50%; left: 50%; display: grid; width: 56px; height: 56px; place-items: center; border: 1px solid rgba(111,184,255,.5); border-radius: 50%; background: radial-gradient(circle,#19375b,#0c1728 72%); box-shadow: 0 0 0 9px rgba(67,135,217,.055),0 0 35px rgba(39,126,231,.22); transform: translate(-50%,-50%); }
+.radar-center img { width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 0 9px rgba(95,176,255,.45)); }
+.radar-signal { position: absolute; z-index: 1; width: 9px; height: 9px; border: 1px solid #c3e5ff; border-radius: 50%; background: #60adff; box-shadow: 0 0 15px rgba(76,165,255,.85),0 0 0 5px rgba(68,147,231,.13); }
+.radar-signal-one { top: 27%; left: 34%; }
+.radar-signal-two { top: 61%; right: 28%; width: 7px; height: 7px; }
+.radar-signal-three { top: 37%; right: 19%; width: 6px; height: 6px; }
+.radar-float { position: absolute; z-index: 3; border: 1px solid rgba(111,169,231,.26); border-radius: 11px; background: rgba(9,16,26,.88); box-shadow: 0 16px 40px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.04); backdrop-filter: blur(10px); }
+.radar-opportunity-card { top: 18%; left: 0; display: grid; gap: 7px; min-width: 190px; padding: 13px 14px; }
+.radar-card-label { color: #7daee5; font-family: var(--mono); font-size: 7px; font-weight: 700; letter-spacing: .12em; }
+.radar-opportunity-card strong { color: #eaf3ff; font-size: 12px; font-weight: 600; letter-spacing: -.015em; }
+.radar-card-detail { display: inline-flex; align-items: center; gap: 6px; color: #8f9fb2; font-size: 8px; }
+.radar-card-detail i { width: 5px; height: 5px; border-radius: 50%; background: #82e3b4; box-shadow: 0 0 8px rgba(130,227,180,.5); }
+.radar-signal-card { right: -1%; bottom: 18%; display: flex; align-items: center; gap: 10px; min-width: 226px; padding: 11px 12px; }
+.radar-signal-mark { display: flex; align-items: end; gap: 3px; height: 22px; padding: 4px 5px; border: 1px solid rgba(111,169,231,.2); border-radius: 7px; background: rgba(49,101,164,.12); }
+.radar-signal-mark i { width: 3px; border-radius: 3px; background: #6fb7ff; }
+.radar-signal-mark i:nth-child(1) { height: 6px; opacity: .55; }
+.radar-signal-mark i:nth-child(2) { height: 10px; opacity: .75; }
+.radar-signal-mark i:nth-child(3) { height: 14px; }
+.radar-signal-card>span:nth-child(2) { display: grid; gap: 4px; }
+.radar-signal-card b { color: #c5d7ec; font-size: 7px; font-weight: 700; letter-spacing: .08em; }
+.radar-signal-card small { color: #78899f; font-size: 8px; }
+.radar-card-arrow { margin-left: auto; color: #92c5ff; font-size: 13px; }
+.radar-bottomline { padding-top: 10px; border-top: 1px solid rgba(91,126,171,.13); font-size: 7px; }
+.radar-bottomline>span:first-child { display: inline-flex; align-items: center; gap: 6px; }
+.radar-bottomline i { width: 4px; height: 4px; }
+.radar-bottomline b { color: #40536c; font-weight: 500; }
+@media (max-width: 980px) {
+  .hero { align-items: center; }
+  .hero-visual { min-height: 460px; }
+}
+@media (max-width: 700px) {
+  .hero { gap: 12px; }
+  .hero-visual { order: 0; width: 100%; min-height: 0; max-height: none; margin: 12px auto 0; }
+  .radar-visual { width: min(100%,520px); margin-inline: auto; padding: 13px 12px 11px; border-radius: 17px; }
+  .radar-display { height: clamp(270px,78vw,340px); margin-top: 6px; }
+  .radar-opportunity-card { top: 16%; left: 0; min-width: 162px; padding: 10px 11px; }
+  .radar-signal-card { right: 0; bottom: 14%; min-width: 190px; gap: 8px; padding: 9px; }
+  .radar-card-detail { font-size: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .radar-visual *, .radar-visual *::before, .radar-visual *::after { scroll-behavior: auto !important; }
+}
