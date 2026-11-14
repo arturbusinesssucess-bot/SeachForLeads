@@ -50,7 +50,7 @@ document.querySelector("#sign-out").addEventListener("click", async () => {
   if (!auth) return;
   try {
     await signOut(auth);
-    window.location.replace("/auth?mode=login");
+    window.location.replace("/");
   } catch {
     const accountEmail = document.querySelector("#account-email");
     accountEmail.textContent = "Não foi possível sair. Tente novamente.";
