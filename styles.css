@@ -25,7 +25,7 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--ink);
+  background: #000;
   color: var(--white);
   font-family: var(--display);
   -webkit-font-smoothing: antialiased;
@@ -38,7 +38,7 @@ button { cursor: pointer; }
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  background: var(--ink);
+  background: #000;
 }
 .topbar, main, .footer { position: relative; z-index: 1; }
 
@@ -876,19 +876,16 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
   height: 24px;
   flex: 0 0 24px;
   place-items: center;
-  border: 1px solid #394355;
-  border-radius: 50%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--blue-bright);
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 400;
   line-height: 1;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  transition: transform 180ms ease;
 }
-.faq-item[open] .faq-toggle {
-  transform: rotate(45deg);
-  border-color: #4b83c4;
-  background: rgba(45,116,255,.09);
-}
+.faq-item[open] .faq-toggle { transform: rotate(45deg); }
 .faq-answer { padding: 0 42px 20px 0; }
 .faq-answer p {
   max-width: 660px;
