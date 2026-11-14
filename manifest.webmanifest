@@ -1,0 +1,42 @@
+{
+  "id": "/app/",
+  "name": "SearchForLeads",
+  "short_name": "SearchLeads",
+  "description": "Encontre, organize e priorize oportunidades para o seu próximo movimento comercial.",
+  "lang": "pt-BR",
+  "start_url": "/app/#home",
+  "scope": "/app/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#08090b",
+  "theme_color": "#08090b",
+  "icons": [
+    {
+      "src": "/public/pwa-icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/pwa-icon-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nova busca",
+      "short_name": "Buscar",
+      "url": "/app/#search",
+      "icons": [{ "src": "/public/pwa-icon.svg", "sizes": "512x512", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Abrir CRM",
+      "short_name": "CRM",
+      "url": "/app/#crm",
+      "icons": [{ "src": "/public/pwa-icon.svg", "sizes": "512x512", "type": "image/svg+xml" }]
+    }
+  ]
+}
