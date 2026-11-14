@@ -42,7 +42,7 @@
           <div class="account-row">
             <div class="account-avatar" id="account-avatar">S</div>
             <div class="account-copy"><strong id="account-name">Sua conta</strong><span id="account-email">Carregando…</span></div>
-            <button id="sign-out" class="sign-out" type="button" aria-label="Sair da conta" title="Sair">↗</button>
+          <button id="sign-out" class="sign-out" type="button" aria-label="Sair da conta" title="Sair"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-9h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-8"/></svg></button>
           </div>
         </div>
       </aside>
@@ -50,7 +50,7 @@
       <main class="app-main">
         <header class="app-topbar">
           <div><span class="topbar-kicker">SEARCHFORLEADS</span><span class="topbar-slash">/</span><span id="breadcrumb">Home</span></div>
-          <button class="topbar-action" type="button" data-open-view="search"><span>+</span> Nova busca</button>
+          <button class="topbar-action pixel-button" type="button" data-open-view="search"><span class="pixel-label">Nova busca</span></button>
         </header>
 
         <section class="app-view" data-view="home" aria-labelledby="home-title">
@@ -60,7 +60,7 @@
               <h1 id="home-title">Bom ter você por aqui<span>.</span></h1>
               <p class="welcome-copy">Encontre empresas com potencial e organize os próximos passos em um só lugar.</p>
             </div>
-            <button class="home-search-button" type="button" data-open-view="search"><span class="search-button-icon">⌕</span> Fazer uma busca <span class="button-arrow">↗</span></button>
+            <button class="home-search-button pixel-button" type="button" data-open-view="search"><span class="pixel-label">Fazer uma busca</span></button>
           </div>
 
           <div class="stat-grid" aria-label="Resumo da conta">
@@ -71,12 +71,12 @@
 
           <div class="home-sections">
             <section class="home-panel recent-panel">
-              <div class="panel-heading"><div><h2>Leads recentes</h2><p>Os últimos contatos que você salvou.</p></div><button class="text-link" type="button" data-open-view="crm">Abrir CRM <span>↗</span></button></div>
+              <div class="panel-heading"><div><h2>Leads recentes</h2><p>Os últimos contatos que você salvou.</p></div><button class="text-link" type="button" data-open-view="crm">Abrir CRM</button></div>
               <div class="empty-inline"><span class="empty-icon">⌕</span><div><strong>Seu CRM começa com a primeira busca</strong><p>Quando você salvar empresas, elas vão aparecer aqui.</p></div></div>
             </section>
             <section class="home-panel start-panel">
               <div class="start-mark"><img src="/public/loupe-logo.svg" alt="" /></div>
-              <div><span class="panel-overline">PRÓXIMO PASSO</span><h2>Comece pelo que você procura.</h2><p>Descreva seu cliente ideal para preparar uma nova busca.</p><button class="start-link" type="button" data-open-view="search">Ir para Busca <span>→</span></button></div>
+              <div><span class="panel-overline">PRÓXIMO PASSO</span><h2>Comece pelo que você procura.</h2><p>Descreva seu cliente ideal para preparar uma nova busca.</p><button class="start-link pixel-button" type="button" data-open-view="search"><span class="pixel-label">Ir para Busca</span></button></div>
             </section>
           </div>
         </section>
@@ -94,7 +94,7 @@
               <input id="search-niche" name="niche" type="text" placeholder="Ex.: software para clínicas" required />
               <label for="search-location">Onde quer encontrar?</label>
               <input id="search-location" name="location" type="text" placeholder="Ex.: São Paulo, SP" required />
-              <button class="search-submit" type="submit">Buscar leads <span>↗</span></button>
+              <button class="search-submit pixel-button" type="submit"><span class="pixel-label">Buscar leads</span></button>
               <p class="search-status" id="search-status" role="status" aria-live="polite"></p>
             </form>
             <aside class="search-side-note"><span class="note-line"></span><span class="panel-overline">COMO FUNCIONA</span><h2>Uma busca de cada vez.</h2><p>Depois de conectar a fonte de prospecção, os resultados aparecem aqui. Você escolhe quais empresas salvar no CRM.</p><div class="search-step"><span>01</span><span>Descreva o perfil</span></div><div class="search-step"><span>02</span><span>Revise os resultados</span></div><div class="search-step"><span>03</span><span>Salve os leads no CRM</span></div></aside>
@@ -108,7 +108,7 @@
         <section class="app-view" data-view="crm" aria-labelledby="crm-title" hidden>
           <div class="page-heading crm-heading">
             <div><p class="view-eyebrow">ORGANIZAÇÃO</p><h1 id="crm-title">CRM<span>.</span></h1><p>Os leads que você salvar durante as buscas ficam organizados aqui.</p></div>
-            <div class="crm-tools"><label class="crm-search"><span aria-hidden="true">⌕</span><input id="crm-filter" type="search" placeholder="Buscar no CRM" aria-label="Buscar leads no CRM" /></label><button class="crm-export" id="export-leads" type="button" disabled>Exportar <span>↗</span></button></div>
+            <div class="crm-tools"><label class="crm-search"><span aria-hidden="true">⌕</span><input id="crm-filter" type="search" placeholder="Buscar no CRM" aria-label="Buscar leads no CRM" /></label><button class="crm-export" id="export-leads" type="button" disabled>Exportar</button></div>
           </div>
           <div class="crm-toolbar"><div class="crm-tabs"><button class="crm-filter is-active" type="button" data-filter="all">Todos <span id="crm-total">0</span></button><button class="crm-filter" type="button" data-filter="new">Novos <span id="crm-new">0</span></button></div><span class="crm-sort">Atualizados recentemente <span>⌄</span></span></div>
           <div class="crm-table-wrap">
@@ -116,7 +116,7 @@
               <thead><tr><th>EMPRESA</th><th>LOCALIZAÇÃO</th><th>ORIGEM</th><th>STATUS</th><th></th></tr></thead>
               <tbody id="crm-rows"></tbody>
             </table>
-            <div class="crm-empty" id="crm-empty"><span class="empty-icon">⌕</span><h2>Nenhum lead por aqui ainda</h2><p>Faça uma busca e salve as empresas com potencial. Elas vão aparecer nesta lista.</p><button type="button" data-open-view="search">Ir para Busca <span>↗</span></button></div>
+            <div class="crm-empty" id="crm-empty"><span class="empty-icon">⌕</span><h2>Nenhum lead por aqui ainda</h2><p>Faça uma busca e salve as empresas com potencial. Elas vão aparecer nesta lista.</p><button class="pixel-button" type="button" data-open-view="search"><span class="pixel-label">Ir para Busca</span></button></div>
           </div>
         </section>
         <footer class="app-footer"><span>SearchForLeads</span><span>Seu próximo contato começa com contexto.</span></footer>
