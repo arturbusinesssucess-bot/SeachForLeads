@@ -131,7 +131,7 @@
 .crm-empty p { max-width: 340px; margin: 7px 0 15px; color: var(--app-dim); font-size: 10px; line-height: 1.55; }
 .crm-empty button.pixel-button { min-height: 38px; padding: 0 13px; font-size: 10px; }
 .mobile-nav { display: none; }
-.product-app button:focus-visible, .product-app a:focus-visible, .product-app input:focus-visible { outline: 2px solid var(--app-blue-light); outline-offset: 3px; }
+.product-app button:focus-visible, .product-app a:focus-visible { outline: 1px solid rgba(255,255,255,.55); outline-offset: 3px; }
 @media (max-width: 900px) {
   .app-frame { grid-template-columns: 210px minmax(0, 1fr); }
   .app-main { padding-inline: 25px; }
