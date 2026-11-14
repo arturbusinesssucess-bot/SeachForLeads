@@ -52,3 +52,28 @@ if (!reduceMotion && magnetMedia.matches) {
     });
   });
 }
+
+
+// Show the privacy notice five seconds after landing entry.
+const privacyNotice = document.querySelector("#privacy-notice");
+const privacyNoticeDismiss = document.querySelector("#privacy-notice-dismiss");
+const privacyNoticeKey = "sfl-privacy-notice-seen";
+let privacyNoticeSeen = false;
+try {
+  privacyNoticeSeen = localStorage.getItem(privacyNoticeKey) === "1";
+} catch {}
+
+if (privacyNotice && privacyNoticeDismiss && !privacyNoticeSeen) {
+  window.setTimeout(() => {
+    privacyNotice.hidden = false;
+    window.requestAnimationFrame(() => privacyNotice.classList.add("is-visible"));
+  }, 5000);
+
+  privacyNoticeDismiss.addEventListener("click", () => {
+    privacyNotice.classList.remove("is-visible");
+    try {
+      localStorage.setItem(privacyNoticeKey, "1");
+    } catch {}
+    window.setTimeout(() => { privacyNotice.hidden = true; }, 330);
+  });
+}
