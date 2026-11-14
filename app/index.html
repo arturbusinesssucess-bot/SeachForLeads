@@ -62,7 +62,7 @@
             <div>
               <p class="view-eyebrow">PAINEL DE PROSPECÇÃO</p>
               <h1 id="home-title">Olá, <span id="home-greeting-name">você</span>.</h1>
-              <p class="welcome-copy">Seu espaço de prospecção está pronto. Organize oportunidades e escolha o próximo passo.</p>
+              <p class="welcome-copy">Encontre empresas com potencial e mantenha cada oportunidade organizada até o próximo contato.</p>
             </div>
             <button class="home-search-button pixel-button" type="button" data-open-view="search"><span class="pixel-label">Fazer uma busca</span></button>
           </div>
@@ -81,9 +81,24 @@
             </div>
           </aside>
 
+          <section class="home-hero" aria-labelledby="home-hero-title">
+            <div class="home-hero-main">
+              <span class="home-hero-kicker"><span class="hero-pulse"></span> SEU PRÓXIMO CLIENTE COMEÇA AQUI</span>
+              <h2 id="home-hero-title">Encontre. Avalie. Inicie a conversa.</h2>
+              <p>Defina o perfil de empresa que procura, escolha uma região e guarde no CRM os contatos que fazem sentido para o seu negócio.</p>
+              <button class="hero-cta pixel-button" type="button" data-open-view="search"><span class="pixel-label">Começar uma busca <span aria-hidden="true">→</span></span></button>
+            </div>
+            <div class="home-hero-steps" aria-label="Como começar">
+              <span class="panel-overline">UM FLUXO SIMPLES</span>
+              <div class="hero-step"><span>01</span><p>Descreva o nicho que você atende</p></div>
+              <div class="hero-step"><span>02</span><p>Escolha onde quer prospectar</p></div>
+              <div class="hero-step"><span>03</span><p>Organize os contatos no CRM</p></div>
+            </div>
+          </section>
+
           <div class="home-section-heading">
-            <div><h2>Visão geral</h2><p>O que está acontecendo na sua conta.</p></div>
-            <button class="text-link" type="button" data-open-view="crm">Ver CRM</button>
+            <div><h2>Visão geral</h2><p>Um resumo do seu espaço de prospecção.</p></div>
+            <button class="text-link" type="button" data-open-view="crm">Ver CRM <span aria-hidden="true">→</span></button>
           </div>
           <div class="stat-grid" aria-label="Resumo da conta">
             <article class="stat-card">
@@ -91,32 +106,24 @@
               <strong id="home-lead-total">0</strong><small>empresas salvas por você</small>
             </article>
             <article class="stat-card">
-              <div class="stat-card-label"><span>Buscas realizadas</span><span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 8v5M8 10.5h5"/></svg></span></div>
-              <strong>0</strong><small>seu histórico de buscas</small>
-            </article>
-            <article class="stat-card">
               <div class="stat-card-label"><span>Para contatar</span><span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div>
               <strong id="home-new-total">0</strong><small>leads aguardando ação</small>
+            </article>
+            <article class="stat-card stat-card-action">
+              <div class="stat-card-label"><span>Próximo passo</span><span class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span></div>
+              <button type="button" data-open-view="search">Encontrar empresas <span aria-hidden="true">↗</span></button>
+              <small>Configure uma busca para começar</small>
             </article>
           </div>
 
           <div class="home-sections">
-            <section class="home-panel start-panel" aria-labelledby="home-start-title">
-              <div class="home-start-header">
-                <div class="start-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></div>
-                <span class="panel-overline">PRIMEIRA BUSCA</span>
-              </div>
-              <h2 id="home-start-title">Encontre empresas que combinam com sua oferta.</h2>
-              <p>Defina o que você vende e onde quer prospectar. Você pode revisar os critérios antes de continuar.</p>
-              <div class="start-checklist">
-                <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>Descreva sua oferta</span>
-                <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>Escolha uma região</span>
-              </div>
-              <button class="start-link pixel-button" type="button" data-open-view="search"><span class="pixel-label">Configurar busca</span></button>
-            </section>
             <section class="home-panel recent-panel" aria-labelledby="home-recent-title">
-              <div class="panel-heading"><div><h2 id="home-recent-title">Leads recentes</h2><p>Empresas que você salvou no CRM.</p></div><button class="text-link" type="button" data-open-view="crm">Abrir CRM</button></div>
-              <div class="empty-inline"><span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span><div><strong>Seu CRM começa com o primeiro lead</strong><p>Depois de uma busca, salve as empresas que fazem sentido e retome o contato por aqui.</p><button class="empty-action" type="button" data-open-view="search">Começar uma busca</button></div></div>
+              <div class="panel-heading"><div><span class="panel-overline">ACOMPANHAMENTO</span><h2 id="home-recent-title">Leads recentes</h2><p>Empresas que você salvar nas buscas.</p></div><button class="text-link" type="button" data-open-view="crm">Abrir CRM <span aria-hidden="true">→</span></button></div>
+              <div class="empty-inline"><span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span><div><strong>Seu CRM começa com o primeiro lead</strong><p>Faça uma busca e salve as empresas que combinam com sua oferta. Elas ficam reunidas aqui.</p><button class="empty-action" type="button" data-open-view="search">Começar uma busca <span aria-hidden="true">→</span></button></div></div>
+            </section>
+            <section class="home-panel start-panel" aria-labelledby="home-start-title">
+              <div class="start-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/></svg></div>
+              <div><span class="panel-overline">PARA COMEÇAR</span><h2 id="home-start-title">Transforme sua oferta em uma busca.</h2><p>Escolha um nicho e uma região. Você poderá revisar os critérios antes de continuar.</p><button class="start-link pixel-button" type="button" data-open-view="search"><span class="pixel-label">Configurar busca <span aria-hidden="true">→</span></span></button></div>
             </section>
           </div>
         </section>
