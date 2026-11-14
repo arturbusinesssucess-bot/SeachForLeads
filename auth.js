@@ -5,7 +5,6 @@ import {
   GoogleAuthProvider,
   getAuth,
   onAuthStateChanged,
-  sendPasswordResetEmail,
   setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -20,7 +19,6 @@ const submit = document.querySelector("#auth-submit");
 const message = document.querySelector("#auth-message");
 const passwordInput = document.querySelector("#auth-password");
 const passwordToggle = document.querySelector("#auth-password-toggle");
-const forgotPassword = document.querySelector("#auth-forgot-password");
 const googleButton = document.querySelector("#auth-google");
 const modeToggle = document.querySelector("#auth-mode-toggle");
 const modeCaption = document.querySelector("#auth-mode-caption");
@@ -95,29 +93,6 @@ passwordToggle.addEventListener("click", () => {
   passwordInput.type = isVisible ? "password" : "text";
   passwordToggle.setAttribute("aria-pressed", String(!isVisible));
   passwordToggle.setAttribute("aria-label", isVisible ? "Mostrar senha" : "Ocultar senha");
-});
-
-forgotPassword.addEventListener("click", async () => {
-  if (!auth) {
-    setMessage("Configure o Firebase antes de recuperar sua senha.", "error");
-    return;
-  }
-  const email = document.querySelector("#auth-email").value.trim();
-  if (!email) {
-    setMessage("Digite seu e-mail para receber o link de recuperação.", "error");
-    document.querySelector("#auth-email").focus();
-    return;
-  }
-  forgotPassword.disabled = true;
-  setMessage("Enviando link de recuperação…");
-  try {
-    await sendPasswordResetEmail(auth, email);
-    setMessage("Se este e-mail estiver cadastrado, você receberá um link para redefinir a senha.", "success");
-  } catch (error) {
-    setMessage(firebaseErrorMessage(error), "error");
-  } finally {
-    forgotPassword.disabled = false;
-  }
 });
 
 googleButton.addEventListener("click", async () => {
