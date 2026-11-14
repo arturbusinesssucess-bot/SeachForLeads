@@ -81,6 +81,51 @@ faqItems.forEach((item) => {
 });
 
 
+// Keep the radar's ambient movement in view and stop it offscreen.
+const radarVisual = document.querySelector(".radar-visual");
+if (radarVisual && !reduceMotion) {
+  import("https://cdn.jsdelivr.net/npm/motion@14.13.0/+esm")
+    .then(({ animate, inView, stagger }) => {
+      const sweep = radarVisual.querySelector(".radar-sweep");
+      const signals = radarVisual.querySelectorAll(".radar-signal");
+      const floatingCards = radarVisual.querySelectorAll(".radar-float");
+      if (!sweep || !signals.length || !floatingCards.length) return;
+
+      inView(radarVisual, () => {
+        const sweepMotion = animate(sweep, { rotate: 360 }, {
+          duration: 12,
+          ease: "linear",
+          repeat: Infinity,
+        });
+        const signalMotion = animate(signals, {
+          scale: [0.78, 1.12, 0.78],
+          opacity: [0.55, 1, 0.55],
+        }, {
+          duration: 2.7,
+          delay: stagger(0.34),
+          ease: "easeInOut",
+          repeat: Infinity,
+        });
+        const cardMotion = animate(floatingCards, { y: [0, -5, 0] }, {
+          duration: 4.2,
+          delay: stagger(0.55),
+          ease: "easeInOut",
+          repeat: Infinity,
+        });
+
+        return () => {
+          sweepMotion.stop();
+          signalMotion.stop();
+          cardMotion.stop();
+        };
+      }, { amount: 0.2 });
+    })
+    .catch(() => {
+      // The landing remains complete if the animation module cannot load.
+    });
+}
+
+
 // Magnetic hover effect for the hero's secondary CTA.
 const magnetMedia = window.matchMedia("(hover: hover) and (pointer: fine)");
 if (!reduceMotion && magnetMedia.matches) {
