@@ -15,3 +15,11 @@ if (entranceBlocks.length && "IntersectionObserver" in window && !reduceMotion) 
   entranceBlocks.forEach((block) => entranceObserver.observe(block));
 }
 
+
+
+// Keep the FAQ behavior to one open answer at a time.
+const faqItems = [...document.querySelectorAll(".faq-item")];
+faqItems.forEach((item) => item.addEventListener("toggle", () => {
+  if (!item.open) return;
+  faqItems.forEach((other) => { if (other !== item) other.open = false; });
+}));
