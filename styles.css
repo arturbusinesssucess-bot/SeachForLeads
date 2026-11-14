@@ -641,8 +641,8 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
   min-height: 560px;
 }
 .hero-copy {
-  width: min(100%, 860px);
-  max-width: 860px;
+  width: min(100%, 1000px);
+  max-width: 1000px;
   margin-inline: auto;
   text-align: center;
 }
