@@ -946,3 +946,35 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 @media (prefers-reduced-motion: reduce) {
   .hero #hero-title .hero-search-word { animation: none; background-position: 50% 50%; }
 }
+
+
+/* Subtitles sharpen into focus; their descriptions rise in normally. */
+.motion-ready .animar .fx-blur {
+  opacity: 0;
+  filter: blur(14px);
+  transform: scale(1.04);
+}
+.motion-ready .animar .fx-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.motion-ready .animar.run .fx-blur {
+  animation: blurin 900ms cubic-bezier(.16,1,.3,1) forwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+.motion-ready .animar.run .fx-enter {
+  animation: entrance-up 600ms cubic-bezier(.16,1,.3,1) forwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+@keyframes blurin {
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-ready .animar .fx-blur,
+  .motion-ready .animar .fx-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
