@@ -25,7 +25,8 @@
 .app-nav a:hover { color: var(--app-text); background: #111318; }
 .app-nav a[aria-current="page"] { border-color: #222a35; background: #141922; color: var(--app-text); }
 .app-nav a[aria-current="page"] svg { color: var(--app-blue-light); }
-.app-nav svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
+.app-nav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; transition: color 160ms ease, transform 160ms ease; }
+.app-nav a:hover svg { transform: translateY(-1px); }
 .nav-count { display: grid; min-width: 20px; height: 20px; place-items: center; margin-left: auto; border: 1px solid var(--app-line); border-radius: 6px; color: var(--app-muted); font-size: 10px; }
 .sidebar-bottom { margin-top: auto; }
 .plan-note { display: flex; align-items: center; gap: 9px; margin: 0 5px 14px; padding: 11px 10px; border-bottom: 1px solid var(--app-line-soft); color: #a9b0ba; font-size: 10px; }
@@ -52,6 +53,9 @@
 .welcome-row h1 > span, .page-heading h1 > span { color: var(--app-blue-light); }
 .welcome-copy, .page-heading > p:last-child { margin: 10px 0 0; color: var(--app-muted); font-size: 13px; line-height: 1.6; }
 .home-search-button { min-height: 42px; flex: 0 0 auto; padding: 0 15px; font-size: 11px; }
+.home-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 0 0 12px; }
+.home-section-heading h2 { margin: 0; color: #e8ebef; font-size: 14px; font-weight: 570; letter-spacing: -.025em; }
+.home-section-heading p { margin: 5px 0 0; color: var(--app-dim); font-size: 10px; }
 .pwa-install-card { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 14px; margin: 0 0 18px; border: 1px solid #252d39; border-radius: 9px; padding: 15px 16px; background: #0d1015; }
 .pwa-install-card[hidden] { display: none; }
 .pwa-install-mark { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid #28384d; border-radius: 9px; background: #101722; }
@@ -66,9 +70,12 @@
 .pwa-install-dismiss { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 6px; background: transparent; color: #87909b; font-size: 20px; cursor: pointer; }
 .pwa-install-dismiss:hover { background: #171b22; color: #f2f3f5; }
 .stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
-.stat-card { display: grid; min-height: 133px; align-content: start; gap: 7px; border: 1px solid var(--app-line); border-radius: 9px; padding: 17px 18px; background: var(--app-surface); }
-.stat-card > span { color: #a5acb6; font-size: 11px; }
-.stat-card strong { margin-top: 5px; color: var(--app-text); font-size: 28px; font-weight: 550; letter-spacing: -.05em; }
+.stat-card { display: grid; min-height: 133px; align-content: space-between; gap: 10px; border: 1px solid var(--app-line); border-radius: 9px; padding: 15px 16px; background: var(--app-surface); transition: border-color 160ms ease, background 160ms ease; }
+.stat-card:hover { border-color: #333b47; background: #12151b; }
+.stat-card-label { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #a5acb6; font-size: 11px; }
+.stat-icon { display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center; border: 1px solid #293343; border-radius: 7px; color: #86a9d5; }
+.stat-icon svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.stat-card strong { color: var(--app-text); font-size: 28px; font-weight: 550; letter-spacing: -.05em; line-height: 1; }
 .stat-card small { color: var(--app-dim); font-size: 10px; }
 .home-sections { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .8fr); gap: 14px; }
 .home-panel { min-height: 242px; border: 1px solid var(--app-line); border-radius: 9px; background: var(--app-surface); }
@@ -79,15 +86,20 @@
 .text-link { border: 0; padding: 3px 0; background: transparent; color: #b5c8e3; font-size: 10px; cursor: pointer; }
 .text-link:hover { color: white; }
 .empty-inline { display: flex; min-height: 157px; align-items: center; gap: 14px; padding: 12px 6px; }
-.empty-icon { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border: 1px solid #293343; border-radius: 9px; color: var(--app-blue-light); font-size: 23px; }
+.empty-icon { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border: 1px solid #293343; border-radius: 9px; color: var(--app-blue-light); }
+.empty-icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .empty-inline strong { color: #d9dde3; font-size: 11px; font-weight: 550; }
 .empty-inline p { margin: 6px 0 0; color: var(--app-dim); font-size: 10px; }
 .start-panel { display: flex; gap: 15px; padding: 19px; background: #11151b; }
 .start-mark { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border: 1px solid #263448; border-radius: 8px; background: #141e2b; }
 .start-mark img { width: 20px; height: 20px; object-fit: contain; }
+.start-mark svg { width: 18px; height: 18px; fill: none; stroke: var(--app-blue-light); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .panel-overline { display: block; margin-bottom: 10px; color: #7ca9df; font-size: 8px; }
-.start-panel h2 { max-width: 210px; margin: 0; color: #edf0f4; font-size: 16px; font-weight: 560; letter-spacing: -.04em; line-height: 1.25; }
-.start-panel p { margin: 9px 0 15px; color: var(--app-muted); font-size: 10px; line-height: 1.55; }
+.start-panel h2 { max-width: 270px; margin: 0; color: #edf0f4; font-size: 16px; font-weight: 560; letter-spacing: -.04em; line-height: 1.25; }
+.start-panel p { margin: 9px 0 13px; color: var(--app-muted); font-size: 10px; line-height: 1.55; }
+.start-checklist { display: grid; gap: 7px; margin: 0 0 14px; }
+.start-checklist span { display: flex; align-items: center; gap: 7px; color: #b8c0ca; font-size: 9px; }
+.start-checklist svg { width: 13px; height: 13px; fill: none; stroke: var(--app-blue-light); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .start-link { min-height: 34px; margin-top: 2px; padding: 0 12px; font-size: 10px; }
 .app-footer { display: flex; justify-content: space-between; gap: 12px; padding: 15px 0 17px; border-top: 1px solid var(--app-line-soft); color: #59616c; font-size: 9px; }
 .page-heading { margin-bottom: 25px; }
@@ -172,7 +184,7 @@
   .pwa-install-button { min-height: 34px; padding-inline: 9px; font-size: 9px; }
 
   .stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .stat-card { min-height: 117px; padding: 14px; }
+  .stat-card { min-height: 117px; padding: 13px; }
   .stat-card:last-child { grid-column: 1 / -1; min-height: 93px; }
   .stat-card strong { font-size: 24px; }
   .recent-panel, .start-panel { padding: 15px; }
@@ -195,9 +207,11 @@
   .crm-empty { position: absolute; top: 43px; right: 0; left: 0; padding-inline: 20px; }
   .mobile-nav { position: fixed; z-index: 5; right: 0; bottom: 0; left: 0; display: grid; height: 63px; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #292d34; background: rgba(11,12,15,.97); padding-bottom: env(safe-area-inset-bottom); }
   .mobile-nav a { display: grid; align-content: center; justify-items: center; gap: 3px; color: #8b929c; font-size: 9px; text-decoration: none; }
-  .mobile-nav a > span { color: #9da7b4; font-size: 18px; line-height: 1; }
+  .mobile-nav a > svg { width: 19px; height: 19px; fill: none; stroke: #9da7b4; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: color 160ms ease, stroke 160ms ease; }
+  .mobile-nav a > span { color: #9da7b4; font-size: 9px; line-height: 1; }
   .mobile-nav a[aria-current="page"] { color: white; }
-  .mobile-nav a[aria-current="page"] > span { color: var(--app-blue-light); }
+  .mobile-nav a[aria-current="page"] > span { color: #eef3fa; }
+  .mobile-nav a[aria-current="page"] > svg { stroke: var(--app-blue-light); }
 }
 @media (prefers-reduced-motion: reduce) { .app-view { animation: none; } .topbar-action, .app-nav a, .home-search-button { transition: none; } }
 
