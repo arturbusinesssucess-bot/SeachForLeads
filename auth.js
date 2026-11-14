@@ -29,6 +29,7 @@ const signupFields = [...document.querySelectorAll("[data-signup-only]")];
 const loginFields = [...document.querySelectorAll("[data-login-only]")];
 let mode = new URLSearchParams(window.location.search).get("mode") === "signup" ? "signup" : "login";
 let auth = null;
+let persistenceReady = Promise.resolve();
 
 function setMessage(text = "", type = "") {
   message.textContent = text;
@@ -79,9 +80,12 @@ setMode(mode);
 if (isFirebaseConfigured) {
   const app = initializeApp(firebaseConfig);
   auth = getAuth(app);
-  onAuthStateChanged(auth, (user) => {
-    if (user) window.location.href = "app/";
-  });
+  persistenceReady = setPersistence(auth, browserLocalPersistence);
+  persistenceReady
+    .then(() => onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = "app/";
+    }))
+    .catch((error) => setMessage(firebaseErrorMessage(error), "error"));
 } else {
   setMessage();
 }
@@ -124,6 +128,7 @@ googleButton.addEventListener("click", async () => {
   googleButton.disabled = true;
   setMessage("Conectando com o Google…");
   try {
+    await persistenceReady;
     await signInWithPopup(auth, new GoogleAuthProvider());
     setMessage("Acesso liberado. Abrindo seu radar…", "success");
   } catch (error) {
@@ -150,7 +155,7 @@ form.addEventListener("submit", async (event) => {
   submit.disabled = true;
   setMessage("Verificando seu acesso…");
   try {
-    await setPersistence(auth, browserLocalPersistence);
+    await persistenceReady;
     if (mode === "signup") {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       if (name) await updateProfile(result.user, { displayName: name });
