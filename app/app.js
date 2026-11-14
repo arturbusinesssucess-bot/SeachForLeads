@@ -50,7 +50,7 @@ document.querySelector("#sign-out").addEventListener("click", async () => {
   if (!auth) return;
   try {
     await signOut(auth);
-    window.location.replace("../auth.html?mode=login");
+    window.location.replace("/auth?mode=login");
   } catch {
     const accountEmail = document.querySelector("#account-email");
     accountEmail.textContent = "Não foi possível sair. Tente novamente.";
@@ -62,7 +62,7 @@ if (isFirebaseConfigured) {
   auth = getAuth(initializeApp(firebaseConfig));
   onAuthStateChanged(auth, (user) => {
     if (!user) {
-      window.location.replace("../auth.html?mode=login");
+      window.location.replace("/auth?mode=login");
       return;
     }
     const name = user.displayName?.trim() || user.email?.split("@")[0] || "Sua conta";
@@ -72,6 +72,6 @@ if (isFirebaseConfigured) {
     authView.dataset.auth = "ready";
   });
 } else {
-  window.location.replace("../auth.html?mode=login");
+  window.location.replace("/auth?mode=login");
 }
 
