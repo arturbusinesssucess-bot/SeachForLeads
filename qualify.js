@@ -17,7 +17,7 @@ function showStep(index) {
   stepNumber.textContent = String(currentStep + 1);
   progress.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
   previous.hidden = currentStep === 0;
-  next.innerHTML = currentStep === steps.length - 1 ? "Preparar meu radar <span aria-hidden=\"true\">↗</span>" : "Continuar <span aria-hidden=\"true\">↗</span>";
+  next.innerHTML = `<span class="pixel-label">${currentStep === steps.length - 1 ? "Preparar meu radar" : "Continuar"}</span>`;
   steps[currentStep].querySelector("input, textarea, select")?.focus();
 }
 
@@ -32,7 +32,7 @@ function currentStepIsValid() {
 function showAuthRequired() {
   form.hidden = true;
   success.hidden = false;
-  success.innerHTML = `<div class="qualify-success-mark" aria-hidden="true">↗</div><h2>Entre para continuar.</h2><p>Faça login ou crie sua conta na landing para salvar seu perfil e liberar a análise de leads.</p><a class="qualify-button" href="index.html">Voltar para entrar <span aria-hidden="true">↗</span></a>`;
+  success.innerHTML = `<div class="qualify-success-mark" aria-hidden="true">↗</div><h2>Entre para continuar.</h2><p>Faça login ou crie sua conta na landing para salvar seu perfil e liberar a análise de leads.</p><a class="qualify-button pixel-button" href="/auth?mode=login"><span class="pixel-label">Voltar para entrar</span></a>`;
 }
 
 if (isFirebaseConfigured) {
