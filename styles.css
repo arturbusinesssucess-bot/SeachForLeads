@@ -815,3 +815,96 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
   .qualify-page .pixel-button::before { animation: none; }
   .qualify-page .pixel-button::after { display: none; }
 }
+
+
+/* Centered FAQ accordion, adapted from the supplied example. */
+.faq-section {
+  max-width: none;
+  margin: 132px auto 0;
+  padding: 0 clamp(20px, 5vw, 76px);
+}
+.faq-inner {
+  width: min(100%, 760px);
+  margin: 0 auto;
+}
+.faq-heading {
+  margin: 0 0 38px;
+  text-align: center;
+}
+.faq-label {
+  margin: 0 0 12px;
+  color: var(--blue-bright);
+  font-size: 12px;
+  font-weight: 650;
+}
+.faq-heading h2 {
+  max-width: 700px;
+  margin: 0 auto 14px;
+  color: var(--white);
+  font-size: clamp(34px, 4vw, 48px);
+  font-weight: 650;
+  line-height: 1.08;
+  letter-spacing: -.055em;
+}
+.faq-description {
+  max-width: 520px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.faq-accordion { border-top: 1px solid var(--line); }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item > summary {
+  display: flex;
+  min-height: 66px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  list-style: none;
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 550;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.faq-item > summary::-webkit-details-marker { display: none; }
+.faq-item > summary:focus-visible { outline: 2px solid var(--blue-bright); outline-offset: 3px; border-radius: 4px; }
+.faq-toggle {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  place-items: center;
+  border: 1px solid #394355;
+  border-radius: 50%;
+  color: var(--blue-bright);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+.faq-item[open] .faq-toggle {
+  transform: rotate(45deg);
+  border-color: #4b83c4;
+  background: rgba(45,116,255,.09);
+}
+.faq-answer { padding: 0 42px 20px 0; }
+.faq-answer p {
+  max-width: 660px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+@media (max-width: 700px) {
+  .faq-section { margin-top: 96px; padding-inline: 20px; }
+  .faq-heading { margin-bottom: 27px; }
+  .faq-heading h2 { font-size: 34px; }
+  .faq-item > summary { min-height: 61px; gap: 15px; font-size: 14px; }
+  .faq-answer { padding-right: 8px; padding-bottom: 18px; }
+  .faq-answer p { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-toggle { transition: none; }
+}
