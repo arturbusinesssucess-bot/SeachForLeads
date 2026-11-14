@@ -20,69 +20,66 @@ if (entranceBlocks.length && "IntersectionObserver" in window && !reduceMotion) 
 // Animate FAQ answers on open and close, keeping only one answer open.
 const faqItems = [...document.querySelectorAll(".faq-item")];
 const faqAnimations = new WeakMap();
+const faqOpenTargets = new WeakMap();
 
 function setFaqOpen(item, open) {
   const answer = item.querySelector(".faq-answer");
-  if (!answer || item.open === open) return;
+  if (!answer) return;
 
-  faqAnimations.get(item)?.cancel();
+  const activeAnimation = faqAnimations.get(item);
+  if (!activeAnimation && item.open === open) return;
+
+  const currentHeight = item.open ? answer.getBoundingClientRect().height : 0;
+  const currentOpacity = item.open ? Number.parseFloat(getComputedStyle(answer).opacity) || 0 : 0;
+  activeAnimation?.cancel();
+  faqOpenTargets.set(item, open);
 
   if (reduceMotion) {
     item.open = open;
+    faqOpenTargets.delete(item);
     return;
   }
 
-  if (open) {
-    item.open = true;
-    answer.style.height = "auto";
-    const fullHeight = answer.scrollHeight;
-    answer.style.height = "0px";
-    answer.style.opacity = "0";
-    answer.style.overflow = "hidden";
-    answer.getBoundingClientRect();
-
-    const animation = answer.animate(
-      [{ height: "0px", opacity: 0 }, { height: `${fullHeight}px`, opacity: 1 }],
-      { duration: 380, easing: "cubic-bezier(.16, 1, .3, 1)" },
-    );
-    faqAnimations.set(item, animation);
-    animation.onfinish = () => {
-      answer.style.height = "";
-      answer.style.opacity = "";
-      answer.style.overflow = "";
-      faqAnimations.delete(item);
-    };
-    return;
-  }
-
-  const currentHeight = answer.getBoundingClientRect().height;
+  if (open) item.open = true;
+  const targetHeight = open ? answer.scrollHeight : 0;
   answer.style.height = `${currentHeight}px`;
+  answer.style.opacity = String(currentOpacity);
   answer.style.overflow = "hidden";
+  answer.getBoundingClientRect();
 
   const animation = answer.animate(
-    [{ height: `${currentHeight}px`, opacity: 1 }, { height: "0px", opacity: 0 }],
-    { duration: 340, easing: "cubic-bezier(.4, 0, .2, 1)" },
+    [
+      { height: `${currentHeight}px`, opacity: currentOpacity },
+      { height: `${targetHeight}px`, opacity: open ? 1 : 0 },
+    ],
+    {
+      duration: open ? 380 : 340,
+      easing: open ? "cubic-bezier(.16, 1, .3, 1)" : "cubic-bezier(.4, 0, .2, 1)",
+    },
   );
   faqAnimations.set(item, animation);
   animation.onfinish = () => {
-    item.open = false;
+    if (!open) item.open = false;
     answer.style.height = "";
     answer.style.opacity = "";
     answer.style.overflow = "";
     faqAnimations.delete(item);
+    faqOpenTargets.delete(item);
   };
 }
 
 faqItems.forEach((item) => {
   item.querySelector("summary")?.addEventListener("click", (event) => {
     event.preventDefault();
-    const opening = !item.open;
+    const currentlyOpening = faqOpenTargets.get(item) ?? item.open;
+    const opening = !currentlyOpening;
     if (opening) faqItems.forEach((other) => {
-      if (other !== item && other.open) setFaqOpen(other, false);
+      if (other !== item && (faqOpenTargets.get(other) ?? other.open)) setFaqOpen(other, false);
     });
     setFaqOpen(item, opening);
   });
 });
+
 
 // Magnetic hover effect for the hero's secondary CTA.
 const magnetMedia = window.matchMedia("(hover: hover) and (pointer: fine)");
