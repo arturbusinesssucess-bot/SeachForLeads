@@ -503,10 +503,10 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 }
 .hero-copy { max-width: 650px; }
 .hero h1 {
-  max-width: 650px;
+  max-width: 860px;
   margin-top: 22px;
-  font-size: clamp(46px, 5.6vw, 78px);
-  line-height: .98;
+  font-size: clamp(52px, 6.3vw, 88px);
+  line-height: .96;
   letter-spacing: -.062em;
 }
 .hero-lede { max-width: 530px; margin-bottom: 30px; line-height: 1.55; }
@@ -546,7 +546,7 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
   .hero { display: flex; flex-direction: column; align-items: stretch; padding-top: 24px; }
   .hero-visual { order: -1; min-height: 0; max-height: 340px; }
   .mascot-stage { width: min(72vw, 280px); }
-  .hero h1 { font-size: clamp(42px, 12.6vw, 62px); }
+  .hero h1 { font-size: clamp(44px, 13.4vw, 68px); }
   .hero-lede { margin-bottom: 22px; font-size: 16px; }
   .benefit-grid { grid-template-columns: 1fr; }
   .benefit-card, .benefit-card-featured, .benefit-card-accent { min-height: 230px; }
@@ -918,4 +918,26 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 }
 @media (prefers-reduced-motion: reduce) {
   .faq-toggle { transition: none; }
+}
+
+
+/* Animated blue and violet gradient on the word Search only. */
+.hero #hero-title .hero-search-word {
+  display: inline-block;
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(110deg, #63c4ff 0%, #7b8cff 35%, #a16eff 58%, #4d9cff 80%, #63c4ff 100%);
+  background-size: 240% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hero-search-gradient 4s linear infinite;
+}
+.hero #hero-title .hero-period { color: var(--white); }
+@keyframes hero-search-gradient {
+  from { background-position: 0% 50%; }
+  to { background-position: 240% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero #hero-title .hero-search-word { animation: none; background-position: 50% 50%; }
 }
