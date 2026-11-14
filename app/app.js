@@ -38,6 +38,56 @@ document.querySelectorAll("[data-open-view]").forEach((button) => {
 window.addEventListener("hashchange", () => showView(location.hash.slice(1), false));
 showView(location.hash.slice(1) || "home", false);
 
+const installCard = document.querySelector("#pwa-install-card");
+const installButton = document.querySelector("#pwa-install-button");
+const installDismiss = document.querySelector("#pwa-install-dismiss");
+const installHelp = document.querySelector("#pwa-install-help");
+let deferredInstallPrompt = null;
+
+function isAppInstalled() {
+  return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+}
+
+if (installCard && installButton && installHelp) {
+  installCard.hidden = isAppInstalled();
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installCard.hidden = false;
+    installHelp.hidden = true;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    installCard.hidden = true;
+  });
+
+  installButton.addEventListener("click", async () => {
+    if (deferredInstallPrompt) {
+      const prompt = deferredInstallPrompt;
+      deferredInstallPrompt = null;
+      installButton.disabled = true;
+      await prompt.prompt();
+      const choice = await prompt.userChoice;
+      installButton.disabled = false;
+      if (choice.outcome === "accepted") installCard.hidden = true;
+      return;
+    }
+
+    const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    installHelp.textContent = isAppleMobile
+      ? "No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início."
+      : "No Chrome ou Edge, abra o menu do navegador e escolha Instalar SearchForLeads ou Adicionar à tela inicial.";
+    installHelp.hidden = false;
+  });
+
+  installDismiss?.addEventListener("click", () => {
+    installCard.hidden = true;
+  });
+}
+
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
   status.textContent = "A fonte de prospecção ainda não está conectada. Quando estiver, os resultados desta busca poderão ser salvos no CRM.";
