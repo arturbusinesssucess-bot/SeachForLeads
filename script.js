@@ -160,9 +160,10 @@ if (!reduceMotion && magnetMedia.matches) {
 const privacyNotice = document.querySelector("#privacy-notice");
 const privacyNoticeDismiss = document.querySelector("#privacy-notice-dismiss");
 const privacyNoticeKey = "sfl-privacy-notice-seen";
-let privacyNoticeSeen = false;
+const privacyNoticeCookie = "sfl_privacy_notice_seen";
+let privacyNoticeSeen = document.cookie.split(/;\\s*/).includes(`${privacyNoticeCookie}=1`);
 try {
-  privacyNoticeSeen = localStorage.getItem(privacyNoticeKey) === "1";
+  privacyNoticeSeen = privacyNoticeSeen || localStorage.getItem(privacyNoticeKey) === "1";
 } catch {}
 
 if (privacyNotice && privacyNoticeDismiss && !privacyNoticeSeen) {
@@ -176,6 +177,8 @@ if (privacyNotice && privacyNoticeDismiss && !privacyNoticeSeen) {
     try {
       localStorage.setItem(privacyNoticeKey, "1");
     } catch {}
+    const secure = location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `${privacyNoticeCookie}=1; Max-Age=315360000; Path=/; SameSite=Lax${secure}`;
     window.setTimeout(() => { privacyNotice.hidden = true; }, 330);
   });
 }
