@@ -776,7 +776,21 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 .auth-intro .auth-social-proof strong { color: #f2f6fb; }
 .auth-intro .auth-avatars img { border-color: #06081e; }
 
-.auth-intro .auth-brand .brand-for { color: #65b7ff; }
+.auth-intro .auth-brand .brand-for { color: #f2f6fb; }
+.auth-intro .auth-brand-search {
+  display: inline-block;
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(110deg, #63c4ff 0%, #7b8cff 35%, #a16eff 58%, #4d9cff 80%, #63c4ff 100%);
+  background-size: 240% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hero-search-gradient 4s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-intro .auth-brand-search { animation: none; background-position: 50% 50%; }
+}
 
 
 /* Keep only the clickable brand above the qualification form. */
