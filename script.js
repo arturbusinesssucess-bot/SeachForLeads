@@ -161,7 +161,7 @@ const privacyNotice = document.querySelector("#privacy-notice");
 const privacyNoticeDismiss = document.querySelector("#privacy-notice-dismiss");
 const privacyNoticeKey = "sfl-privacy-notice-seen";
 const privacyNoticeCookie = "sfl_privacy_notice_seen";
-let privacyNoticeSeen = document.cookie.split(/;\\s*/).includes(`${privacyNoticeCookie}=1`);
+let privacyNoticeSeen = document.cookie.split(/;\s*/).includes(`${privacyNoticeCookie}=1`);
 try {
   privacyNoticeSeen = privacyNoticeSeen || localStorage.getItem(privacyNoticeKey) === "1";
 } catch {}
