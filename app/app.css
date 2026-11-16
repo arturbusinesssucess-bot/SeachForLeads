@@ -17,7 +17,7 @@
 .app-sidebar { position: sticky; top: 0; display: flex; height: 100vh; flex-direction: column; padding: 25px 16px 17px; border-right: 1px solid var(--app-line-soft); background: var(--app-sidebar); }
 .app-brand { display: inline-flex; width: fit-content; align-items: center; gap: 10px; margin: 0 0 47px 5px; color: var(--app-text); font-size: 16px; font-weight: 650; letter-spacing: -.035em; text-decoration: none; }
 .app-brand img { width: 34px; height: 34px; object-fit: contain; }
-.app-brand > span > span { color: var(--app-blue-light); }
+.app-brand > span > span { color: var(--app-text); }
 .app-brand > .app-brand-word > .app-brand-search {
   display: inline-block;
   white-space: nowrap;
@@ -27,9 +27,13 @@
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: hero-search-gradient 4s linear infinite;
+  animation: app-brand-gradient 4s linear infinite;
 }
-.app-brand > .app-brand-word > .app-brand-for { color: var(--app-text); }
+.app-brand > .app-brand-word > .app-brand-for { color: #fff; }
+@keyframes app-brand-gradient {
+  from { background-position: 0% 50%; }
+  to { background-position: 240% 50%; }
+}
 @media (prefers-reduced-motion: reduce) {
   .app-brand > .app-brand-word > .app-brand-search { animation: none; background-position: 50% 50%; }
 }
