@@ -13,7 +13,7 @@ export function LandingFooter() {
    {title:'Conta',links:[{label:'Criar conta',href:'/auth?mode=signup'},{label:'Meu espaço',href:'/app/'},{label:'Voltar ao topo',href:'#top'}]}
   ]}
   socials={[{icon:'instagram',href:'https://instagram.com'},{icon:'youtube',href:'https://youtube.com'},{icon:'github',href:'https://github.com/arturbusinesssucess-bot/SeachForLeads'}]}
-  credit={{label:'Basecamp Studio',href:'#'}}
+  credit={null}
  />;
 }
 if (typeof document !== 'undefined') {
