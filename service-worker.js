@@ -1,4 +1,4 @@
-const CACHE_NAME = "sfl-pwa-v2";
+const CACHE_NAME = "sfl-pwa-v3";
 const APP_SHELL = [
   "/app/",
   "/app/app.css",
@@ -54,6 +54,20 @@ self.addEventListener("fetch", (event) => {
 
   if (!isAppRequest && !isFirebaseModule) return;
   if (isAppRequest && !["script", "style", "image", "font"].includes(request.destination) && url.pathname !== "/manifest.webmanifest") return;
+
+  if (isAppRequest && request.destination === "style") {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      try {
+        const response = await fetch(request);
+        if (response.ok) await cache.put(request, response.clone());
+        return response;
+      } catch {
+        return await cache.match(request) || Response.error();
+      }
+    })());
+    return;
+  }
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
