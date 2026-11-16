@@ -190,48 +190,126 @@
 
       </main>
 
-      <footer class="footer" id="footer">
-        <section class="footer-brand-card" aria-label="Sobre o SearchForLeads">
-          <a class="footer-brand" href="/#top" aria-label="SearchForLeads, início">
-            <img class="footer-brand-mark" src="/public/loupe-logo.svg" alt="" aria-hidden="true" />
-            <span>Search<span>For</span>Leads</span>
-          </a>
-          <div class="footer-brand-bottom animar">
-            <span class="footer-kicker">MENOS PROSPECÇÃO NO ESCURO</span>
-            <h2 class="fx-blur" style="--i:0">Encontre quem está pronto para ouvir.</h2>
-            <p class="fx-enter" style="--i:1">Leads com contexto para você escolher o próximo passo com confiança.</p>
-            <a class="footer-cta" href="/auth?mode=signup"><span class="footer-cta-label">Começar minha busca</span><span class="footer-cta-icon" aria-hidden="true"><i></i><b>↗</b></span></a>
-          </div>
-          <span class="footer-card-index" aria-hidden="true">SFL / 2026</span>
-        </section>
+      <div id="footer"><div id="ridgeline-footer"><link rel="preload" as="image" href="/public/loupe-logo.svg"/><footer class="rdf-root" style="min-height:680px;--rdf-scene-min:260px;--rdf-paper:#f2f6fa;--rdf-ink:#121b26;--rdf-muted:#637184;--rdf-line:#dae3ed;--rdf-heart:#e5484d;--rdf-deep:#1a3e66;--rdf-accent:#34679a;--rdf-n:3;--rdf-max:1120px;--rdf-sans:&quot;Inter&quot;, &quot;Inter Variable&quot;, &quot;Geist&quot;, &quot;Helvetica Neue&quot;, Arial, system-ui, sans-serif;--rdf-mono:&quot;JetBrains Mono&quot;, &quot;Geist Mono&quot;, &quot;SF Mono&quot;, ui-monospace, Menlo, Consolas, monospace"><style>
+.rdf-root {
+  position: relative; display: grid; width: 100%; overflow: hidden; isolation: isolate;
+  background: var(--rdf-paper); color: var(--rdf-ink); font-family: var(--rdf-sans);
+  -webkit-font-smoothing: antialiased; --rdf-pad: clamp(20px, 3.2vw, 30px);
+}
+.rdf-frame {
+  position: relative; display: grid; grid-template-rows: auto auto minmax(var(--rdf-scene-min), 1fr);
+  width: 100%; max-width: var(--rdf-max); margin: 0 auto;
+}
+.rdf-frame::before, .rdf-frame::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 1px; z-index: 3; pointer-events: none;
+  background: var(--rdf-line); transform: scaleY(0); transform-origin: 50% 0;
+  transition: transform 1.4s cubic-bezier(.2,.7,.1,1);
+}
+.rdf-frame::before { left: 0; }
+.rdf-frame::after { right: 0; transition-delay: .08s; }
+.rdf-in .rdf-frame::before, .rdf-in .rdf-frame::after { transform: scaleY(1); }
 
-        <section class="footer-links-card" aria-label="Links do SearchForLeads">
-          <div class="footer-link-columns">
-            <div class="footer-link-group">
-              <h3>Produto</h3>
-              <a href="#como-funciona">Como funciona</a>
-              <a href="#recursos">Recursos</a>
-              <a href="#top">Prévia de leads</a>
-            </div>
-            <div class="footer-link-group">
-              <h3>Ajuda</h3>
-              <a href="#duvidas">Dúvidas frequentes</a>
-              <a href="mailto:contato@searchforleads.com">Fale com a gente</a>
-              <a href="/auth?mode=login">Entrar na conta</a>
-            </div>
-            <div class="footer-link-group footer-link-highlight">
-              <span class="footer-kicker">SEU PRÓXIMO MOVIMENTO</span>
-              <p>Comece com uma busca e deixe o radar organizar as oportunidades.</p>
-              <a href="/auth?mode=signup">Criar conta <span aria-hidden="true">↗</span></a>
-            </div>
-          </div>
-          <div class="footer-bottomline">
-            <span>© 2026 SearchForLeads</span>
-            <span>Feito para quem vende com contexto.</span>
-            <a href="#top">Voltar ao topo ↑</a>
-          </div>
-        </section>
-      </footer>
+.rdf-r {
+  opacity: 0; transform: translateY(12px); filter: blur(5px);
+  transition: opacity .9s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter .9s ease;
+  transition-delay: calc(var(--d, 0) * 1ms);
+}
+.rdf-in .rdf-r { opacity: 1; transform: none; filter: none; }
+
+.rdf-top {
+  position: relative; z-index: 2; display: grid;
+  grid-template-columns: minmax(0, 1.9fr) repeat(var(--rdf-n), minmax(0, 1fr));
+  gap: 28px; padding: clamp(44px, 6.4vw, 80px) var(--rdf-pad) clamp(30px, 4vw, 52px);
+}
+.rdf-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.rdf-logo {
+  display: inline-flex; align-items: center; gap: 10px; color: var(--rdf-ink); text-decoration: none;
+  font-size: 23px; font-weight: 500; letter-spacing: -.035em; line-height: 1;
+}
+.rdf-mark { width: 30px; height: 21px; display: block; overflow: visible; }
+.rdf-mark rect { fill: var(--rdf-paper); transition: transform .7s cubic-bezier(.2,.7,.1,1); }
+.rdf-logo:hover .rdf-mist-a { transform: translateX(4px); }
+.rdf-logo:hover .rdf-mist-b { transform: translateX(-5px); }
+.rdf-tag { margin: 0; max-width: 30ch; font-size: 13.5px; line-height: 1.55; color: var(--rdf-muted); text-wrap: pretty; }
+.rdf-social { display: flex; gap: 6px; margin: 2px 0 0 -7px; padding: 0; list-style: none; }
+.rdf-social a {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; color: var(--rdf-muted);
+  transition: color .3s ease, background-color .3s ease, transform .45s cubic-bezier(.2,.7,.1,1);
+}
+.rdf-social a:hover { color: var(--rdf-ink); background: color-mix(in srgb, var(--rdf-deep) 8%, transparent); transform: translateY(-2px); }
+.rdf-social svg { width: 15px; height: 15px; display: block; }
+
+.rdf-col h3 {
+  margin: 4px 0 18px; font: 500 10.5px/1 var(--rdf-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--rdf-muted);
+}
+.rdf-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.rdf-link {
+  position: relative; display: inline-flex; align-items: center; gap: 8px;
+  color: var(--rdf-ink); text-decoration: none; font-size: 14px; line-height: 1.35; letter-spacing: -.005em;
+  transition: color .3s ease, transform .5s cubic-bezier(.2,.7,.1,1);
+}
+.rdf-link::before {
+  content: ""; position: absolute; left: -12px; top: 50%; width: 7px; height: 1px; background: var(--rdf-accent);
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform .45s cubic-bezier(.2,.7,.1,1);
+}
+.rdf-link:hover { color: var(--rdf-accent); transform: translateX(7px); }
+.rdf-link:hover::before { transform: scaleX(1); }
+.rdf-badge {
+  font: 500 9px/1 var(--rdf-mono); letter-spacing: .1em; text-transform: uppercase; padding: 4px 6px 3px; border-radius: 99px;
+  color: var(--rdf-accent); background: color-mix(in srgb, var(--rdf-accent) 11%, transparent);
+}
+.rdf-link:focus-visible, .rdf-logo:focus-visible, .rdf-social a:focus-visible, .rdf-credit:focus-visible {
+  outline: 1px solid var(--rdf-accent); outline-offset: 4px; border-radius: 3px;
+}
+
+.rdf-bar {
+  position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  padding: 0 var(--rdf-pad); font-size: 12px; color: var(--rdf-muted);
+}
+.rdf-bar p { margin: 0; }
+.rdf-credit {
+  color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--rdf-muted) 55%, transparent);
+  text-underline-offset: 3px; transition: color .3s ease, text-decoration-color .3s ease;
+}
+.rdf-credit:hover { color: var(--rdf-ink); text-decoration-color: currentColor; }
+.rdf-heart { display: inline-block; width: 11px; height: 11px; margin: 0 3px; vertical-align: -1px; color: var(--rdf-heart); }
+.rdf-credit:hover .rdf-heart { animation: rdf-beat 1s ease-in-out infinite; }
+@keyframes rdf-beat { 0%, 60%, 100% { transform: scale(1); } 15% { transform: scale(1.3); } 32% { transform: scale(.95); } 45% { transform: scale(1.15); } }
+
+.rdf-scene { position: relative; z-index: 1; margin-top: -64px; overflow: hidden; }
+.rdf-scene canvas {
+  position: absolute; left: 0; bottom: 0; display: block; max-width: none;
+  image-rendering: pixelated; image-rendering: crisp-edges;
+}
+.rdf-alt {
+  position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; opacity: 0;
+  transition: opacity .35s ease; font: 500 10px/1 var(--rdf-mono); letter-spacing: .08em; color: var(--rdf-ink);
+}
+.rdf-alt i {
+  position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--rdf-paper); box-shadow: 0 0 0 1.5px var(--rdf-ink);
+}
+.rdf-alt b { position: absolute; left: -.5px; bottom: 6px; width: 1px; height: 26px; background: var(--rdf-ink); opacity: .55; }
+.rdf-alt span {
+  position: absolute; left: 0; bottom: 34px; transform: translateX(-50%); white-space: nowrap; padding: 5px 7px 4px;
+  border-radius: 5px; background: color-mix(in srgb, var(--rdf-paper) 88%, transparent); box-shadow: 0 0 0 1px var(--rdf-line);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.rdf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .rdf-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 36px; }
+  .rdf-brand { grid-column: 1 / -1; }
+  .rdf-bar { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .rdf-scene { margin-top: -40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rdf-r, .rdf-frame::before, .rdf-frame::after, .rdf-link, .rdf-link::before, .rdf-social a, .rdf-mark rect { transition: none; }
+  .rdf-r { filter: none; }
+  .rdf-credit:hover .rdf-heart { animation: none; }
+}
+</style><div class="rdf-frame"><div class="rdf-top"><div class="rdf-brand"><a class="rdf-logo rdf-r" style="--d:140" href="/#top"><img src="/public/loupe-logo.svg" width="30" height="30" alt=""/><span>SearchForLeads</span></a><p class="rdf-tag rdf-r" style="--d:230">Expedition planning for teams who go further — routes, permits and weather in one place.</p><ul class="rdf-social"><li class="rdf-r" style="--d:320"><a href="https://instagram.com" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"></circle></svg></a></li><li class="rdf-r" style="--d:380"><a href="https://youtube.com" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.9C18.2 4.9 12 4.9 12 4.9s-6.2 0-7.8.4a2.6 2.6 0 0 0-1.8 1.9C2 8.8 2 12 2 12s0 3.2.4 4.8a2.6 2.6 0 0 0 1.8 1.9c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.9c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15.1V8.9l5.2 3.1L10 15.1z"></path></svg></a></li><li class="rdf-r" style="--d:440"><a href="https://github.com/arturbusinesssucess-bot/SeachForLeads" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.4 9.4 0 0 1 12 6.84c.85 0 1.71.12 2.51.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.1 10.1 0 0 0 22 12.23C22 6.58 17.52 2 12 2z"></path></svg></a></li></ul></div><nav class="rdf-col" aria-label="Produto"><h3 class="rdf-r" style="--d:260">Produto</h3><ul><li class="rdf-r" style="--d:330"><a class="rdf-link" href="#como-funciona">Como funciona</a></li><li class="rdf-r" style="--d:385"><a class="rdf-link" href="#recursos">Recursos<span class="rdf-badge">New</span></a></li><li class="rdf-r" style="--d:440"><a class="rdf-link" href="#top">Prévia de leads</a></li></ul></nav><nav class="rdf-col" aria-label="Ajuda"><h3 class="rdf-r" style="--d:370">Ajuda</h3><ul><li class="rdf-r" style="--d:440"><a class="rdf-link" href="#duvidas">Dúvidas frequentes</a></li><li class="rdf-r" style="--d:495"><a class="rdf-link" href="mailto:contato@searchforleads.com">Fale com a gente</a></li><li class="rdf-r" style="--d:550"><a class="rdf-link" href="/auth?mode=login">Entrar na conta</a></li></ul></nav><nav class="rdf-col" aria-label="Conta"><h3 class="rdf-r" style="--d:480">Conta</h3><ul><li class="rdf-r" style="--d:550"><a class="rdf-link" href="/auth?mode=signup">Criar conta</a></li><li class="rdf-r" style="--d:605"><a class="rdf-link" href="/app/">Meu espaço</a></li><li class="rdf-r" style="--d:660"><a class="rdf-link" href="#top">Voltar ao topo</a></li></ul></nav></div><div class="rdf-bar rdf-r" style="--d:1250"><p>© 2026 SearchForLeads, Inc. All rights reserved.</p><a class="rdf-credit" href="#">Made with<svg class="rdf-heart" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.1 5.3 3 1.7-1.9 3.2-3 5.3-3 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"></path></svg><span class="rdf-sr">love</span>by Basecamp Studio</a></div><div class="rdf-scene"><canvas aria-hidden="true"></canvas><div class="rdf-alt" aria-hidden="true"><b></b><i></i><span></span></div></div></div></footer></div></div>
+      <script defer src="/public/ridgeline-footer.v1.js"></script>
     </div>
 
     <aside class="privacy-notice" id="privacy-notice" aria-labelledby="privacy-notice-title" hidden>
