@@ -6,7 +6,7 @@ export function LandingFooter() {
   preset="glacier" seed={23} ridges={7}
   name="SearchForLeads" brandHref="/#top"
   logo={<img src="/public/loupe-logo.svg" width="30" height="30" alt="" />}
-  tagline="Expedition planning for teams who go further — routes, permits and weather in one place."
+  tagline="Planejamento de expedições para equipes que vão mais longe — rotas, autorizações e previsão do tempo em um só lugar."
   columns={[
    {title:'Produto',links:[{label:'Como funciona',href:'#como-funciona'},{label:'Recursos',href:'#recursos',badge:'New'},{label:'Prévia de leads',href:'#top'}]},
    {title:'Ajuda',links:[{label:'Dúvidas frequentes',href:'#duvidas'},{label:'Fale com a gente',href:'mailto:contato@searchforleads.com'},{label:'Entrar na conta',href:'/auth?mode=login'}]},
