@@ -8,7 +8,7 @@ export function LandingFooter() {
   logo={<img src="/public/loupe-logo.svg" width="30" height="30" alt="" />}
   tagline="Planejamento de expedições para equipes que vão mais longe — rotas, autorizações e previsão do tempo em um só lugar."
   columns={[
-   {title:'Produto',links:[{label:'Como funciona',href:'#como-funciona'},{label:'Recursos',href:'#recursos',badge:'New'},{label:'Prévia de leads',href:'#top'}]},
+   {title:'Navegação',links:[{label:'Como funciona',href:'#como-funciona'},{label:'Recursos',href:'#recursos'},{label:'Dúvidas',href:'#duvidas'},{label:'Entrar',href:'/auth?mode=login'}]},
    {title:'Ajuda',links:[{label:'Dúvidas frequentes',href:'#duvidas'},{label:'Fale com a gente',href:'https://wa.me/5573999844036'},{label:'E-mail',href:'mailto:artur.business.sucess@gmail.com'},{label:'Entrar na conta',href:'/auth?mode=login'}]},
    {title:'Conta',links:[{label:'Criar conta',href:'/auth?mode=signup'},{label:'Meu espaço',href:'/app/'},{label:'Voltar ao topo',href:'#top'}]}
   ]}
