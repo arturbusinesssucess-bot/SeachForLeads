@@ -12,7 +12,7 @@ export function LandingFooter() {
    {title:'Ajuda',links:[{label:'Dúvidas frequentes',href:'#duvidas'},{label:'Fale com a gente',href:'https://wa.me/5573999844036'},{label:'E-mail',href:'mailto:artur.business.sucess@gmail.com'},{label:'Entrar na conta',href:'/auth?mode=login'}]},
    {title:'Conta',links:[{label:'Criar conta',href:'/auth?mode=signup'},{label:'Meu espaço',href:'/app/'},{label:'Voltar ao topo',href:'#top'}]}
   ]}
-  socials={[{icon:'instagram',href:'https://instagram.com'}]}
+  socials={[]}
   credit={null}
  />;
 }
