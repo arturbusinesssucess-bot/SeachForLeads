@@ -27,6 +27,53 @@ function messageFor(status) {
   return "A análise por IA está temporariamente indisponível. Tente novamente mais tarde.";
 }
 
+function animateCRMDisclosure(panel) {
+  const summary = panel?.querySelector("summary");
+  if (!summary || typeof panel.animate !== "function") return;
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let animation = null;
+  let targetOpen = panel.open;
+
+  function settle(open) {
+    panel.open = open;
+    delete panel.dataset.panelMotion;
+    animation?.cancel();
+    animation = null;
+  }
+
+  summary.addEventListener("click", (event) => {
+    // Pointer, Enter and Space all use the same native summary activation.
+    if (reducedMotion.matches && !animation) return;
+    event.preventDefault();
+    const nextOpen = animation ? !targetOpen : !panel.open;
+    const startHeight = panel.getBoundingClientRect().height;
+    animation?.cancel();
+    targetOpen = nextOpen;
+    panel.open = true;
+    const endHeight = (nextOpen ? panel : summary).getBoundingClientRect().height;
+    if (reducedMotion.matches || Math.abs(endHeight - startHeight) < 1) {
+      settle(nextOpen);
+      return;
+    }
+
+    panel.dataset.panelMotion = nextOpen ? "opening" : "closing";
+    const transition = panel.animate({ height: [`${startHeight}px`, `${endHeight}px`] }, {
+      duration: nextOpen ? 240 : 200,
+      easing: "cubic-bezier(.22, .72, .3, 1)",
+      fill: "both",
+    });
+    animation = transition;
+    transition.onfinish = () => {
+      if (animation === transition) settle(nextOpen);
+    };
+  });
+
+  reducedMotion.addEventListener("change", ({ matches }) => {
+    if (matches && animation) settle(targetOpen);
+  });
+}
+
 export function initializeAIWorkspace({ crmRows } = {}) {
   const offerPane = document.querySelector("#ai-offer-panel");
   const offer = document.querySelector("#ai-offer");
@@ -40,6 +87,7 @@ export function initializeAIWorkspace({ crmRows } = {}) {
   const leadResults = document.querySelector("#ai-lead-results");
   const niche = document.querySelector("#search-niche");
   if (!offerPane || !offer || !offerButton || !offerStatus || !offerResults || !crmOffer || !leadButton || !leadStatus || !leadCount || !leadResults || !niche || !crmRows) return null;
+  animateCRMDisclosure(crmOffer.closest("details"));
 
   let currentUser = null;
   let connection = null;

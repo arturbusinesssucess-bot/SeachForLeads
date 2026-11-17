@@ -11,7 +11,7 @@ import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 import { initializeSettings } from "./settings.js?v=pipeline-15";
 import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=pipeline-15";
 
-import { initializeAIWorkspace } from "./ai-workspace.js?v=pipeline-15";
+import { initializeAIWorkspace } from "./ai-workspace.js?v=crm-disclosure";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=custom-selects-20261117";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";

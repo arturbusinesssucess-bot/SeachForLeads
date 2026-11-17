@@ -43,3 +43,36 @@
 
 .product-app #ai-offer-panel { background: transparent; }
 .product-app #ai-offer { min-height: 52px; max-height: min(300px, max(144px, 42svh)); field-sizing: content; resize: none; overflow-y: auto; }
+
+.product-app #ai-crm-panel[data-panel-motion] { overflow: hidden; overflow: clip; }
+.product-app #ai-crm-panel > summary { padding-block: 10px; }
+.product-app #ai-crm-panel > summary:focus-visible { outline-offset: -3px; }
+.product-app #ai-crm-panel .ai-summary-state {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgb(255 255 255 / .06);
+  color: #c4cbe0;
+  transition: background-color 150ms ease, color 150ms ease, transform 120ms ease;
+}
+.product-app #ai-crm-panel > summary:focus-visible .ai-summary-state {
+  background: #263653;
+  color: #dbe8ff;
+}
+@media (hover: hover) {
+  .product-app #ai-crm-panel > summary:hover .ai-summary-state {
+    background: #263653;
+    color: #dbe8ff;
+  }
+}
+.product-app #ai-crm-panel > summary:active .ai-summary-state {
+  background: #34517d;
+  color: #fff;
+  transform: scale(.88);
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-app #ai-crm-panel .ai-summary-state { transition: none; }
+  .product-app #ai-crm-panel > summary:active .ai-summary-state { transform: none; }
+}
