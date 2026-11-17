@@ -2,7 +2,8 @@
 .product-app .ai-pane > summary { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 16px; border-radius: inherit; list-style: none; font-size: 14px; font-weight: 600; line-height: 1.5; cursor: pointer; }
 .product-app .ai-pane > summary::-webkit-details-marker { display: none; }
 .product-app .ai-pane > summary > svg { width: 20px; height: 20px; flex: 0 0 20px; fill: none; stroke: var(--app-blue-light, #81b8ff); }
-.product-app .ai-summary-state { margin-left: auto; color: var(--workspace-muted, #aaaab2); font-size: 12px; font-weight: 400; }
+.product-app .ai-summary-state { flex: none; margin-inline-start: auto; color: var(--workspace-muted, #aaaab2); }
+.product-app .ai-summary-state svg { display: block; width: 20px; height: 20px; }
 .product-app .ai-pane:not([open]) .ai-when-open, .product-app .ai-pane[open] .ai-when-closed { display: none; }
 .product-app .ai-pane > summary:focus-visible, .product-app .ai-niche-choice:focus-visible { outline: 2px solid #a8b8ff; outline-offset: 3px; }
 .product-app .ai-pane-body { display: grid; gap: 14px; padding: 0 16px 20px; }
@@ -41,5 +42,4 @@
 }
 
 .product-app #ai-offer-panel { background: transparent; }
-.product-app #ai-offer-panel .ai-summary-state svg { display: block; width: 20px; height: 20px; }
 .product-app #ai-offer { min-height: 52px; max-height: min(300px, max(144px, 42svh)); field-sizing: content; resize: none; overflow-y: auto; }
