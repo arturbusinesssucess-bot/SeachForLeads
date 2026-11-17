@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css" />
-    <link rel="stylesheet" href="app.css?v=home-header-20261116" />
+    <link rel="stylesheet" href="app.css?v=search-clean-20261116" />
   </head>
   <body class="product-app" data-auth="checking">
     <div class="app-frame">
@@ -52,9 +52,6 @@
       </aside>
 
       <main class="app-main">
-        <header class="app-topbar">
-          <div><span class="topbar-kicker">SEARCHFORLEADS</span><span class="topbar-slash">/</span><span id="breadcrumb">Home</span></div>
-        </header>
 
         <section class="app-view" data-view="home" aria-labelledby="home-title">
           <div class="welcome-row">
@@ -125,52 +122,26 @@
           </div>
         </section>
 
-        <section class="app-view" data-view="search" aria-labelledby="search-title" hidden>
-          <div class="page-heading search-page-heading">
-            <div>
-              <p class="view-eyebrow">PROSPECÇÃO</p>
-              <h1 id="search-title">Encontre empresas<span>.</span></h1>
-              <p>Defina quem você quer alcançar e em qual região quer prospectar.</p>
+        <section class="app-view search-view" data-view="search" aria-label="Buscar empresas" hidden>
+          <header class="search-page-header"><h1 id="search-title">Leads</h1></header>
+          <div class="search-intro" id="search-intro">
+            <div class="search-beacon" aria-hidden="true">
+              <div class="search-beacon-core"><svg viewBox="0 0 48 48" fill="none"><defs><linearGradient id="search-loupe-gradient" x1="6" y1="6" x2="43" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="#63c4ff"/><stop offset=".52" stop-color="#8b75ff"/><stop offset="1" stop-color="#4d9cff"/></linearGradient></defs><circle cx="21" cy="21" r="12" stroke="url(#search-loupe-gradient)" stroke-width="2.6"/><path d="m30 30 10 10" stroke="url(#search-loupe-gradient)" stroke-width="2.6" stroke-linecap="round"/></svg></div>
             </div>
-            <span class="page-status"><span class="hero-pulse"></span> NOVA BUSCA</span>
+            <h2>Inicie uma <span class="search-intro-accent">nova busca</span></h2>
+            <p>Defina um nicho e uma região para começar sua prospecção.</p>
+            <button class="search-primary" id="open-search-form" type="button" aria-controls="search-editor" aria-expanded="false"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Iniciar nova busca</button>
           </div>
-          <div class="search-workspace">
-            <form class="search-form" id="lead-search-form">
-              <div class="form-heading">
-                <div class="form-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5M8 10.8h5.6M10.8 8v5.6"/></svg></div>
-                <div><span class="panel-overline">PASSO 1 · PERFIL IDEAL</span><h2>Defina seu cliente ideal</h2><p>Comece pelo nicho e pela localização.</p></div>
-              </div>
-              <label for="search-niche">O que você vende ou procura?</label>
-              <input id="search-niche" name="niche" type="text" placeholder="Ex.: software para clínicas" autocomplete="organization-title" required />
-              <small class="field-hint">Use um segmento, serviço ou tipo de empresa.</small>
-              <label for="search-location">Onde quer encontrar?</label>
-              <input id="search-location" name="location" type="text" placeholder="Ex.: São Paulo, SP" autocomplete="address-level2" required />
-              <small class="field-hint">Informe cidade, estado ou região de atendimento.</small>
-              <button class="search-submit pixel-button" type="submit"><span class="pixel-label">Buscar empresas <span aria-hidden="true">→</span></span></button>
+          <div class="search-editor" id="search-editor" hidden>
+            <button class="search-back" id="close-search-form" type="button"><span aria-hidden="true">←</span> Voltar</button>
+            <header class="search-editor-heading"><h2 id="search-form-title">Vamos encontrar seu próximo cliente.</h2><p>Defina o perfil de empresa e onde quer prospectar.</p></header>
+            <form class="search-clean-form" id="lead-search-form" aria-labelledby="search-form-title">
+              <div class="search-field"><label for="search-niche">Que tipo de empresa você procura?</label><input id="search-niche" name="niche" type="text" placeholder="Ex.: clínicas odontológicas" required autocomplete="off"></div>
+              <div class="search-field"><label for="search-location">Em qual região?</label><input id="search-location" name="location" type="text" placeholder="Ex.: Salvador, BA" required autocomplete="address-level2"></div>
+              <button class="search-primary search-clean-submit" type="submit">Buscar empresas <span aria-hidden="true">→</span></button>
               <p class="search-status" id="search-status" role="status" aria-live="polite"></p>
             </form>
-            <aside class="search-side-note" aria-labelledby="search-guide-title">
-              <span class="note-line" aria-hidden="true"></span>
-              <span class="panel-overline">DA BUSCA AO CONTATO</span>
-              <h2 id="search-guide-title">Uma prospecção com contexto.</h2>
-              <p>Encontre empresas alinhadas ao que você oferece e mantenha as próximas ações organizadas.</p>
-              <div class="search-step"><span>01</span><strong>Defina o perfil</strong><small>Escolha o nicho ideal</small></div>
-              <div class="search-step"><span>02</span><strong>Escolha a região</strong><small>Direcione sua prospecção</small></div>
-              <div class="search-step"><span>03</span><strong>Organize no CRM</strong><small>Retome cada oportunidade</small></div>
-              <div class="search-note-callout"><span aria-hidden="true">i</span><p>As empresas encontradas poderão ser revisadas antes de você salvá-las.</p></div>
-            </aside>
           </div>
-          <section class="results-panel" aria-labelledby="results-title">
-            <div class="panel-heading">
-              <div><span class="panel-overline">RESULTADOS</span><h2 id="results-title">Empresas encontradas</h2><p>Os resultados da sua busca aparecerão nesta área.</p></div>
-              <span class="results-empty-label"><span class="results-dot"></span> AGUARDANDO BUSCA</span>
-            </div>
-            <div class="results-empty">
-              <span class="results-search-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5M8 10.8h5.6M10.8 8v5.6"/></svg></span>
-              <strong>Seus resultados vão aparecer aqui</strong>
-              <p>Preencha os campos acima para preparar uma nova prospecção.</p>
-            </div>
-          </section>
         </section>
 
         <section class="app-view" data-view="crm" aria-labelledby="crm-title" hidden>
@@ -219,7 +190,7 @@
       <a href="#crm" data-view-link="crm"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="10" r="2"/><path d="M5.5 16a2.5 2.5 0 0 1 5 0M14 9h4m-4 4h4m-4 4h3"/></svg><span>CRM</span></a>
       <a href="#search" data-view-link="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 8v5M8 10.5h5"/></svg><span>Busca</span></a>
     </nav>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?v=search-clean-20261116"></script>
   </body>
 </html>
 
