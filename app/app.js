@@ -121,7 +121,10 @@ const crmRows = document.querySelector("#crm-rows");
 const crmEmpty = document.querySelector("#crm-empty");
 const crmEmptyTitle = document.querySelector("#crm-empty-title");
 const crmEmptyDescription = document.querySelector("#crm-empty-description");
-crmFilter.addEventListener("input", () => {
+const crmWorkspace = document.querySelector("#crm-workspace");
+const crmTableWrap = document.querySelector("#crm-table-wrap");
+
+function renderCRM() {
   const query = crmFilter.value.trim().toLocaleLowerCase("pt-BR");
   const rows = [...crmRows.querySelectorAll("tr")];
   const visibleRows = rows.filter((row) => {
@@ -129,15 +132,21 @@ crmFilter.addEventListener("input", () => {
     row.hidden = !matches;
     return matches;
   });
+  if (crmWorkspace) crmWorkspace.hidden = rows.length === 0;
+  if (crmTableWrap) crmTableWrap.hidden = visibleRows.length === 0;
   crmEmpty.hidden = visibleRows.length > 0;
   if (rows.length && query && !visibleRows.length) {
     crmEmptyTitle.textContent = "Nenhum lead corresponde à busca";
     crmEmptyDescription.textContent = "Tente outro nome de empresa ou cidade.";
   } else {
-    crmEmptyTitle.textContent = "Nenhum lead por aqui ainda";
-    crmEmptyDescription.textContent = "Faça uma busca, escolha as empresas com potencial e salve-as para acompanhar os próximos passos.";
+    crmEmptyTitle.textContent = "Seu CRM começa aqui.";
+    crmEmptyDescription.textContent = "Encontre empresas na Busca e salve os contatos que quiser acompanhar por aqui.";
   }
-});
+}
+crmFilter.addEventListener("input", renderCRM);
+new MutationObserver(renderCRM).observe(crmRows, { childList: true, subtree: true, characterData: true });
+renderCRM();
+
 
 document.querySelector("#sign-out").addEventListener("click", async () => {
   if (!auth) return;
