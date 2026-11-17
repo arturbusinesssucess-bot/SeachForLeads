@@ -6,3 +6,5 @@
 - Nas ações de começar/iniciar/configurar uma busca e buscar empresas, use a lupa fornecida pelo usuário. Preserve os nomes, IDs, tipos, eventos e atributos de acessibilidade necessários à ação.
 - Mantenha foco visível para teclado, estado desabilitado, alvos de toque de pelo menos 44 px e suporte a movimento reduzido. O foco de teclado não é uma borda decorativa permanente.
 - Controles de navegação, filtros e seletores mantêm suas variantes próprias. Mudanças nos botões do app não autorizam alterar os CTAs da landing.
+
+- Para ações rápidas de navegação da Home, use `app-button app-button--quick` e `public/home-quick-actions.v1.css`: botões neutros com ícones, em card cinza, e borda azul/roxa animada apenas no hover ou foco. Essa variante mantém os demais botões principais no padrão LED.
