@@ -1,4 +1,5 @@
-.product-app [data-view="home"] .quick-actions-panel { min-height: 0; margin-top: 16px; padding: 24px; }
+.product-app [data-view="home"] .home-sections--single { grid-template-columns: minmax(0,1fr); }
+.product-app [data-view="home"] .quick-actions-panel { min-height: 0; margin: 24px 0; padding: 24px; }
 .product-app [data-view="home"] .quick-actions-panel > h2 { margin: 0 0 18px; color: #ededf2; font-size: 16px; font-weight: 600; line-height: 1.4; letter-spacing: -.02em; }
 .quick-actions-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
 .product-app .app-button--quick { min-width: 0; min-height: 54px; padding: 14px 18px; border: 0; border-radius: 12px; background: #111111; color: #e6e6ec; box-shadow: none; }
