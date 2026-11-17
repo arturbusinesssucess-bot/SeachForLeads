@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="/public/app-corner-mist.v1.css" />
     <link rel="stylesheet" href="/public/app-mobile.v1.css" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=nichos-20261117" />
-    <link rel="stylesheet" href="/public/app-settings.v1.css?v=card-icons" />
+    <link rel="stylesheet" href="/public/app-settings.v1.css?v=categories" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <div class="app-corner-mist" aria-hidden="true"></div>
@@ -238,15 +238,23 @@
             <button class="settings-back" type="button" data-open-view="home"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg><span>Voltar à Home</span></button>
           </header>
           <div class="settings-layout">
-            <aside class="settings-navigation" aria-label="Preferências">
-              <h2>Preferências</h2>
+            <aside class="settings-navigation" aria-label="Categorias de configurações">
               <div class="settings-tabs" role="tablist" aria-label="Seções de configurações" aria-orientation="vertical">
-                <button id="settings-tab-general" data-settings-tab="general" type="button" role="tab" aria-controls="settings-panel-general" aria-selected="true" tabindex="0">Geral</button>
-                <button id="settings-tab-profile" data-settings-tab="profile" type="button" role="tab" aria-controls="settings-panel-profile" aria-selected="false" tabindex="-1">Perfil</button>
-                <button id="settings-tab-security" data-settings-tab="security" type="button" role="tab" aria-controls="settings-panel-security" aria-selected="false" tabindex="-1">Segurança</button>
-                <button id="settings-tab-account" data-settings-tab="account" type="button" role="tab" aria-controls="settings-panel-account" aria-selected="false" tabindex="-1">Conta</button>
-                <button id="settings-tab-plans" data-settings-tab="plans" type="button" role="tab" aria-controls="settings-panel-plans" aria-selected="false" tabindex="-1">Planos <span class="settings-tab-note">Em breve</span></button>
-                <button id="settings-tab-pipeline" data-settings-tab="pipeline" type="button" role="tab" aria-controls="settings-panel-pipeline" aria-selected="false" tabindex="-1">Funil de vendas</button>
+                <div class="settings-tab-group" role="group" aria-labelledby="settings-group-preferences">
+                  <h2 id="settings-group-preferences" class="settings-group-title">Preferências</h2>
+                  <button id="settings-tab-general" data-settings-tab="general" type="button" role="tab" aria-controls="settings-panel-general" aria-selected="true" tabindex="0">Geral</button>
+                  <button id="settings-tab-profile" data-settings-tab="profile" type="button" role="tab" aria-controls="settings-panel-profile" aria-selected="false" tabindex="-1">Perfil</button>
+                  <button id="settings-tab-security" data-settings-tab="security" type="button" role="tab" aria-controls="settings-panel-security" aria-selected="false" tabindex="-1">Segurança</button>
+                </div>
+                <div class="settings-tab-group" role="group" aria-labelledby="settings-group-account">
+                  <h2 id="settings-group-account" class="settings-group-title">Conta</h2>
+                  <button id="settings-tab-account" data-settings-tab="account" type="button" role="tab" aria-controls="settings-panel-account" aria-selected="false" tabindex="-1">Conta</button>
+                  <button id="settings-tab-plans" data-settings-tab="plans" type="button" role="tab" aria-controls="settings-panel-plans" aria-selected="false" tabindex="-1">Planos <span class="settings-tab-note">Em breve</span></button>
+                </div>
+                <div class="settings-tab-group" role="group" aria-labelledby="settings-group-sales">
+                  <h2 id="settings-group-sales" class="settings-group-title">Vendas</h2>
+                  <button id="settings-tab-pipeline" data-settings-tab="pipeline" type="button" role="tab" aria-controls="settings-panel-pipeline" aria-selected="false" tabindex="-1">Funil de vendas</button>
+                </div>
               </div>
             </aside>
             <div class="settings-content">
