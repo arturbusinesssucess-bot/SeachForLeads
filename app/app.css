@@ -655,3 +655,16 @@
 @media (max-width: 767px) { .search-view .search-editor-dimensional { min-height: max(640px, calc(100svh - 138px)); padding: 32px 14px; border-radius: 16px; } .search-glass-card { padding: 24px 22px 28px; border-radius: 17px; } .search-glass-card .search-editor-heading h2 { font-size: 29px; } .search-glass-card .search-clean-form { gap: 22px; } .search-glass-card .search-field input { font-size: 16px; } }
 @media (max-width: 359px) { .search-view .search-editor-dimensional { padding: 24px 10px; } .search-glass-card { padding: 22px 16px 26px; } .search-glass-card .search-editor-heading h2 { font-size: 27px; } }
 @media (prefers-reduced-motion: reduce) { .search-dimensional-canvas { transition: none; } }
+
+.search-location-fields { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 16px; }
+.search-glass-card .search-field select { width: 100%; min-width: 0; min-height: 48px; border: 1px solid rgba(171,192,232,.22); border-radius: 10px; padding: 12px 14px; background-color: rgba(4,8,17,.58); color: #f3f6fc; color-scheme: dark; font: inherit; font-size: 14px; cursor: pointer; }
+.search-glass-card .search-field select:focus-visible { outline: 2px solid #8b9fff; outline-offset: 2px; border-color: #8b9fff; }
+.search-glass-card .search-field select:disabled { opacity: .65; cursor: not-allowed; }
+.search-glass-card .search-field select option { background: #101622; color: #f3f6fc; }
+.search-field-optional, .search-field-help { color: #a7b3c7; font-weight: 400; }
+.search-field-help { margin: -12px 0 0; font-size: 12px; line-height: 1.6; }
+.search-city-retry { justify-self: start; min-height: 40px; margin-top: -16px; padding: 8px 0; border: 0; background: transparent; color: #a7beff; font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.search-city-retry[hidden] { display: none; }
+.search-city-retry:focus-visible { outline: 2px solid #8b9fff; outline-offset: 4px; }
+.search-clean-submit:disabled { opacity: .55; cursor: wait; transform: none; }
+@media (max-width: 600px) { .search-location-fields { grid-template-columns: minmax(0,1fr); gap: 22px; } .search-glass-card .search-field select { font-size: 16px; } }
