@@ -17,6 +17,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=action-arrow-20261116" />
+    <link rel="stylesheet" href="/public/landing-product.v1.css" />
   </head>
   <body>
     <div class="site-shell">
@@ -86,60 +87,75 @@
           </div>
         </section>
 
-        <section class="section-intro animar" id="recursos" aria-labelledby="resources-title">
-          <div class="eyebrow" style="--i:0"><span>02</span> menos lista, mais contexto</div>
-          <h2 class="fx-blur" id="resources-title" style="--i:0">O lead certo deixa de parecer uma agulha no palheiro.</h2>
-          <p class="fx-enter" style="--i:1">O SearchForLeads transforma uma busca ampla em um próximo passo claro — sem planilhas intermináveis e sem depender de feeling.</p>
-        </section>
+        <section class="landing-product landing-product-tour" id="recursos" aria-labelledby="resources-title">
+          <header class="landing-product-heading">
+            <h2 id="resources-title">Veja o painel por dentro.</h2>
+            <p>Conheça a Busca, o CRM e os indicadores do funil antes de criar sua conta.</p>
+          </header>
 
-        <section class="benefit-grid animar fx-stagger" aria-label="Benefícios do SearchForLeads">
-          <article class="benefit-card benefit-card-featured" style="--i:0">
-            <div class="card-number">01</div>
-            <div>
-              <h3>Encontre sinais antes do primeiro contato.</h3>
-              <p>Veja quais empresas têm contexto para ouvir você agora, não apenas quem cabe em uma lista de segmentos.</p>
+          <div class="product-tour" data-product-tour>
+            <div class="product-tour-bar">
+              <span class="product-tour-brand"><img src="/public/loupe-logo.svg" width="24" height="24" alt="" /> SearchForLeads</span>
+              <div class="product-tour-tabs" role="tablist" aria-label="Telas do painel" hidden>
+                <button id="product-tab-busca" type="button" role="tab" aria-selected="true" aria-controls="product-panel-busca">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span>Busca</span>
+                </button>
+                <button id="product-tab-crm" type="button" role="tab" aria-selected="false" aria-controls="product-panel-crm" tabindex="-1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21M3 7h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span>CRM</span>
+                </button>
+                <button id="product-tab-analytics" type="button" role="tab" aria-selected="false" aria-controls="product-panel-analytics" tabindex="-1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 17V9M18 17V5M3 3v16a2 2 0 0 0 2 2h16M8 17v-3"/></svg><span>Analytics</span>
+                </button>
+              </div>
             </div>
-            <span class="card-caption">fit com intenção</span>
-          </article>
-          <article class="benefit-card" style="--i:1">
-            <div class="card-number">02</div>
-            <h3>Prioridade que dá para explicar.</h3>
-            <p>Uma pontuação simples mostra por que aquele lead merece atenção.</p>
-          </article>
-          <article class="benefit-card benefit-card-accent" style="--i:2">
-            <div class="card-number">03</div>
-            <h3>Da descoberta à conversa.</h3>
-            <p>Saia da pesquisa com um próximo passo e uma abordagem mais humana.</p>
-            <span class="accent-arrow" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span>
-          </article>
-        </section>
 
-        <section class="steps-section animar" id="como-funciona" aria-labelledby="steps-title">
-          <div class="section-heading">
-            <div>
-              <div class="eyebrow"><span>03</span> como funciona</div>
-              <h2 class="fx-blur" id="steps-title" style="--i:0">Uma busca. Três decisões melhores.</h2>
-            </div>
-            <p class="fx-enter" style="--i:1">Comece pequeno, entenda o retorno e aumente o ritmo quando fizer sentido.</p>
+            <figure class="product-tour-panel" id="product-panel-busca" aria-labelledby="product-caption-busca">
+              <picture class="product-tour-picture">
+                <source media="(max-width: 600px)" srcset="/public/product-busca-mobile.webp" width="585" height="1482" />
+                <img src="/public/product-busca.webp" width="1294" height="865" alt="Tela de busca com campos de segmento, estado, cidade e quantidade, sobre o fundo azul e roxo do formulário." loading="lazy" decoding="async" />
+              </picture>
+              <figcaption class="product-tour-caption"><h3 id="product-caption-busca">Defina quem você quer encontrar</h3><p>Combine um nicho com estado e cidade. Quando a IA estiver disponível na sua conta, descreva sua oferta para receber sugestões de nichos.</p></figcaption>
+            </figure>
+
+            <figure class="product-tour-panel" id="product-panel-crm" aria-labelledby="product-caption-crm">
+              <picture class="product-tour-picture">
+                <source media="(max-width: 600px)" srcset="/public/product-crm-mobile.webp" width="585" height="1211" />
+                <img src="/public/product-crm.webp" width="1294" height="723" alt="Tela do CRM com resumo dos leads, opção de qualificação com IA e etapas de acompanhamento." loading="lazy" decoding="async" />
+              </picture>
+              <figcaption class="product-tour-caption"><h3 id="product-caption-crm">Organize seu funil de vendas</h3><p>Veja os leads no CRM e personalize nomes, cores e ordem das etapas nas configurações do painel. <small>Prévia com dados ilustrativos.</small></p></figcaption>
+            </figure>
+
+            <figure class="product-tour-panel" id="product-panel-analytics" aria-labelledby="product-caption-analytics">
+              <picture class="product-tour-picture">
+                <source media="(max-width: 600px)" srcset="/public/product-analytics-mobile.webp" width="585" height="1769" />
+                <img src="/public/product-analytics.webp" width="1368" height="826" alt="Painel de Analytics com indicadores do CRM, barras de distribuição por etapa e gráfico de cobertura de contato." loading="lazy" decoding="async" />
+              </picture>
+              <figcaption class="product-tour-caption"><h3 id="product-caption-analytics">Acompanhe o avanço dos leads</h3><p>Filtre os indicadores por etapa ou localidade e veja quantos leads avançaram para o contato. <small>Prévia com dados ilustrativos.</small></p></figcaption>
+            </figure>
           </div>
-          <ol class="steps-list fx-stagger">
-            <li style="--i:0"><span class="step-index">01</span><div><h3>Descreva seu alvo</h3><p>Informe o que você vende, para quem e em qual região.</p></div><span class="step-line" aria-hidden="true"></span></li>
-            <li style="--i:1"><span class="step-index">02</span><div><h3>Deixe o radar trabalhar</h3><p>O sistema reúne empresas, sinais e pontos de contato em uma única busca.</p></div><span class="step-line" aria-hidden="true"></span></li>
-            <li style="--i:2"><span class="step-index">03</span><div><h3>Escolha quem merece conversa</h3><p>Leia a análise, filtre por prioridade e avance com contexto.</p></div><span class="step-line" aria-hidden="true"></span></li>
+        </section>
+
+        <section class="landing-product landing-process" id="como-funciona" aria-labelledby="steps-title">
+          <header class="landing-product-heading">
+            <h2 id="steps-title">Da busca ao próximo contato.</h2>
+            <p>Uma rotina de prospecção que você acompanha no mesmo painel.</p>
+          </header>
+          <ol class="landing-process-list">
+            <li><h3>Defina o perfil da empresa</h3><p>Escolha o nicho e a região que fazem sentido para sua oferta.</p></li>
+            <li><h3>Organize os leads no CRM</h3><p>Configure as etapas do funil de acordo com seu processo comercial.</p></li>
+            <li><h3>Revise o que avançou</h3><p>Compare as etapas em Analytics e veja onde concentrar os próximos contatos.</p></li>
           </ol>
         </section>
 
-        <section class="audience-section animar" aria-labelledby="audience-title">
-          <div class="audience-copy">
-            <div class="eyebrow"><span>04</span> para quem vende</div>
-            <h2 class="fx-blur" id="audience-title" style="--i:0">Bom para quem precisa de direção, não de mais uma lista.</h2>
-            <p class="fx-enter" style="--i:1">Use para prospecção ativa, pesquisa de mercado ou para encontrar o próximo grupo de clientes que ainda não conhece sua solução.</p>
-          </div>
-          <div class="audience-list fx-stagger">
-            <div style="--i:0"><span>01</span><strong>Agências e consultorias</strong><small>encontre contas com dor clara</small></div>
-            <div style="--i:1"><span>02</span><strong>Times comerciais</strong><small>priorize o pipeline da semana</small></div>
-            <div style="--i:2"><span>03</span><strong>Fundadores e freelancers</strong><small>venda sem montar uma operação inteira</small></div>
-          </div>
+        <section class="landing-product landing-audiences" aria-labelledby="audience-title">
+          <header class="landing-product-heading">
+            <h2 id="audience-title">Para quem faz prospecção.</h2>
+          </header>
+          <ul class="landing-audience-list">
+            <li><h3>Agências e consultorias</h3><p>Defina segmentos e regiões que combinam com o serviço que você oferece.</p></li>
+            <li><h3>Times comerciais</h3><p>Veja quais leads já foram contatados e quais continuam aguardando abordagem.</p></li>
+            <li><h3>Fundadores e freelancers</h3><p>Acompanhe as oportunidades em um funil ajustado à sua rotina de vendas.</p></li>
+          </ul>
         </section>
 
         <section class="faq-section animar" id="duvidas" aria-labelledby="faq-title">
@@ -321,6 +337,7 @@
       <button class="privacy-notice-dismiss" id="privacy-notice-dismiss" type="button">Entendi</button>
     </aside>
 
+    <script type="module" src="/public/landing-product.v1.js"></script>
     <script type="module" src="script.js"></script>
   </body>
 </html>
