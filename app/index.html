@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/public/app-buttons.v1.css" />
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
     <link rel="stylesheet" href="/public/app-corner-mist.v1.css" />
+    <link rel="stylesheet" href="/public/app-mobile.v1.css" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <div class="app-corner-mist" aria-hidden="true"></div>
@@ -174,7 +175,7 @@
               </div>
             </div>
             <div class="crm-table-wrap" id="crm-table-wrap" role="region" aria-label="Empresas salvas no CRM" tabindex="0" hidden>
-              <table class="crm-table"><thead><tr><th scope="col">EMPRESA</th><th scope="col">LOCALIZAÇÃO</th><th scope="col">ORIGEM</th><th scope="col">STATUS</th><th scope="col" aria-label="Ações"></th></tr></thead><tbody id="crm-rows"></tbody></table>
+              <table class="crm-table" role="table" aria-label="Empresas salvas no CRM"><thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">EMPRESA</th><th role="columnheader" scope="col">LOCALIZAÇÃO</th><th role="columnheader" scope="col">ORIGEM</th><th role="columnheader" scope="col">STATUS</th><th role="columnheader" scope="col" aria-label="Ações"></th></tr></thead><tbody id="crm-rows" role="rowgroup"></tbody></table>
             </div>
           </div>
           <div class="crm-empty" id="crm-empty">
@@ -209,7 +210,7 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=workspace-analytics-20261117"></script>
+    <script type="module" src="app.js?v=mobile-20261117"></script>
   </body>
 </html>
 
