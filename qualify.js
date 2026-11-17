@@ -1,6 +1,9 @@
+import { initializeAppSelects } from "./public/app-selects.v1.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
+
+initializeAppSelects();
 
 const form = document.querySelector("#qualify-form");
 const steps = [...document.querySelectorAll(".qualify-step")];
