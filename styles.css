@@ -1113,3 +1113,6 @@ h2 { margin: 18px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; letter
 @media (prefers-reduced-motion: reduce) {
   .radar-visual *, .radar-visual *::before, .radar-visual *::after { scroll-behavior: auto !important; }
 }
+
+.action-arrow { display: inline-block; width: 18px; height: 18px; flex: 0 0 auto; vertical-align: middle; fill: currentColor; stroke: none; }
+.accent-arrow .action-arrow, .qualify-success-mark .action-arrow { width: 1em; height: 1em; }
