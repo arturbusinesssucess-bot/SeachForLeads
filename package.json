@@ -1,6 +1,10 @@
 {
   "dependencies": {
     "motion": "^14.13.0",
-    "three": "0.128.0"
+    "three": "0.128.0",
+    "jose": "6.2.17"
+  },
+  "scripts": {
+    "test:ai": "node --test server/ai-auth.test.mjs server/ai-core.test.mjs server/ai-handler.test.mjs"
   }
 }

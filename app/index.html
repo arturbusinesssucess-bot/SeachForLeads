@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
     <link rel="stylesheet" href="/public/app-corner-mist.v1.css" />
     <link rel="stylesheet" href="/public/app-mobile.v1.css" />
+    <link rel="stylesheet" href="/public/app-ai.v1.css" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <div class="app-corner-mist" aria-hidden="true"></div>
@@ -143,6 +144,17 @@
             <div class="search-glass-card">
             <button class="search-back" id="close-search-form" type="button"><svg xmlns="http://www.w3.org/2000/svg" class="back-arrow" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg> Voltar</button>
             <header class="search-editor-heading"><h2 id="search-form-title">Vamos encontrar seu próximo cliente.</h2><p>Defina o perfil de empresa e onde quer prospectar.</p></header>
+            <details class="ai-pane" id="ai-offer-panel">
+              <summary><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span>Encontrar nichos para minha oferta</span><span class="ai-summary-state" aria-hidden="true"><span class="ai-when-closed">Abrir</span><span class="ai-when-open">Fechar</span></span></summary>
+              <div class="ai-pane-body">
+                <p id="ai-offer-help">Descreva o que você vende. A IA sugere nichos e critérios; você escolhe o que usar na busca.</p>
+                <label for="ai-offer">Sua oferta</label>
+                <textarea id="ai-offer" maxlength="2000" rows="4" placeholder="Ex.: crio sites com agendamento para negócios locais." aria-describedby="ai-offer-help ai-offer-status"></textarea>
+                <button class="app-button app-button--primary" id="ai-suggest-niches" type="button" disabled><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Sugerir nichos</span></button>
+                <p class="ai-status" id="ai-offer-status" role="status" aria-live="polite">Verificando a disponibilidade da análise por IA…</p>
+                <div class="ai-results" id="ai-niche-results" hidden></div>
+              </div>
+            </details>
             <form class="search-clean-form" id="lead-search-form" aria-labelledby="search-form-title">
               <div class="search-field"><label for="search-niche">Que tipo de empresa você procura?</label><input id="search-niche" name="niche" type="text" placeholder="Ex.: clínicas odontológicas" required autocomplete="off"></div>
               <div class="search-location-fields">
@@ -163,6 +175,18 @@
         <section class="app-view crm-view" data-view="crm" aria-labelledby="crm-title" hidden>
           <header class="search-page-header"><h1 id="crm-title">CRM</h1></header>
           <div class="crm-metrics" aria-label="Resumo do CRM"><article class="metric-card"><p>Total no CRM</p><strong id="crm-metric-total">0</strong><small>empresas salvas</small></article><article class="metric-card"><p>Para contatar</p><strong id="crm-metric-pending">0</strong><small>novos e qualificados</small></article><article class="metric-card"><p>Fechados</p><strong id="crm-metric-won">0</strong><small>negócios concluídos</small></article></div>
+          <details class="ai-pane" id="ai-crm-panel">
+            <summary><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 17V9"/><path d="M18 17V5"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M8 17v-3"/></svg><span>Qualificar leads com IA</span><span class="ai-summary-state" aria-hidden="true"><span class="ai-when-closed">Abrir</span><span class="ai-when-open">Fechar</span></span></summary>
+            <div class="ai-pane-body">
+              <p id="ai-crm-help">Compare os leads com sua oferta usando os dados disponíveis no CRM. A análise não confirma intenção de compra ou informações que não foram fornecidas.</p>
+              <label for="ai-crm-offer">O que você oferece a essas empresas?</label>
+              <textarea id="ai-crm-offer" maxlength="2000" rows="4" placeholder="Descreva seu produto ou serviço e o cliente que pretende atender." aria-describedby="ai-crm-help ai-lead-status"></textarea>
+              <p id="ai-lead-count">Salve leads no CRM para analisar a compatibilidade com sua oferta.</p>
+              <button class="app-button app-button--primary" id="ai-analyze-leads" type="button" disabled><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 17V9"/><path d="M18 17V5"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M8 17v-3"/></svg><span class="app-button-label">Analisar leads</span></button>
+              <p class="ai-status" id="ai-lead-status" role="status" aria-live="polite">Verificando a disponibilidade da análise por IA…</p>
+              <div class="ai-results" id="ai-lead-results" hidden></div>
+            </div>
+          </details>
           <div class="crm-workspace" id="crm-workspace" hidden>
             <div class="crm-controls">
               <div class="crm-tabs" role="group" aria-label="Filtrar leads">
@@ -210,7 +234,7 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=mobile-20261117"></script>
+    <script type="module" src="app.js?v=openrouter-20261117"></script>
   </body>
 </html>
 

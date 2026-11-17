@@ -1,0 +1,41 @@
+.product-app .ai-pane { min-width: 0; margin: 20px 0; padding: 0; border: 0; border-radius: 14px; background: var(--workspace-card, #191919); color: var(--app-text, #f2f3f5); }
+.product-app .ai-pane > summary { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 16px; border-radius: inherit; list-style: none; font-size: 14px; font-weight: 600; line-height: 1.5; cursor: pointer; }
+.product-app .ai-pane > summary::-webkit-details-marker { display: none; }
+.product-app .ai-pane > summary > svg { width: 20px; height: 20px; flex: 0 0 20px; fill: none; stroke: var(--app-blue-light, #81b8ff); }
+.product-app .ai-summary-state { margin-left: auto; color: var(--workspace-muted, #aaaab2); font-size: 12px; font-weight: 400; }
+.product-app .ai-pane:not([open]) .ai-when-open, .product-app .ai-pane[open] .ai-when-closed { display: none; }
+.product-app .ai-pane > summary:focus-visible, .product-app .ai-niche-choice:focus-visible { outline: 2px solid #a8b8ff; outline-offset: 3px; }
+.product-app .ai-pane-body { display: grid; gap: 14px; padding: 0 16px 20px; }
+.product-app .ai-pane-body > p { margin: 0; color: var(--workspace-muted, #aaaab2); font-size: 13px; line-height: 1.6; }
+.product-app .ai-pane label { color: #e6e6ec; font-size: 14px; font-weight: 500; line-height: 1.5; }
+.product-app .ai-pane textarea { display: block; box-sizing: border-box; width: 100%; min-width: 0; min-height: 112px; max-height: 300px; resize: vertical; padding: 12px 14px; border: 1px solid var(--app-line, #252930); border-radius: 10px; background: #101216; color: var(--app-text, #f2f3f5); font: inherit; font-size: 14px; line-height: 1.6; }
+.product-app .ai-pane textarea::placeholder { color: #9ba3af; }
+.product-app .ai-pane textarea:focus-visible { border-color: #8b9fff; outline: 2px solid #8b9fff; outline-offset: 2px; }
+.product-app .ai-pane-body > .app-button { justify-self: start; }
+.product-app .ai-pane .ai-status { min-height: 20px; margin: 0; color: #b5bbc6; font-size: 12px; line-height: 1.6; }
+.product-app .ai-results[hidden] { display: none; }
+.product-app .ai-results { display: grid; min-width: 0; gap: 16px; }
+.product-app .ai-result-summary { margin: 0; color: #d8d8e0; font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; }
+.product-app .ai-result-heading { margin: 8px 0 0; color: #efeff4; font-size: 15px; font-weight: 600; line-height: 1.5; }
+.product-app .ai-result-cards { display: grid; min-width: 0; gap: 12px; }
+.product-app .ai-result-card { min-width: 0; padding: 16px; border: 0; border-radius: 12px; background: var(--workspace-card-raised, #222222); overflow-wrap: anywhere; }
+.product-app .ai-result-card h4 { margin: 0; color: #f0f0f4; font-size: 15px; font-weight: 600; line-height: 1.5; }
+.product-app .ai-result-card h5 { margin: 18px 0 8px; color: #d7d7df; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.product-app .ai-result-card p { margin: 8px 0 0; color: #b9b9c3; font-size: 13px; line-height: 1.6; }
+.product-app .ai-result-list { display: grid; gap: 8px; margin: 0; padding-left: 20px; color: #b9b9c3; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.product-app .ai-niche-choice { min-height: 44px; margin-top: 14px; background: #303030; color: #f3f3f7; box-shadow: none; white-space: normal; }
+.product-app .ai-niche-choice:hover { background: #393939; }
+.product-app .ai-result-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.product-app .ai-result-company { min-width: 0; }
+.product-app .ai-result-company p { margin: 6px 0 0; font-size: 12px; }
+.product-app .ai-result-header .ai-result-score { display: flex; align-items: baseline; gap: 3px; flex-shrink: 0; margin: 0; color: #aaaab2; }
+.product-app .ai-result-score strong { color: #f5f5f7; font-size: 36px; font-weight: 650; line-height: 1.1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.product-app .ai-result-score span { font-size: 12px; }
+@media (max-width: 767px) {
+  .product-app .ai-pane { margin: 16px 0; }
+  .product-app .ai-pane > summary { padding: 16px; }
+  .product-app .ai-pane textarea { font-size: 16px; }
+  .product-app .ai-pane-body > .app-button { width: 100%; }
+  .product-app .ai-result-header { flex-wrap: wrap; }
+  .product-app .ai-result-company { flex: 1 1 140px; }
+}

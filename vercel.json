@@ -7,5 +7,10 @@
       "permanent": true
     }
   ],
-  "cleanUrls": true
+  "cleanUrls": true,
+  "functions": {
+    "api/ai.mjs": {
+      "maxDuration": 30
+    }
+  }
 }
