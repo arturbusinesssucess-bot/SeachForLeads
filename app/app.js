@@ -8,10 +8,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
-import { initializeSearchCriteria } from "./search-criteria.js?v=br-localities-20261116";
+import { initializeSearchCriteria } from "./search-criteria.js?v=custom-selects-20261117";
+import { initializeAppSelects } from "../public/app-selects.v1.js";
+import { initializeAnalytics, classifyCRMStatus } from "./analytics.js?v=workspace-analytics-20261117";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
+initializeAppSelects();
 
 const authView = document.body;
 const views = [...document.querySelectorAll("[data-view]")];
@@ -19,7 +22,7 @@ const viewLinks = [...document.querySelectorAll("[data-view-link]")];
 const status = document.querySelector("#search-status");
 const searchForm = document.querySelector("#lead-search-form");
 const searchCriteria = initializeSearchCriteria(searchForm);
-const viewNames = { home: "Home", search: "Busca", crm: "CRM" };
+const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics" };
 
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
@@ -133,6 +136,7 @@ searchForm.addEventListener("submit", (event) => {
 document.querySelectorAll(".crm-filter").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".crm-filter").forEach((filter) => filter.classList.toggle("is-active", filter === button));
+    renderCRM();
   });
 });
 const crmFilter = document.querySelector("#crm-filter");
@@ -142,28 +146,33 @@ const crmEmptyTitle = document.querySelector("#crm-empty-title");
 const crmEmptyDescription = document.querySelector("#crm-empty-description");
 const crmWorkspace = document.querySelector("#crm-workspace");
 const crmTableWrap = document.querySelector("#crm-table-wrap");
+const crmAnalytics = initializeAnalytics(crmRows);
 
 function renderCRM() {
+  crmAnalytics?.refresh();
   const query = crmFilter.value.trim().toLocaleLowerCase("pt-BR");
+  const stageFilter = document.querySelector(".crm-filter.is-active")?.dataset.filter;
   const rows = [...crmRows.querySelectorAll("tr")];
   const visibleRows = rows.filter((row) => {
-    const matches = !query || row.textContent.toLocaleLowerCase("pt-BR").includes(query);
+    const matchesText = !query || row.textContent.toLocaleLowerCase("pt-BR").includes(query);
+    const matchesStage = stageFilter !== "new" || classifyCRMStatus(row.dataset.status || row.cells[3]?.textContent) === "new";
+    const matches = matchesText && matchesStage;
     row.hidden = !matches;
     return matches;
   });
   if (crmWorkspace) crmWorkspace.hidden = rows.length === 0;
   if (crmTableWrap) crmTableWrap.hidden = visibleRows.length === 0;
   crmEmpty.hidden = visibleRows.length > 0;
-  if (rows.length && query && !visibleRows.length) {
+  if (rows.length && !visibleRows.length) {
     crmEmptyTitle.textContent = "Nenhum lead corresponde à busca";
-    crmEmptyDescription.textContent = "Tente outro nome de empresa ou cidade.";
+    crmEmptyDescription.textContent = "Tente outro nome, cidade ou etapa do CRM.";
   } else {
     crmEmptyTitle.textContent = "Seu CRM começa aqui.";
     crmEmptyDescription.textContent = "Encontre empresas na Busca e salve os contatos que quiser acompanhar por aqui.";
   }
 }
 crmFilter.addEventListener("input", renderCRM);
-new MutationObserver(renderCRM).observe(crmRows, { childList: true, subtree: true, characterData: true });
+new MutationObserver(renderCRM).observe(crmRows, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["data-status", "data-contacted", "data-contacted-at", "data-city", "data-company"] });
 renderCRM();
 
 
