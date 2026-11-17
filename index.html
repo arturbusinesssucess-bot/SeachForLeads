@@ -17,7 +17,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=action-arrow-20261116" />
-    <link rel="stylesheet" href="/public/landing-product.v1.css?v=separate-previews" />
+    <link rel="stylesheet" href="/public/landing-product.v1.css?v=search-video" />
   </head>
   <body>
     <div class="site-shell">
@@ -87,20 +87,6 @@
           </div>
         </section>
 
-        <section class="landing-product landing-preview landing-preview-search" id="recursos" aria-labelledby="resources-title">
-          <header class="landing-product-heading">
-            <p class="landing-preview-label">Busca</p>
-            <h2 id="resources-title">Veja o painel por dentro.</h2>
-            <p>Escolha o nicho, o estado, a cidade e a quantidade de leads. Quando a IA estiver disponível na sua conta, descreva sua oferta para receber sugestões de nichos.</p>
-          </header>
-          <figure class="landing-preview-media">
-            <picture class="landing-preview-picture">
-                <source media="(max-width: 600px)" srcset="/public/product-busca-mobile.webp" width="585" height="1482" />
-                <img src="/public/product-busca.webp" width="1294" height="865" alt="Tela de busca com campos de segmento, estado, cidade e quantidade, sobre o fundo azul e roxo do formulário." loading="lazy" decoding="async" />
-              </picture>
-          </figure>
-        </section>
-
         <section class="landing-product landing-process" id="como-funciona" aria-labelledby="steps-title">
           <header class="landing-product-heading">
             <h2 id="steps-title">Da busca ao próximo contato.</h2>
@@ -111,6 +97,33 @@
             <li><h3>Organize os leads no CRM</h3><p>Configure as etapas do funil de acordo com seu processo comercial.</p></li>
             <li><h3>Revise o que avançou</h3><p>Compare as etapas em Analytics e veja onde concentrar os próximos contatos.</p></li>
           </ol>
+        </section>
+
+        <section class="landing-product landing-search-detail" id="recursos" aria-labelledby="resources-title">
+          <header class="landing-product-heading">
+            <h2 id="resources-title">Como funciona a Busca</h2>
+            <p>Defina o tipo de empresa que quer encontrar, escolha o estado e, se quiser, a cidade. Em seguida, informe a quantidade de leads da busca.</p>
+            <p>Se a IA estiver disponível na sua conta, descreva sua oferta para receber sugestões de nichos.</p>
+          </header>
+
+          <div class="landing-search-gallery">
+            <figure class="landing-preview-media">
+              <picture class="landing-preview-picture">
+                <source media="(max-width: 600px)" srcset="/public/product-busca-mobile.webp" width="585" height="1482" />
+                <img src="/public/product-busca.webp" width="1294" height="865" alt="Tela de busca com campos de segmento, estado, cidade e quantidade, sobre o fundo azul e roxo do formulário." loading="lazy" decoding="async" />
+              </picture>
+              <figcaption>Formulário de busca</figcaption>
+            </figure>
+            <figure class="landing-preview-media">
+              <div class="landing-preview-picture landing-search-video">
+                <video controls playsinline preload="none" width="1272" height="632" poster="/public/product-busca-demo-poster.v1.webp" aria-label="Demonstração em vídeo do formulário de busca">
+                  <source src="/public/product-busca-demo.v1.mp4" type="video/mp4" />
+                  <a href="/public/product-busca-demo.v1.mp4">Abrir vídeo da Busca</a>
+                </video>
+              </div>
+              <figcaption>Demonstração em vídeo</figcaption>
+            </figure>
+          </div>
         </section>
 
         <section class="landing-product landing-preview landing-preview-crm" id="painel-crm" aria-labelledby="landing-crm-title">
