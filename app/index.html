@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css?v=action-arrow-20261116" />
-    <link rel="stylesheet" href="app.css?v=dimensional-form-20261116" />
+    <link rel="stylesheet" href="app.css?v=br-localities-20261116" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <header class="sidebar-mobile-bar"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
@@ -137,7 +137,13 @@
             <header class="search-editor-heading"><h2 id="search-form-title">Vamos encontrar seu próximo cliente.</h2><p>Defina o perfil de empresa e onde quer prospectar.</p></header>
             <form class="search-clean-form" id="lead-search-form" aria-labelledby="search-form-title">
               <div class="search-field"><label for="search-niche">Que tipo de empresa você procura?</label><input id="search-niche" name="niche" type="text" placeholder="Ex.: clínicas odontológicas" required autocomplete="off"></div>
-              <div class="search-field"><label for="search-location">Em qual região?</label><input id="search-location" name="location" type="text" placeholder="Ex.: Salvador, BA" required autocomplete="address-level2"></div>
+              <div class="search-location-fields">
+                <div class="search-field"><label for="search-state">Estado</label><select id="search-state" name="state" required autocomplete="address-level1"><option value="" disabled selected>Selecione um estado</option><option value="AC">Acre (AC)</option><option value="AL">Alagoas (AL)</option><option value="AP">Amapá (AP)</option><option value="AM">Amazonas (AM)</option><option value="BA">Bahia (BA)</option><option value="CE">Ceará (CE)</option><option value="DF">Distrito Federal (DF)</option><option value="ES">Espírito Santo (ES)</option><option value="GO">Goiás (GO)</option><option value="MA">Maranhão (MA)</option><option value="MT">Mato Grosso (MT)</option><option value="MS">Mato Grosso do Sul (MS)</option><option value="MG">Minas Gerais (MG)</option><option value="PA">Pará (PA)</option><option value="PB">Paraíba (PB)</option><option value="PR">Paraná (PR)</option><option value="PE">Pernambuco (PE)</option><option value="PI">Piauí (PI)</option><option value="RJ">Rio de Janeiro (RJ)</option><option value="RN">Rio Grande do Norte (RN)</option><option value="RS">Rio Grande do Sul (RS)</option><option value="RO">Rondônia (RO)</option><option value="RR">Roraima (RR)</option><option value="SC">Santa Catarina (SC)</option><option value="SP">São Paulo (SP)</option><option value="SE">Sergipe (SE)</option><option value="TO">Tocantins (TO)</option></select></div>
+                <div class="search-field"><label for="search-city">Cidade <span class="search-field-optional">(opcional)</span></label><select id="search-city" name="city" aria-describedby="search-city-help" autocomplete="address-level2" disabled><option value="">Escolha o estado primeiro</option></select></div>
+              </div>
+              <p class="search-field-help" id="search-city-help" role="status" aria-live="polite">Selecione um estado para ver as cidades.</p>
+              <button class="search-city-retry" id="retry-search-cities" type="button" hidden>Tentar carregar cidades novamente</button>
+              <div class="search-field"><label for="search-quantity">Quantidade de leads</label><select id="search-quantity" name="quantity" required><option value="10">10 leads</option><option value="25">25 leads</option><option value="50">50 leads</option><option value="100">100 leads</option></select></div>
               <button class="search-primary search-clean-submit" type="submit">Buscar empresas <span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></button>
               <p class="search-status" id="search-status" role="status" aria-live="polite"></p>
             </form>
@@ -173,7 +179,7 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=dimensional-form-20261116"></script>
+    <script type="module" src="app.js?v=br-localities-20261116"></script>
   </body>
 </html>
 
