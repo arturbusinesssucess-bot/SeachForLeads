@@ -1,5 +1,5 @@
 .product-app { --workspace-card: #191919; --workspace-card-raised: #222222; --workspace-muted: #aaaab2; --workspace-chart: #36b48b; }
-.product-app [data-view="home"] :is(.stat-card,.home-panel,.home-hero,.pwa-install-card), .product-app .metric-card, .product-app .analytics-card { border: 0; background: var(--workspace-card); background-image: none; box-shadow: none; border-radius: 18px; }
+.product-app [data-view="home"] :is(.stat-card,.home-panel,.home-hero), .product-app .metric-card, .product-app .analytics-card { border: 0; background: var(--workspace-card); background-image: none; box-shadow: none; border-radius: 18px; }
 .product-app [data-view="home"] :is(.stat-card,.home-hero,.home-panel)::before, .product-app [data-view="home"] :is(.stat-card,.home-hero,.home-panel)::after { content: none; display: none; }
 .product-app [data-view="home"] .stat-card:hover { border: 0; box-shadow: none; transform: none; }
 .product-app [data-view="home"] .stat-grid, .metrics-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; }

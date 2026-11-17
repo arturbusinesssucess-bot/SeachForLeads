@@ -15,13 +15,6 @@
   .product-app .welcome-row h1 { font-size: 32px; line-height: 1.15; }
   .product-app .welcome-row #home-greeting-name { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
   .product-app :is(.view-eyebrow,.panel-overline) { font-size: 10px; }
-  .product-app .pwa-install-card { position: relative; grid-template-columns: 36px minmax(0,1fr); align-items: start; gap: 12px; padding: 16px; }
-  .product-app .pwa-install-copy { padding-right: 28px; }
-  .product-app .pwa-install-copy h2 { font-size: 14px; line-height: 1.4; }
-  .product-app .pwa-install-copy > p:not(.panel-overline) { font-size: 12px; line-height: 1.5; }
-  .product-app .pwa-install-actions { grid-column: 2; }
-  .product-app .pwa-install-button { min-height: 44px; font-size: 12px; padding-inline: 16px; }
-  .product-app .pwa-install-dismiss { position: absolute; top: 4px; right: 4px; width: 44px; height: 44px; }
   .product-app [data-view="home"] .home-hero { grid-template-columns: minmax(0,1fr); }
   .product-app .home-hero-main { padding: 20px; }
   .product-app .home-hero-kicker { font-size: 10px; line-height: 1.5; letter-spacing: .08em; }

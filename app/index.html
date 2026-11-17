@@ -14,13 +14,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css?v=action-arrow-20261116" />
-    <link rel="stylesheet" href="app.css?v=br-localities-20261116" />
+    <link rel="stylesheet" href="app.css?v=install-card" />
     <link rel="stylesheet" href="/public/app-selects.v1.css" data-app-select-styles />
-    <link rel="stylesheet" href="/public/workspace-analytics.v1.css" />
+    <link rel="stylesheet" href="/public/workspace-analytics.v1.css?v=install-card" />
     <link rel="stylesheet" href="/public/app-buttons.v1.css" />
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
     <link rel="stylesheet" href="/public/app-corner-mist.v1.css" />
-    <link rel="stylesheet" href="/public/app-mobile.v1.css" />
+    <link rel="stylesheet" href="/public/app-mobile.v1.css?v=install-card" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-glass" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
   </head>
@@ -72,17 +72,14 @@
           </div>
 
           <aside class="pwa-install-card" id="pwa-install-card" aria-labelledby="pwa-install-title">
-            <div class="pwa-install-mark" aria-hidden="true"><img src="/public/pwa-icon.svg" alt="" /></div>
+            <img class="pwa-install-mark" src="/public/pwa-install-mascot.v1.webp" width="1254" height="1254" alt="" decoding="async" loading="lazy" />
             <div class="pwa-install-copy">
-              <span class="panel-overline">NO SEU DISPOSITIVO</span>
               <h2 id="pwa-install-title">Leve seu radar com você.</h2>
               <p>Instale o SearchForLeads para abrir direto da tela inicial, sem passar pela loja de aplicativos.</p>
               <p class="pwa-install-help" id="pwa-install-help" hidden></p>
             </div>
-            <div class="pwa-install-actions">
-              <button class="app-button app-button--primary" id="pwa-install-button" type="button"><svg class="app-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span class="app-button-label">Instalar app</span></button>
-              <button class="pwa-install-dismiss" id="pwa-install-dismiss" type="button" aria-label="Dispensar aviso">×</button>
-            </div>
+            <button class="app-button app-button--primary" id="pwa-install-button" type="button"><svg class="app-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span class="app-button-label">Instalar app</span></button>
+            <button class="pwa-install-dismiss" id="pwa-install-dismiss" type="button" aria-label="Dispensar aviso">×</button>
           </aside>
 
           <section class="home-hero" aria-labelledby="home-hero-title">
