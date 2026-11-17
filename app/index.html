@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css" />
-    <link rel="stylesheet" href="app.css?v=crm-clean-20261116" />
+    <link rel="stylesheet" href="app.css?v=dimensional-form-20261116" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <header class="sidebar-mobile-bar"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
@@ -129,7 +129,10 @@
             <p>Defina um nicho e uma região para começar sua prospecção.</p>
             <button class="search-primary" id="open-search-form" type="button" aria-controls="search-editor" aria-expanded="false"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Iniciar nova busca</button>
           </div>
-          <div class="search-editor" id="search-editor" hidden>
+          <div class="search-editor search-editor-dimensional" id="search-editor" hidden>
+            <div class="search-dimensional-layer" aria-hidden="true"><canvas class="search-dimensional-canvas"></canvas></div>
+            <div class="search-dimensional-shade" aria-hidden="true"></div>
+            <div class="search-glass-card">
             <button class="search-back" id="close-search-form" type="button"><span aria-hidden="true">←</span> Voltar</button>
             <header class="search-editor-heading"><h2 id="search-form-title">Vamos encontrar seu próximo cliente.</h2><p>Defina o perfil de empresa e onde quer prospectar.</p></header>
             <form class="search-clean-form" id="lead-search-form" aria-labelledby="search-form-title">
@@ -138,6 +141,7 @@
               <button class="search-primary search-clean-submit" type="submit">Buscar empresas <span aria-hidden="true">→</span></button>
               <p class="search-status" id="search-status" role="status" aria-live="polite"></p>
             </form>
+            </div>
           </div>
         </section>
 
@@ -169,7 +173,7 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=crm-clean-20261116"></script>
+    <script type="module" src="app.js?v=dimensional-form-20261116"></script>
   </body>
 </html>
 
