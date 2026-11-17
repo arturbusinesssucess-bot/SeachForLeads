@@ -12,11 +12,13 @@
 .product-app .settings-back svg { width: 18px; height: 18px; }
 .product-app .settings-layout { display: grid; grid-template-columns: 190px minmax(0,1fr); align-items: start; gap: 36px; }
 .product-app .settings-navigation { position: sticky; top: 24px; min-width: 0; }
-.product-app .settings-navigation > h2 { margin: 0 0 14px; padding: 0 12px; color: var(--workspace-muted, #aaaab2); font-size: 12px; font-weight: 500; }
-.product-app .settings-tabs { display: grid; gap: 6px; }
-.product-app .settings-tabs > button { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; color: #a6a8b2; font: inherit; font-size: 14px; line-height: 1.5; text-align: left; cursor: pointer; }
-.product-app .settings-tabs > button:hover { background: #171717; color: #f2f3f5; }
-.product-app .settings-tabs > button[aria-selected="true"] { background: var(--workspace-card-raised, #222222); color: #f2f3f5; }
+.product-app .settings-tabs { display: grid; gap: 16px; }
+.product-app .settings-tab-group { display: grid; gap: 6px; min-width: 0; }
+.product-app .settings-tab-group + .settings-tab-group { padding-top: 16px; border-top: 1px solid var(--app-line, #252930); }
+.product-app .settings-group-title { margin: 0; padding: 0 12px 4px; color: var(--workspace-muted, #aaaab2); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.product-app .settings-tabs button { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; color: #a6a8b2; font: inherit; font-size: 14px; line-height: 1.5; text-align: left; cursor: pointer; }
+.product-app .settings-tabs button:hover { background: #171717; color: #f2f3f5; }
+.product-app .settings-tabs button[aria-selected="true"] { background: var(--workspace-card-raised, #222222); color: #f2f3f5; }
 .product-app .settings-tab-note { color: #92929d; font-size: 10px; white-space: nowrap; }
 .product-app .settings-content, .product-app .settings-panel { min-width: 0; }
 .product-app .settings-panel { display: grid; gap: 20px; }
@@ -82,9 +84,11 @@
   .product-app .settings-back { min-height: 44px; }
   .product-app .settings-layout { grid-template-columns: minmax(0,1fr); gap: 24px; }
   .product-app .settings-navigation { position: static; }
-  .product-app .settings-navigation > h2 { padding: 0; margin-bottom: 12px; }
-  .product-app .settings-tabs { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
-  .product-app .settings-tabs > button { flex-direction: column; align-items: center; justify-content: center; padding: 10px 6px; font-size: 12px; text-align: center; }
+  .product-app .settings-tabs { gap: 12px; }
+  .product-app .settings-tab-group { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .product-app .settings-group-title { grid-column: 1 / -1; padding-inline: 6px; }
+  .product-app .settings-tab-group + .settings-tab-group { padding-top: 12px; }
+  .product-app .settings-tabs button { flex-direction: column; align-items: center; justify-content: center; padding: 10px 6px; font-size: 12px; text-align: center; }
   .product-app .settings-tab-note { font-size: 9px; }
   .product-app .settings-panel-heading h2 { font-size: 22px; }
   .product-app .settings-shortcuts { grid-template-columns: minmax(0,1fr); gap: 12px; }
