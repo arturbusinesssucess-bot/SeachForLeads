@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="app.css?v=br-localities-20261116" />
     <link rel="stylesheet" href="/public/app-selects.v1.css" data-app-select-styles />
     <link rel="stylesheet" href="/public/workspace-analytics.v1.css" />
+    <link rel="stylesheet" href="/public/app-buttons.v1.css" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <header class="sidebar-mobile-bar"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
@@ -83,7 +84,7 @@
               <span class="home-hero-kicker"><span class="hero-pulse"></span> SEU PRÓXIMO CLIENTE COMEÇA AQUI</span>
               <h2 id="home-hero-title">Encontre. Avalie. Inicie a conversa.</h2>
               <p>Defina o perfil de empresa que procura, escolha uma região e guarde no CRM os contatos que fazem sentido para o seu negócio.</p>
-              <button class="hero-cta pixel-button" type="button" data-open-view="search"><span class="pixel-label">Começar uma busca <span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></span></button>
+              <button class="hero-cta app-button app-button--primary" type="button" data-open-view="search"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Começar uma busca</span></button>
             </div>
             <div class="home-hero-steps" aria-label="Como começar">
               <span class="panel-overline">UM FLUXO SIMPLES</span>
@@ -107,12 +108,12 @@
           <div class="home-sections">
             <section class="home-panel recent-panel" aria-labelledby="home-recent-title">
               <div class="panel-heading"><div><span class="panel-overline">ACOMPANHAMENTO</span><h2 id="home-recent-title">Leads recentes</h2><p>Empresas que você salvar nas buscas.</p></div><button class="text-link" type="button" data-open-view="crm">Abrir CRM <span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></button></div>
-              <div class="empty-inline" id="home-recent-empty"><span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span><div><strong>Seu CRM começa com o primeiro lead</strong><p>Faça uma busca e salve as empresas que combinam com sua oferta. Elas ficam reunidas aqui.</p><button class="empty-action" type="button" data-open-view="search">Começar uma busca <span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></button></div></div>
+              <div class="empty-inline" id="home-recent-empty"><span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span><div><strong>Seu CRM começa com o primeiro lead</strong><p>Faça uma busca e salve as empresas que combinam com sua oferta. Elas ficam reunidas aqui.</p><button class="app-button app-button--primary" type="button" data-open-view="search"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Começar uma busca</span></button></div></div>
               <div class="recent-lead-list" id="home-recent-leads" role="list" aria-label="Leads recentes" hidden></div>
             </section>
             <section class="home-panel start-panel" aria-labelledby="home-start-title">
               <div class="start-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m19 15 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/></svg></div>
-              <div><span class="panel-overline">PARA COMEÇAR</span><h2 id="home-start-title">Transforme sua oferta em uma busca.</h2><p>Escolha um nicho e uma região. Você poderá revisar os critérios antes de continuar.</p><button class="start-link pixel-button" type="button" data-open-view="search"><span class="pixel-label">Configurar busca <span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></span></button></div>
+              <div><span class="panel-overline">PARA COMEÇAR</span><h2 id="home-start-title">Transforme sua oferta em uma busca.</h2><p>Escolha um nicho e uma região. Você poderá revisar os critérios antes de continuar.</p><button class="start-link app-button app-button--primary" type="button" data-open-view="search"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Configurar busca</span></button></div>
             </section>
           </div>
         </section>
@@ -125,7 +126,7 @@
             </div>
             <h2>Hora do <span class="search-intro-accent">Search</span></h2>
             <p>Defina um nicho e uma região para começar sua prospecção.</p>
-            <button class="search-primary" id="open-search-form" type="button" aria-controls="search-editor" aria-expanded="false"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Iniciar nova busca</button>
+            <button class="app-button app-button--primary" id="open-search-form" type="button" aria-controls="search-editor" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Iniciar nova busca</span></button>
           </div>
           <div class="search-editor search-editor-dimensional" id="search-editor" hidden>
             <div class="search-dimensional-layer" aria-hidden="true"><canvas class="search-dimensional-canvas"></canvas></div>
@@ -143,7 +144,7 @@
               <button class="search-city-retry" id="retry-search-cities" type="button" hidden>Tentar carregar cidades novamente</button>
               <div class="search-field"><label for="search-quantity">Quantidade de leads</label><input class="quantity-input" id="search-quantity" name="quantity" type="number" inputmode="numeric" min="1" max="100" step="1" value="10" required aria-describedby="search-quantity-help"></div>
               <p class="search-field-help" id="search-quantity-help">De 1 a 100 leads por busca.</p>
-              <button class="search-primary search-clean-submit" type="submit">Buscar empresas <span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></button>
+              <button class="search-clean-submit app-button app-button--primary" type="submit"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Buscar empresas</span></button>
               <p class="search-status" id="search-status" role="status" aria-live="polite"></p>
             </form>
             </div>
@@ -171,7 +172,7 @@
           <div class="crm-empty" id="crm-empty">
             <h2 id="crm-empty-title">Seu CRM começa aqui.</h2>
             <p id="crm-empty-description">Encontre empresas na Busca e salve os contatos que quiser acompanhar por aqui.</p>
-            <button class="search-primary" type="button" data-open-view="search">Começar a busca <span aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></span></button>
+            <button class="app-button app-button--primary" type="button" data-open-view="search"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Começar a busca</span></button>
           </div>
         </section>
         
@@ -182,7 +183,7 @@
             <div class="analytics-filter"><label for="analytics-city">Localidade</label><select id="analytics-city" data-select-search="true" data-select-search-placeholder="Pesquisar localidade" disabled><option value="">Todas as localidades</option></select></div>
             <button class="analytics-reset" id="analytics-reset" type="button" hidden>Limpar filtros</button><span class="analytics-result-count" id="analytics-result-count" role="status" aria-live="polite">0 de 0 leads</span>
           </div>
-          <aside class="analytics-notice" id="analytics-empty"><strong>Seus indicadores começam com o primeiro lead.</strong><p>Salve empresas no CRM para acompanhar as etapas, os contatos e a distribuição por localidade.</p><button class="text-link" type="button" data-open-view="search">Começar a busca <svg xmlns="http://www.w3.org/2000/svg" class="action-arrow" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></button></aside>
+          <aside class="analytics-notice" id="analytics-empty"><strong>Seus indicadores começam com o primeiro lead.</strong><p>Salve empresas no CRM para acompanhar as etapas, os contatos e a distribuição por localidade.</p><button class="app-button app-button--primary" type="button" data-open-view="search"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Começar a busca</span></button></aside>
           <p class="analytics-notice" id="analytics-no-matches" role="status" hidden>Nenhum lead corresponde aos filtros. Escolha outra etapa ou localidade.</p>
           <div class="metrics-grid" aria-label="Indicadores do recorte selecionado">
             <article class="metric-card"><p>Leads no CRM</p><strong id="analytics-total">0</strong><small>no recorte selecionado</small></article>
