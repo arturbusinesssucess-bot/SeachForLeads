@@ -510,3 +510,38 @@
   .crm-empty { padding: 38px 18px; }
 }
 @media (prefers-reduced-motion: reduce) { .crm-table tr { transition: none; } }
+
+
+.search-intro[hidden], .search-editor[hidden] { display: none; }
+.search-page-header { margin: 0 0 30px; }
+.search-page-header h1 { margin: 0; font-size: 25px; font-weight: 650; letter-spacing: -.04em; }
+.search-intro { min-height: 450px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center; border: 1px dashed rgba(114,118,255,.28); border-radius: 18px; background: radial-gradient(ellipse at 50% 35%, rgba(82,75,180,.055), transparent 65%); }
+.search-beacon { position: relative; display: grid; place-items: center; width: 68px; height: 68px; margin-bottom: 26px; border-radius: 50%; isolation: isolate; }
+.search-beacon::before, .search-beacon::after { position: absolute; inset: 0; border-radius: inherit; content: ""; pointer-events: none; background: conic-gradient(from 0deg, #4388ff, #9168ff, #63c4ff, #4388ff); animation: search-beacon-turn 8s linear infinite; }
+.search-beacon::after { inset: -8px; filter: blur(21px); opacity: .3; z-index: -1; }
+.search-beacon-core { position: relative; display: grid; place-items: center; width: 65px; height: 65px; border-radius: inherit; background: #0c1018; box-shadow: inset 0 0 24px rgba(80,96,207,.1); }
+.search-beacon svg { width: 34px; height: 34px; filter: drop-shadow(0 0 9px rgba(114,118,255,.32)); }
+.search-view .search-intro h2 { max-width: 640px; margin: 0; font-size: clamp(23px,2.5vw,27px); font-weight: 650; line-height: 1.2; letter-spacing: -.04em; color: var(--app-text); }
+.search-intro-accent { background: linear-gradient(110deg, #63c4ff 0%, #7b8cff 35%, #a16eff 58%, #4d9cff 80%, #63c4ff 100%); background-size: 240% 100%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: app-brand-gradient 4s linear infinite; }
+.search-intro > p { max-width: 420px; margin: 12px 0 24px; color: var(--app-muted); font-size: 14px; line-height: 1.65; }
+.search-primary { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 44px; padding: 0 20px; border: 1px solid #5798fa; border-radius: 10px; background: #347bed; color: #fff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 160ms ease, transform 160ms ease; }
+.search-primary:hover { background: #4388ff; transform: translateY(-1px); }
+.search-primary:active { transform: none; }
+.search-primary:focus-visible, .search-back:focus-visible { outline: 2px solid #a8b1ff; outline-offset: 4px; }
+.search-editor { max-width: 550px; margin: 0 auto; padding: 42px 0 80px; }
+.search-back { display: inline-flex; align-items: center; gap: 10px; padding: 6px 0; margin-bottom: 30px; border: 0; background: transparent; color: var(--app-muted); font: inherit; font-size: 13px; cursor: pointer; }
+.search-back:hover { color: var(--app-text); }
+.search-editor-heading h2 { margin: 0 0 14px; font-size: clamp(28px,3vw,36px); font-weight: 650; letter-spacing: -.05em; line-height: 1.15; }
+.search-editor-heading p { margin: 0 0 32px; color: var(--app-muted); font-size: 14px; line-height: 1.65; }
+.search-clean-form { display: grid; gap: 24px; }
+.search-field { display: grid; gap: 10px; }
+.search-field label { color: var(--app-text); font-size: 13px; font-weight: 500; }
+.search-field input { width: 100%; min-height: 48px; border: 1px solid var(--app-line); border-radius: 10px; padding: 12px 14px; background: #101318; color: var(--app-text); font: inherit; font-size: 14px; }
+.search-field input::placeholder { color: #727c8c; }
+.search-field input:focus { outline: 2px solid #798bff; outline-offset: 2px; border-color: #798bff; }
+.search-clean-submit { width: 100%; margin-top: 4px; }
+.search-clean-form .search-status { margin: 0; line-height: 1.6; font-size: 13px; }
+.search-clean-form .search-status:empty { display: none; }
+@keyframes search-beacon-turn { to { transform: rotate(360deg); } }
+@media (max-width: 600px) { .search-intro { min-height: 440px; padding: 48px 20px; } .search-beacon { margin-bottom: 28px; } .search-intro > p { max-width: 290px; } .search-editor { padding: 22px 0 64px; } }
+@media (prefers-reduced-motion: reduce) { .search-beacon::before, .search-beacon::after { animation: none; } .search-primary { transition: none; } .search-intro-accent { animation: none; } }
