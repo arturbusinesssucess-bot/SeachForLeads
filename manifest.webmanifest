@@ -11,6 +11,13 @@
   "orientation": "any",
   "background_color": "#08090b",
   "theme_color": "#08090b",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "/manifest.webmanifest",
+      "id": "https://searchforleads.vercel.app/app/"
+    }
+  ],
   "icons": [
     {
       "src": "/public/pwa-mascot-v1-192.png",

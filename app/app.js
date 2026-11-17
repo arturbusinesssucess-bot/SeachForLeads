@@ -80,50 +80,87 @@ const installCard = document.querySelector("#pwa-install-card");
 const installButton = document.querySelector("#pwa-install-button");
 const installDismiss = document.querySelector("#pwa-install-dismiss");
 const installHelp = document.querySelector("#pwa-install-help");
-let deferredInstallPrompt = null;
-
-function isAppInstalled() {
-  return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-}
 
 if (installCard && installButton && installHelp) {
-  installCard.hidden = isAppInstalled();
+  const installKey = "sfl:pwa-installed";
+  let deferredInstallPrompt = null;
+  let installConfirmed = false;
 
-  window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredInstallPrompt = event;
-    installCard.hidden = false;
-    installHelp.hidden = true;
-  });
-
-  window.addEventListener("appinstalled", () => {
+  function hideInstallCard() {
+    installConfirmed = true;
     deferredInstallPrompt = null;
     installCard.hidden = true;
-  });
+  }
 
-  installButton.addEventListener("click", async () => {
-    if (deferredInstallPrompt) {
-      const prompt = deferredInstallPrompt;
-      deferredInstallPrompt = null;
-      installButton.disabled = true;
-      await prompt.prompt();
-      const choice = await prompt.userChoice;
-      installButton.disabled = false;
-      if (choice.outcome === "accepted") installCard.hidden = true;
+  function rememberInstall() {
+    hideInstallCard();
+    try { localStorage.setItem(installKey, "1"); } catch { /* Keep the card hidden for this session if storage is blocked. */ }
+  }
+
+  async function checkInstallation() {
+    if (window.matchMedia("(display-mode: standalone), (display-mode: minimal-ui)").matches || navigator.standalone === true) {
+      rememberInstall();
       return;
     }
+    try {
+      if (localStorage.getItem(installKey) === "1") {
+        hideInstallCard();
+        return;
+      }
+    } catch { /* Installation detection can still work without storage. */ }
+    try {
+      const relatedApps = await navigator.getInstalledRelatedApps?.();
+      if (relatedApps?.some(({ platform }) => platform === "webapp")) rememberInstall();
+    } catch { /* Browsers can restrict installation detection. */ }
+    if (!installConfirmed) installCard.hidden = false;
+  }
 
+  function showInstallHelp() {
     const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     installHelp.textContent = isAppleMobile
       ? "No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início."
       : "No Chrome ou Edge, abra o menu do navegador e escolha Instalar SearchForLeads ou Adicionar à tela inicial.";
     installHelp.hidden = false;
+  }
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    if (installConfirmed) return;
+    deferredInstallPrompt = event;
+    installHelp.hidden = true;
+  });
+
+  window.addEventListener("appinstalled", rememberInstall);
+  window.addEventListener("storage", (event) => {
+    if (event.key === installKey && event.newValue === "1") hideInstallCard();
+  });
+
+  installButton.addEventListener("click", async () => {
+    if (installConfirmed) return;
+    if (deferredInstallPrompt) {
+      const prompt = deferredInstallPrompt;
+      deferredInstallPrompt = null;
+      installButton.disabled = true;
+      try {
+        await prompt.prompt();
+        const choice = await prompt.userChoice;
+        if (choice.outcome === "accepted") installCard.hidden = true;
+      } catch {
+        if (!installConfirmed) showInstallHelp();
+      } finally {
+        installButton.disabled = false;
+      }
+      return;
+    }
+
+    showInstallHelp();
   });
 
   installDismiss?.addEventListener("click", () => {
     installCard.hidden = true;
   });
+  checkInstallation();
 }
 
 searchForm.addEventListener("submit", (event) => {
