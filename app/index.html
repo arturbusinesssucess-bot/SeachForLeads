@@ -14,41 +14,38 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css" />
-    <link rel="stylesheet" href="app.css?v=search-clean-20261116" />
+    <link rel="stylesheet" href="app.css?v=sidebar-20261116" />
   </head>
-  <body class="product-app" data-auth="checking">
-    <div class="app-frame">
-      <aside class="app-sidebar">
-        <a class="app-brand" href="../" aria-label="SearchForLeads, início">
+  <body class="product-app sidebar-ui" data-auth="checking">
+    <header class="sidebar-mobile-bar"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
           <img src="/public/loupe-logo.svg" alt="" />
           <span class="app-brand-word"><span class="app-brand-search">Search</span><span class="app-brand-for">For</span>Leads</span>
-        </a>
-
-        <div class="app-nav-label">ESPAÇO DE TRABALHO</div>
+        </a><button id="sidebar-menu-button" class="sidebar-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="app-sidebar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></header>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true" hidden></div>
+    <div class="app-frame">
+      <aside class="app-sidebar" id="app-sidebar" aria-label="Menu principal" data-expanded="false">
+        <div class="sidebar-brand-row"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
+          <img src="/public/loupe-logo.svg" alt="" />
+          <span class="app-brand-word sidebar-label"><span class="app-brand-search">Search</span><span class="app-brand-for">For</span>Leads</span>
+        </a><button id="sidebar-close" class="sidebar-close" type="button" aria-label="Fechar menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+        <button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-label="Expandir menu" aria-expanded="false" aria-controls="app-sidebar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16m4-11 3 3-3 3"/></svg><span class="sidebar-label">Recolher menu</span></button>
         <nav class="app-nav" aria-label="Navegação do app">
-          <a href="#home" data-view-link="home" aria-current="page">
+          <a href="#home" data-view-link="home" aria-label="Home" title="Home" aria-current="page">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
-            <span>Home</span>
+            <span class="sidebar-label">Home</span>
           </a>
-          <a href="#crm" data-view-link="crm">
+          <a href="#crm" data-view-link="crm" aria-label="CRM" title="CRM">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="10" r="2"/><path d="M5.5 16a2.5 2.5 0 0 1 5 0M14 9h4m-4 4h4m-4 4h3"/></svg>
-            <span>CRM</span>
+            <span class="sidebar-label">CRM</span>
             <span class="nav-count" id="lead-count" hidden>0</span>
           </a>
-          <a href="#search" data-view-link="search">
+          <a href="#search" data-view-link="search" aria-label="Busca" title="Busca">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 8v5M8 10.5h5"/></svg>
-            <span>Busca</span>
+            <span class="sidebar-label">Busca</span>
           </a>
         </nav>
-
-        <div class="sidebar-bottom">
-          <div class="plan-note"><span class="plan-dot"></span><span>Seu radar está ativo</span></div>
-          <div class="account-row">
-            <div class="account-avatar" id="account-avatar">S</div>
-            <div class="account-copy"><strong id="account-name">Sua conta</strong><span id="account-email">Carregando…</span></div>
-          <button id="sign-out" class="sign-out" type="button" aria-label="Sair da conta" title="Sair"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-9h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-8"/></svg></button>
-          </div>
-        </div>
+        <div class="sidebar-bottom"><button id="sign-out" class="sign-out" type="button" aria-label="Sair da conta" title="Sair"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-9h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-8"/></svg><span class="sidebar-label">Sair da conta</span></button><div class="account-row"><div class="account-avatar" id="account-avatar">S</div>
+            <div class="account-copy sidebar-label"><strong id="account-name">Sua conta</strong><span id="account-email">Carregando…</span></div></div></div>
       </aside>
 
       <main class="app-main">
@@ -128,7 +125,7 @@
             <div class="search-beacon" aria-hidden="true">
               <div class="search-beacon-core"><svg viewBox="0 0 48 48" fill="none"><defs><linearGradient id="search-loupe-gradient" x1="6" y1="6" x2="43" y2="43" gradientUnits="userSpaceOnUse"><stop stop-color="#63c4ff"/><stop offset=".52" stop-color="#8b75ff"/><stop offset="1" stop-color="#4d9cff"/></linearGradient></defs><circle cx="21" cy="21" r="12" stroke="url(#search-loupe-gradient)" stroke-width="2.6"/><path d="m30 30 10 10" stroke="url(#search-loupe-gradient)" stroke-width="2.6" stroke-linecap="round"/></svg></div>
             </div>
-            <h2>Inicie uma <span class="search-intro-accent">nova busca</span></h2>
+            <h2>Hora do <span class="search-intro-accent">Search</span></h2>
             <p>Defina um nicho e uma região para começar sua prospecção.</p>
             <button class="search-primary" id="open-search-form" type="button" aria-controls="search-editor" aria-expanded="false"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Iniciar nova busca</button>
           </div>
@@ -182,15 +179,11 @@
             </div>
           </div>
         </section>
-        <footer class="app-footer"><span>SearchForLeads</span><span>Seu próximo contato começa com contexto.</span></footer>
+        
       </main>
     </div>
-    <nav class="mobile-nav" aria-label="Navegação principal">
-      <a href="#home" data-view-link="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg><span>Home</span></a>
-      <a href="#crm" data-view-link="crm"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="10" r="2"/><path d="M5.5 16a2.5 2.5 0 0 1 5 0M14 9h4m-4 4h4m-4 4h3"/></svg><span>CRM</span></a>
-      <a href="#search" data-view-link="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 8v5M8 10.5h5"/></svg><span>Busca</span></a>
-    </nav>
-    <script type="module" src="app.js?v=search-clean-20261116"></script>
+
+    <script type="module" src="app.js?v=sidebar-20261116"></script>
   </body>
 </html>
 
