@@ -1,5 +1,4 @@
 const stateCodes = new Set(["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]);
-const leadQuantities = new Set([10, 25, 50, 100]);
 let localityRequest = null;
 
 function loadLocalities() {
@@ -85,7 +84,7 @@ export function initializeSearchCriteria(form) {
   state.addEventListener("change", populateCities);
   retry.addEventListener("click", populateCities);
   city.addEventListener("change", () => city.setCustomValidity(""));
-  quantity.addEventListener("change", () => quantity.setCustomValidity(""));
+  quantity.addEventListener("input", () => quantity.setCustomValidity(""));
   niche.addEventListener("input", () => niche.setCustomValidity(""));
   form.addEventListener("reset", () => window.queueMicrotask(populateCities));
   if (state.value) populateCities();
@@ -95,7 +94,7 @@ export function initializeSearchCriteria(form) {
       niche.setCustomValidity(niche.value.trim() ? "" : "Informe o tipo de empresa que você procura.");
       state.setCustomValidity(stateCodes.has(state.value) ? "" : "Selecione um estado brasileiro.");
       const limit = Number(quantity.value);
-      quantity.setCustomValidity(leadQuantities.has(limit) ? "" : "Escolha 10, 25, 50 ou 100 leads.");
+      quantity.setCustomValidity(quantity.value.trim() && Number.isInteger(limit) && limit >= 1 && limit <= 100 ? "" : "Informe um número inteiro de 1 a 100 leads.");
       if (!form.reportValidity()) return null;
       if (!selectedState || selectedState.code !== state.value || city.disabled) {
         help.textContent = "Carregue as cidades do estado escolhido antes de continuar.";
