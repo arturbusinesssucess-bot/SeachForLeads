@@ -1,0 +1,44 @@
+.product-app .app-button {
+  --button-fill: #2f6fe0;
+  --button-fill-hover: #2c67d2;
+  --button-led: rgba(54,124,255,.28);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 12px;
+  appearance: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  overflow: visible;
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+.product-app .app-button--primary { background: var(--button-fill); background-image: none; color: #fff; box-shadow: 0 0 24px var(--button-led), 0 8px 24px rgba(22,62,152,.18); }
+.product-app .app-button--primary::before { content: none; }
+.product-app .app-button--primary::after { position: absolute; inset: 0; border-radius: inherit; content: ""; pointer-events: none; box-shadow: 0 0 26px 3px rgba(54,124,255,.28); opacity: 0; transition: opacity 160ms ease; }
+.product-app .app-button--primary:hover:not(:disabled) { background-color: var(--button-fill-hover); color: #fff; transform: translateY(-1px); }
+.product-app .app-button--primary:hover:not(:disabled)::after { opacity: 1; }
+.product-app .app-button--primary:active:not(:disabled) { transform: translateY(0); }
+.product-app .app-button:focus-visible { outline: 2px solid #a8b8ff; outline-offset: 4px; }
+.product-app .app-button:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; transform: none; }
+.product-app .app-button:disabled::after { opacity: 0; }
+.product-app .app-button .app-button-icon { width: 18px; height: 18px; flex: 0 0 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.product-app .app-button .app-button-label { position: relative; z-index: 1; }
+.product-app .app-button--compact { min-height: 40px; padding: 10px 14px; font-size: 12px; }
+.product-app .app-button--compact .app-button-icon { width: 16px; height: 16px; flex-basis: 16px; }
+.product-app :is(#home-recent-empty,#analytics-empty) .app-button { margin-top: 14px; }
+@media (pointer: coarse) { .product-app .app-button--compact { min-height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .product-app .app-button, .product-app .app-button::after { transition: none; } .product-app .app-button--primary:hover:not(:disabled) { transform: none; } }
+
