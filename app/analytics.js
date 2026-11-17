@@ -1,4 +1,4 @@
-import { classifyStage, decorateRowStage, getAnalyticsStages, resolveRowStage } from "./pipeline.js?v=20261117";
+import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, resolveRowStage } from "./pipeline.js?v=stage-colors";
 
 export let crmStages = getAnalyticsStages();
 export function classifyCRMStatus(value) { return classifyStage(value); }
@@ -39,6 +39,14 @@ const percentage = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 function setText(selector, value) { const element = document.querySelector(selector); if (element) element.textContent = value; }
 function percent(value) { return value === null ? "—" : `${percentage.format(value)}%`; }
 
+function stageDot(color) {
+  const dot = document.createElement("span");
+  dot.className = "stage-color-dot";
+  dot.dataset.stageColor = color;
+  dot.setAttribute("aria-hidden", "true");
+  return dot;
+}
+
 function renderBars(container, values, total) {
   const fragment = document.createDocumentFragment();
   for (const item of values) {
@@ -47,6 +55,10 @@ function renderBars(container, values, total) {
     const caption = document.createElement("div");
     caption.className = "analytics-bar-caption";
     const label = document.createElement("span"); label.textContent = item.label;
+    if (item.color) {
+      label.className = "analytics-stage-label";
+      label.prepend(stageDot(item.color));
+    }
     const value = document.createElement("strong"); value.textContent = number.format(item.value);
     caption.append(label, value);
     const track = document.createElement("div"); track.className = "analytics-bar-track";
@@ -76,7 +88,7 @@ export function initializeAnalytics(tbody) {
     setText("#analytics-win-rate", percent(summary.winRate));
     setText("#analytics-result-count", `${number.format(summary.total)} de ${number.format(records.length)} leads`);
     reset.hidden = stageFilter.value === "all" && !cityFilter.value;
-    const stages = crmStages.filter((stage) => stage.key !== "other" || summary.counts.other).map((stage) => ({ label: stage.label, value: summary.counts[stage.key] }));
+    const stages = crmStages.filter((stage) => stage.key !== "other" || summary.counts.other).map((stage) => ({ label: stage.label, color: stage.color, value: summary.counts[stage.key] }));
     renderBars(document.querySelector("#analytics-stage-bars"), stages, summary.total);
     const stageDescription = stages.map((stage) => `${stage.label}: ${number.format(stage.value)}`).join("; ");
     document.querySelector("#analytics-stage-chart").setAttribute("aria-label", summary.total ? `Leads por etapa. ${stageDescription}.` : "Leads por etapa. Ainda não há leads para os filtros selecionados.");
@@ -99,7 +111,11 @@ export function initializeAnalytics(tbody) {
 
   function refresh() {
     crmStages = getAnalyticsStages();
-    for (const row of tbody.querySelectorAll("tr")) decorateRowStage(row);
+    for (const row of tbody.querySelectorAll("tr")) {
+      const stage = decorateRowStage(row);
+      const status = row.cells[3];
+      if (status) status.dataset.stageColor = getStageColor(stage);
+    }
     const nextStageSignature = JSON.stringify(crmStages);
     if (nextStageSignature !== stageSignature) {
       const previous = stageFilter.value;
@@ -146,7 +162,10 @@ export function initializeAnalytics(tbody) {
         const name = document.createElement("strong"); name.textContent = record.name;
         const city = document.createElement("span"); city.textContent = record.city;
         company.append(name, city);
-        const stage = document.createElement("span"); stage.className = "recent-lead-stage"; stage.textContent = crmStages.find((stage) => stage.key === record.stage).label;
+        const stageDefinition = crmStages.find((stage) => stage.key === record.stage);
+        const stage = document.createElement("span");
+        stage.className = "recent-lead-stage";
+        stage.append(stageDot(stageDefinition.color), stageDefinition.label);
         item.append(company, stage); fragment.append(item);
       }
       recent.replaceChildren(fragment);
@@ -165,3 +184,4 @@ export function initializeAnalytics(tbody) {
   refresh();
   return { refresh };
 }
+

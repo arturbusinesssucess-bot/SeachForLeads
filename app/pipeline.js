@@ -1,13 +1,25 @@
 const DEFAULT_PIPELINE = Object.freeze([
-  Object.freeze({ key: 'new', label: 'Novos' }),
-  Object.freeze({ key: 'qualified', label: 'Qualificados' }),
-  Object.freeze({ key: 'contacted', label: 'Primeiro contato' }),
-  Object.freeze({ key: 'responded', label: 'Em conversa' }),
-  Object.freeze({ key: 'won', label: 'Fechado' }),
-  Object.freeze({ key: 'lost', label: 'Perdido' }),
+  Object.freeze({ key: 'new', label: 'Novos', color: 'blue' }),
+  Object.freeze({ key: 'qualified', label: 'Qualificados', color: 'purple' }),
+  Object.freeze({ key: 'contacted', label: 'Primeiro contato', color: 'amber' }),
+  Object.freeze({ key: 'responded', label: 'Em conversa', color: 'cyan' }),
+  Object.freeze({ key: 'won', label: 'Fechado', color: 'green' }),
+  Object.freeze({ key: 'lost', label: 'Perdido', color: 'red' }),
 ]);
+export const STAGE_COLOR_OPTIONS = Object.freeze([
+  { key: 'blue', label: 'Azul' },
+  { key: 'purple', label: 'Roxo' },
+  { key: 'cyan', label: 'Ciano' },
+  { key: 'amber', label: 'Âmbar' },
+  { key: 'pink', label: 'Rosa' },
+  { key: 'green', label: 'Verde' },
+  { key: 'red', label: 'Vermelho' },
+  { key: 'slate', label: 'Cinza' },
+].map((option) => Object.freeze(option)));
+const PALETTE_KEYS = new Set(STAGE_COLOR_OPTIONS.map(({ key }) => key));
 const OPEN_KEYS = new Set(['new', 'qualified', 'contacted', 'responded']);
-const ALL_KEYS = new Set(DEFAULT_PIPELINE.map((stage) => stage.key));
+const DEFAULT_COLORS = new Map(DEFAULT_PIPELINE.map(({ key, color }) => [key, color]));
+const FALLBACK_COLOR = 'slate';
 const STORAGE_PREFIX = 'sfl:pipeline:v1:';
 const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
 const aliases = {
@@ -25,19 +37,22 @@ let currentUser = null;
 let currentStages = getDefaultPipeline();
 let rowStates = new WeakMap();
 
-function copy(stages) { return stages.map(({ key, label }) => ({ key, label })); }
+function copy(stages) { return stages.map(({ key, label, color }) => ({ key, label, color })); }
 function invalidStructure() { return new Error('Mantenha as quatro etapas abertas e os resultados Fechado e Perdido.'); }
 function storageFailure() { return new Error('Não foi possível salvar neste dispositivo. Verifique as permissões de armazenamento e tente novamente.'); }
 
 export function getDefaultPipeline() { return copy(DEFAULT_PIPELINE); }
 export function getPipeline() { return copy(currentStages); }
+export function getStageColor(key) {
+  return currentStages.find((stage) => stage.key === key)?.color ?? FALLBACK_COLOR;
+}
 
 export function validatePipeline(input) {
   if (!Array.isArray(input) || input.length !== DEFAULT_PIPELINE.length) throw invalidStructure();
   const keys = new Set(), names = new Set(), stages = [];
   for (let index = 0; index < input.length; index++) {
     const stage = input[index];
-    if (!stage || typeof stage !== 'object' || Array.isArray(stage) || Object.keys(stage).some((field) => field !== 'key' && field !== 'label') || !ALL_KEYS.has(stage.key) || keys.has(stage.key)) throw invalidStructure();
+    if (!stage || typeof stage !== 'object' || Array.isArray(stage) || Object.keys(stage).some((field) => field !== 'key' && field !== 'label' && field !== 'color') || !DEFAULT_COLORS.has(stage.key) || keys.has(stage.key)) throw invalidStructure();
     if (index < 4 ? !OPEN_KEYS.has(stage.key) : stage.key !== DEFAULT_PIPELINE[index].key) {
       throw new Error('As etapas Fechado e Perdido permanecem no fim e não podem mudar de posição.');
     }
@@ -48,7 +63,11 @@ export function validatePipeline(input) {
     const normalized = normalize(label);
     if (names.has(normalized)) throw new Error('O nome de cada etapa deve ser único, mesmo sem acentos ou com letras maiúsculas.');
     if (reservedOther.has(normalized) || (aliasKeys.has(normalized) && aliasKeys.get(normalized) !== stage.key)) throw new Error('Esse nome já identifica outra etapa do funil ou é um nome reservado.');
-    keys.add(stage.key);names.add(normalized);stages.push({ key: stage.key, label });
+    const color = Object.hasOwn(stage, 'color') ? stage.color : DEFAULT_COLORS.get(stage.key);
+    if (!PALETTE_KEYS.has(color)) throw new Error('Escolha uma cor da paleta para cada etapa.');
+    keys.add(stage.key);
+    names.add(normalized);
+    stages.push({ key: stage.key, label, color });
   }
   return stages;
 }
@@ -133,4 +152,7 @@ export function decorateRowStage(row) {
   return key;
 }
 
-export function getAnalyticsStages() { return [...getPipeline(), { key: 'other', label: 'Outros' }]; }
+export function getAnalyticsStages() {
+  return [...getPipeline(), { key: 'other', label: 'Outros', color: FALLBACK_COLOR }];
+}
+

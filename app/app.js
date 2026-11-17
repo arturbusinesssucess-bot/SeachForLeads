@@ -8,14 +8,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
-import { initializeSettings } from "./settings.js?v=20261117";
-import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=20261117";
+import { initializeSettings } from "./settings.js?v=stage-colors";
+import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=stage-colors";
 
 import { initializeAIWorkspace } from "./ai-workspace.js?v=20261117";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=custom-selects-20261117";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
-import { initializeAnalytics } from "./analytics.js?v=settings-20261117";
+import { initializeAnalytics } from "./analytics.js?v=stage-colors";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
@@ -234,3 +234,4 @@ if (isFirebaseConfigured) {
 } else {
   window.location.replace("/auth?mode=login");
 }
+

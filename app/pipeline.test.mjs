@@ -23,7 +23,7 @@ function row(text, status, interactive = false) {
 test('defaults keep six stable keys and immutable final outcomes', async () => {
   const { pipeline: p } = await setup();
   assert.deepEqual(p.getDefaultPipeline().map(stage => stage.key), ['new', 'qualified', 'contacted', 'responded', 'won', 'lost']);
-  assert.deepEqual(p.getDefaultPipeline().slice(-2), [{ key: 'won', label: 'Fechado' }, { key: 'lost', label: 'Perdido' }]);
+  assert.deepEqual(p.getDefaultPipeline().slice(-2), [{ key: 'won', label: 'Fechado', color: 'green' }, { key: 'lost', label: 'Perdido', color: 'red' }]);
 });
 
 test('validates renames and reordering while returning fresh normalized objects', async () => {
@@ -103,6 +103,69 @@ test('invalid stored JSON or invalid saved schemas load defaults without rewriti
     assert.deepEqual(p.getPipeline(), p.getDefaultPipeline());
     assert.equal(entries.get('sfl:pipeline:v1:A'), value);
   }
+});
+
+test('v1 saved stages without colors keep their names and order and receive default colors by key', async () => {
+  const { pipeline: p, entries } = await setup();
+  const legacy = [
+    { key: 'contacted', label: 'Conversa iniciada' },
+    { key: 'new', label: 'Captação' },
+    { key: 'qualified', label: 'Qualificados' },
+    { key: 'responded', label: 'Em conversa' },
+    { key: 'won', label: 'Fechado' },
+    { key: 'lost', label: 'Perdido' },
+  ];
+  const storageKey = 'sfl:pipeline:v1:account-A';
+  const before = JSON.stringify(legacy);
+  entries.set(storageKey, before);
+  const migrated = p.setPipelineUser('account-A');
+
+  assert.deepEqual(migrated.map(({ key, label }) => ({ key, label })), legacy);
+  assert.deepEqual(migrated.map(({ color }) => color), ['amber', 'blue', 'purple', 'cyan', 'green', 'red']);
+  assert.equal(entries.get(storageKey), before);
+  p.savePipeline(migrated);
+  assert.deepEqual(JSON.parse(entries.get(storageKey)), migrated);
+});
+
+test('custom palette colors persist per account even when final outcomes stay locked', async () => {
+  const { pipeline: p, events } = await setup();
+  p.setPipelineUser('account-A');
+  const stages = p.getPipeline();
+  stages[0].color = 'pink';
+  stages[4].color = 'cyan';
+  stages[5].color = 'slate';
+  const saved = p.savePipeline(stages);
+
+  assert.deepEqual(saved.slice(-2), [
+    { key: 'won', label: 'Fechado', color: 'cyan' },
+    { key: 'lost', label: 'Perdido', color: 'slate' },
+  ]);
+  assert.equal(p.getStageColor('new'), 'pink');
+  assert.equal(p.getStageColor('other'), 'slate');
+  assert.equal(p.getAnalyticsStages().at(-1).color, 'slate');
+  assert.equal(events.at(-1).detail.stages[0].color, 'pink');
+
+  events.at(-1).detail.stages[0].color = 'red';
+  saved[0].color = 'amber';
+  assert.equal(p.getStageColor('new'), 'pink');
+  p.setPipelineUser('account-B');
+  assert.equal(p.getStageColor('new'), 'blue');
+  p.setPipelineUser('account-A');
+  assert.equal(p.getStageColor('new'), 'pink');
+  p.resetPipeline();
+  assert.equal(p.getStageColor('new'), 'blue');
+});
+
+test('rejects explicit colors outside the palette without saving changes', async () => {
+  const { pipeline: p, entries } = await setup();
+  p.setPipelineUser('account-A');
+  const original = p.getPipeline();
+  for (const color of ['#ff0000', 'url(https://example.invalid)', 'Blue', '', null, undefined, {}]) {
+    const stages = [{ ...original[0], color }, ...original.slice(1)];
+    assert.throws(() => p.savePipeline(stages), /cor da paleta/i);
+  }
+  assert.equal(entries.size, 0);
+  assert.deepEqual(p.getPipeline(), original);
 });
 
 test('storage read failures load defaults and write failures never claim a saved mutation', async () => {
@@ -187,3 +250,4 @@ test('a previously unknown row can resolve after its label is configured', async
   assert.equal(p.resolveRowStage(lead),'other');p.savePipeline(rename(p.getDefaultPipeline(),'new','Captação'));
   assert.equal(p.resolveRowStage(lead),'new');
 });
+

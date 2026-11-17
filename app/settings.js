@@ -1,10 +1,10 @@
 import { updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-import { getPipeline, getDefaultPipeline, savePipeline, validatePipeline } from "./pipeline.js?v=20261117";
+import { getPipeline, getDefaultPipeline, savePipeline, STAGE_COLOR_OPTIONS, validatePipeline } from "./pipeline.js?v=stage-colors";
 
 const SECTIONS = new Set(["general", "profile", "security", "account", "plans", "pipeline"]);
 const OPEN_STAGES = new Set(["new", "qualified", "contacted", "responded"]);
 const RIGHT_ARROW = "M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z";
-const copyStages = (stages) => stages.map(({ key, label }) => ({ key, label }));
+const copyStages = (stages) => stages.map(({ key, label, color }) => ({ key, label, color }));
 const equalStages = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 
 function node(tag, className, text) {
@@ -39,14 +39,17 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
   const profileSave = root.querySelector("#settings-profile-save");
   const profileCancel = root.querySelector("#settings-profile-cancel");
   const profileStatus = root.querySelector("#settings-profile-status");
+  const signInMethod = root.querySelector("#settings-sign-in-method");
+  const passwordHelp = root.querySelector("#settings-password-help");
   const resetButton = root.querySelector("#settings-password-reset");
+  const googlePasswordLink = root.querySelector("#settings-password-google");
   const securityStatus = root.querySelector("#settings-security-status");
   const pipelineList = root.querySelector("#settings-pipeline-list");
   const pipelineSave = root.querySelector("#settings-pipeline-save");
   const pipelineCancel = root.querySelector("#settings-pipeline-cancel");
   const pipelineDefault = root.querySelector("#settings-pipeline-default");
   const pipelineStatus = root.querySelector("#settings-pipeline-status");
-  if (!tablist || !profileForm || !nameInput || !emailInput || !profileSave || !profileCancel || !profileStatus || !resetButton || !securityStatus || !pipelineList || !pipelineSave || !pipelineCancel || !pipelineDefault || !pipelineStatus || tabs.length !== SECTIONS.size || panels.length !== SECTIONS.size) return null;
+  if (!tablist || !profileForm || !nameInput || !emailInput || !profileSave || !profileCancel || !profileStatus || !signInMethod || !passwordHelp || !resetButton || !googlePasswordLink || !securityStatus || !pipelineList || !pipelineSave || !pipelineCancel || !pipelineDefault || !pipelineStatus || tabs.length !== SECTIONS.size || panels.length !== SECTIONS.size) return null;
 
   const mobile = window.matchMedia("(max-width: 767px)");
   const coarsePointer = window.matchMedia("(pointer: coarse)");
@@ -166,21 +169,30 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     }
   });
 
-  function passwordProvider() { return !!currentUser?.providerData?.some((provider) => provider.providerId === "password"); }
+  function canResetPassword() {
+    return Boolean(currentUser?.email && currentUser.providerData?.some(({ providerId }) => providerId === "password"));
+  }
+
   function refreshSecurity() {
     const providers = currentUser?.providerData || [];
     const names = [...new Set(providers.map((provider) => provider.providerId === "google.com" ? "Google" : provider.providerId === "password" ? "E-mail e senha" : "Outro provedor"))];
-    root.querySelector("#settings-sign-in-method").textContent = currentUser ? names.join(" e ") || "Sua conta" : "Entre na sua conta para continuar.";
-    const canReset = passwordProvider() && !!currentUser?.email;
+    signInMethod.textContent = currentUser ? names.join(", ") || "Sua conta" : "Entre na sua conta para continuar.";
+    const canReset = canResetPassword();
+    const usesGoogle = providers.some(({ providerId }) => providerId === "google.com");
     resetButton.hidden = !canReset;
     resetButton.disabled = !canReset || passwordBusy || resetSent;
     resetButton.setAttribute("aria-busy", String(passwordBusy));
+    googlePasswordLink.hidden = !usesGoogle;
     const label = resetButton.querySelector(".app-button-label");
     if (label) label.textContent = passwordBusy ? "Enviando…" : resetSent ? "E-mail enviado" : "Enviar e-mail para redefinir senha";
-    root.querySelector("#settings-password-help").textContent = !currentUser ? "Entre na sua conta para ver as opções de acesso." : canReset ? "Enviaremos um link de redefinição para o e-mail da sua conta quando você solicitar." : providers.some((provider) => provider.providerId === "google.com") ? "Você entra com o Google. Gerencie sua senha e as verificações de acesso na sua conta Google." : "Gerencie sua senha no provedor usado para entrar.";
+    const instructions = [];
+    if (canReset) instructions.push("Enviaremos um link para redefinir sua senha do SearchForLeads ao e-mail da conta.");
+    if (usesGoogle) instructions.push("Para mudar a senha do Google, abra as configurações da sua Conta Google.");
+    const fallback = currentUser ? "A redefinição de senha está indisponível para o método de acesso da sua conta." : "Entre na sua conta para ver as opções de acesso.";
+    passwordHelp.textContent = instructions.join(" ") || fallback;
   }
   resetButton.addEventListener("click", async () => {
-    if (!currentUser || !passwordProvider() || !currentUser.email || passwordBusy || resetSent) return;
+    if (!canResetPassword() || passwordBusy || resetSent) return;
     const auth = getAuthInstance();
     if (!auth) { securityStatus.textContent = "Não foi possível confirmar sua sessão. Entre novamente."; return; }
     const user = currentUser, revision = userRevision;
@@ -219,6 +231,45 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     }
   }
 
+  function colorDot(color) {
+    const dot = node("span", "stage-color-dot");
+    dot.dataset.stageColor = color;
+    dot.setAttribute("aria-hidden", "true");
+    return dot;
+  }
+
+  function updateColorPicker(picker, stage) {
+    const summary = picker.querySelector("summary");
+    const color = STAGE_COLOR_OPTIONS.find((option) => option.key === stage.color);
+    const label = `Cor de ${stage.label.trim() || "etapa"}: ${color.label}`;
+    summary.setAttribute("aria-label", label);
+    summary.title = label;
+    summary.firstElementChild.dataset.stageColor = stage.color;
+    for (const button of picker.querySelectorAll("[data-pick-color]")) {
+      button.setAttribute("aria-pressed", String(button.dataset.pickColor === stage.color));
+    }
+  }
+
+  function createColorPicker(stage) {
+    const picker = node("details", "settings-stage-colors");
+    picker.name = "settings-stage-colors";
+    const summary = node("summary", "settings-color-trigger");
+    summary.append(colorDot(stage.color));
+    const palette = node("div", "settings-stage-palette");
+    palette.setAttribute("role", "group");
+    palette.setAttribute("aria-label", "Cores da etapa");
+    for (const option of STAGE_COLOR_OPTIONS) {
+      const button = node("button", "settings-color-choice");
+      button.type = "button";
+      button.dataset.pickColor = option.key;
+      button.append(colorDot(option.key), node("span", "", option.label));
+      palette.append(button);
+    }
+    picker.append(summary, palette);
+    updateColorPicker(picker, stage);
+    return picker;
+  }
+
   function renderPipeline(focusKey, direction) {
     const fragment = document.createDocumentFragment();
     draftStages.forEach((stage, index) => {
@@ -232,6 +283,7 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
         number.title = "Arraste para reordenar";
       }
       row.append(number);
+      const colorPicker = createColorPicker(stage);
       if (OPEN_STAGES.has(stage.key)) {
         const field = node("div", "settings-stage-main");
         const label = node("label", "", `Etapa ${index + 1}`);
@@ -256,13 +308,13 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
           button.append(moveArrow());
           controls.append(button);
         }
-        row.append(field, controls);
+        row.append(field, colorPicker, controls);
         updateMoveLabels(row, stage, index);
       } else {
         row.dataset.fixed = "true";
         const fixed = node("div", "settings-stage-final");
         fixed.append(node("strong", "", stage.label), node("span", "", "Etapa fixa"));
-        row.append(fixed);
+        row.append(fixed, colorPicker);
       }
       fragment.append(row);
     });
@@ -294,15 +346,46 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     input.setCustomValidity("");
     input.removeAttribute("aria-invalid");
     pipelineStatus.textContent = "";
-    updateMoveLabels(input.closest("li"), draftStages[index], index);
+    const row = input.closest("li");
+    updateMoveLabels(row, draftStages[index], index);
+    updateColorPicker(row.querySelector(".settings-stage-colors"), draftStages[index]);
     refreshPipelineButtons();
   });
   pipelineList.addEventListener("click", (event) => {
+    const choice = event.target.closest("[data-pick-color]");
+    if (choice && currentUser && !pipelineBusy) {
+      const picker = choice.closest("details");
+      const stage = draftStages.find((item) => item.key === picker.closest("li").dataset.stageKey);
+      stage.color = choice.dataset.pickColor;
+      updateColorPicker(picker, stage);
+      picker.open = false;
+      picker.querySelector("summary").focus({ preventScroll: true });
+      pipelineStatus.textContent = "";
+      refreshPipelineButtons();
+      return;
+    }
     const button = event.target.closest("[data-move]");
     if (!button || button.disabled) return;
     const key = button.closest("[data-stage-key]")?.dataset.stageKey;
     const index = draftStages.findIndex((stage) => stage.key === key);
     moveStage(key, index + (button.dataset.move === "up" ? -1 : 1), button.dataset.move);
+  });
+  document.addEventListener("click", (event) => {
+    for (const picker of pipelineList.querySelectorAll(".settings-stage-colors[open]")) {
+      if (!picker.contains(event.target)) picker.open = false;
+    }
+  });
+  pipelineList.addEventListener("toggle", (event) => {
+    const picker = event.target;
+    if (picker.open) picker.querySelector(".settings-stage-palette").scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, true);
+  pipelineList.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const picker = event.target.closest(".settings-stage-colors[open]");
+    if (!picker) return;
+    event.preventDefault();
+    picker.open = false;
+    picker.querySelector("summary").focus({ preventScroll: true });
   });
   pipelineList.addEventListener("dragstart", (event) => {
     const handle = event.target.closest("[data-drag-stage]");
@@ -396,3 +479,4 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     },
   };
 }
+

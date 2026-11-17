@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="/public/app-corner-mist.v1.css" />
     <link rel="stylesheet" href="/public/app-mobile.v1.css" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=nichos-20261117" />
-    <link rel="stylesheet" href="/public/app-settings.v1.css?v=interaction-feedback" />
+    <link rel="stylesheet" href="/public/app-settings.v1.css?v=stage-colors" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <div class="app-corner-mist" aria-hidden="true"></div>
@@ -280,7 +280,21 @@
               </section>
               <section id="settings-panel-security" data-settings-panel="security" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-security" tabindex="0" hidden>
                 <header class="settings-panel-heading"><h2>Segurança</h2><p>Confira como você acessa sua conta.</p></header>
-                <section class="settings-card settings-stack"><div><h3>Forma de entrada</h3><p id="settings-sign-in-method">Carregando…</p></div><p id="settings-password-help">Entre na sua conta para ver as opções de acesso.</p><button type="button" id="settings-password-reset" class="app-button app-button--primary" disabled hidden><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="fill:currentColor;stroke:none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg><span class="app-button-label">Enviar e-mail para redefinir senha</span></button><p id="settings-security-status" class="settings-status" role="status" aria-live="polite"></p></section>
+                <section class="settings-card settings-stack" aria-labelledby="settings-sign-in-title">
+                  <div><h3 id="settings-sign-in-title">Forma de entrada</h3><p id="settings-sign-in-method">Carregando…</p></div>
+                </section>
+                <section class="settings-card settings-stack" aria-labelledby="settings-password-title">
+                  <div><h3 id="settings-password-title">Redefinir senha</h3><p id="settings-password-help">Entre na sua conta para ver as opções de acesso.</p></div>
+                  <button type="button" id="settings-password-reset" class="app-button app-button--primary" aria-describedby="settings-password-help" disabled hidden>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="fill:currentColor;stroke:none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                    <span class="app-button-label">Enviar e-mail para redefinir senha</span>
+                  </button>
+                  <a id="settings-password-google" class="app-button app-button--primary" href="https://myaccount.google.com/signinoptions/password" target="_blank" rel="noopener noreferrer" aria-describedby="settings-password-help" hidden>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="fill:currentColor;stroke:none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                    <span class="app-button-label">Gerenciar senha no Google</span>
+                  </a>
+                  <p id="settings-security-status" class="settings-status" role="status" aria-live="polite"></p>
+                </section>
               </section>
               <section id="settings-panel-account" data-settings-panel="account" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-account" tabindex="0" hidden>
                 <header class="settings-panel-heading"><h2>Conta e privacidade</h2><p>Seus dados de acesso e as informações do serviço.</p></header>
@@ -294,7 +308,7 @@
               <section id="settings-panel-pipeline" data-settings-panel="pipeline" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-pipeline" tabindex="0" hidden>
                 <header class="settings-panel-heading"><h2>Funil de vendas</h2><p>Personalize os nomes e a ordem das etapas abertas.</p></header>
                 <section class="settings-card settings-stack">
-                  <p>As etapas Fechado e Perdido permanecem no final do funil. No computador, arraste pelo número; no celular ou teclado, use os botões de mover.</p>
+                  <p>Selecione a bolinha para mudar a cor de uma etapa. Fechado e Perdido ficam no final do funil. Para reordenar as demais etapas, arraste pelo número ou use as setas.</p>
                   <p class="settings-local-note">As alterações do funil ficam salvas neste dispositivo para sua conta.</p>
                   <ol class="settings-pipeline-list" id="settings-pipeline-list" aria-label="Etapas do funil"></ol>
                   <div class="settings-form-actions"><button type="button" id="settings-pipeline-save" class="app-button app-button--primary" disabled><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="fill:currentColor;stroke:none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg><span class="app-button-label">Salvar funil</span></button><button type="button" id="settings-pipeline-cancel" class="settings-secondary" disabled>Cancelar</button><button type="button" id="settings-pipeline-default" class="settings-secondary" disabled>Restaurar padrão</button></div>
@@ -307,6 +321,7 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=settings-20261117"></script>
+    <script type="module" src="app.js?v=stage-colors"></script>
   </body>
 </html>
+
