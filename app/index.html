@@ -21,7 +21,8 @@
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
     <link rel="stylesheet" href="/public/app-corner-mist.v1.css" />
     <link rel="stylesheet" href="/public/app-mobile.v1.css" />
-    <link rel="stylesheet" href="/public/app-ai.v1.css" />
+    <link rel="stylesheet" href="/public/app-ai.v1.css?v=nichos-20261117" />
+    <link rel="stylesheet" href="/public/app-settings.v1.css" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <div class="app-corner-mist" aria-hidden="true"></div>
@@ -43,7 +44,7 @@
             <span class="sidebar-label">Home</span>
           </a>
           <a href="#crm" data-view-link="crm" aria-label="CRM" title="CRM">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="10" r="2"/><path d="M5.5 16a2.5 2.5 0 0 1 5 0M14 9h4m-4 4h4m-4 4h3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21"/><path d="M3 7h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
             <span class="sidebar-label">CRM</span>
             <span class="nav-count" id="lead-count" hidden>0</span>
           </a>
@@ -57,7 +58,7 @@
           </a>
         </nav>
         <div class="sidebar-bottom"><button id="sign-out" class="sign-out" type="button" aria-label="Sair da conta" title="Sair"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-9h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-8"/></svg><span class="sidebar-label">Sair da conta</span></button><div class="account-row"><div class="account-avatar" id="account-avatar">S</div>
-            <div class="account-copy sidebar-label"><strong id="account-name">Sua conta</strong><span id="account-email">Carregando…</span></div></div></div>
+            <div class="account-copy sidebar-label"><strong id="account-name">Sua conta</strong><span id="account-email">Carregando…</span></div><a class="account-settings" href="#settings" data-view-link="settings" aria-label="Configurações" title="Configurações"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg></a></div></div>
       </aside>
 
       <main class="app-main">
@@ -79,7 +80,7 @@
               <p class="pwa-install-help" id="pwa-install-help" hidden></p>
             </div>
             <div class="pwa-install-actions">
-              <button class="pwa-install-button pixel-button" id="pwa-install-button" type="button"><span class="pixel-label">Instalar app</span></button>
+              <button class="app-button app-button--primary" id="pwa-install-button" type="button"><svg class="app-button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span class="app-button-label">Instalar app</span></button>
               <button class="pwa-install-dismiss" id="pwa-install-dismiss" type="button" aria-label="Dispensar aviso">×</button>
             </div>
           </aside>
@@ -115,7 +116,7 @@
               <h2 id="home-quick-actions-title">Ações rápidas</h2>
               <div class="quick-actions-grid">
                 <button class="app-button app-button--quick" type="button" data-open-view="search"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="stroke-width:1.5" aria-hidden="true" focusable="false" class="app-button-icon" stroke-linecap="round" stroke-linejoin="round"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Busca</span></button>
-                <button class="app-button app-button--quick" type="button" data-open-view="crm"><svg viewBox="0 0 24 24" aria-hidden="true" class="app-button-icon" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="10" r="2"/><path d="M5.5 16a2.5 2.5 0 0 1 5 0M14 9h4m-4 4h4m-4 4h3"/></svg><span class="app-button-label">CRM</span></button>
+                <button class="app-button app-button--quick" type="button" data-open-view="crm"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="app-button-icon" style="stroke-width:2" aria-hidden="true" focusable="false"><path d="M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21"/><path d="M3 7h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="app-button-label">CRM</span></button>
                 <button class="app-button app-button--quick" type="button" data-open-view="analytics"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-column-increasing preview-icon app-button-icon" style="stroke-width:2" aria-hidden="true" focusable="false"><path d="M13 17V9"/><path d="M18 17V5"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M8 17v-3"/></svg><span class="app-button-label">Analytics</span></button>
               </div>
             </section>
@@ -145,7 +146,7 @@
             <button class="search-back" id="close-search-form" type="button"><svg xmlns="http://www.w3.org/2000/svg" class="back-arrow" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg> Voltar</button>
             <header class="search-editor-heading"><h2 id="search-form-title">Vamos encontrar seu próximo cliente.</h2><p>Defina o perfil de empresa e onde quer prospectar.</p></header>
             <details class="ai-pane" id="ai-offer-panel">
-              <summary><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span>Encontrar nichos para minha oferta</span><span class="ai-summary-state" aria-hidden="true"><span class="ai-when-closed">Abrir</span><span class="ai-when-open">Fechar</span></span></summary>
+              <summary><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span>Encontrar nichos para minha oferta</span><span class="ai-summary-state" aria-hidden="true"><span class="ai-when-closed">Abrir</span><span class="ai-when-open"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></span></span></summary>
               <div class="ai-pane-body">
                 <p id="ai-offer-help">Descreva o que você vende. A IA sugere nichos e critérios; você escolhe o que usar na busca.</p>
                 <label for="ai-offer">Sua oferta</label>
@@ -231,10 +232,73 @@
           </div>
         </section>
 
+        <section class="app-view settings-view" data-view="settings" aria-labelledby="settings-title" hidden>
+          <header class="settings-heading">
+            <div><h1 id="settings-title">Configurações</h1><p>Cuide do seu perfil, acesso e funil de vendas.</p></div>
+            <button class="settings-back" type="button" data-open-view="home"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg><span>Voltar à Home</span></button>
+          </header>
+          <div class="settings-layout">
+            <aside class="settings-navigation" aria-label="Preferências">
+              <h2>Preferências</h2>
+              <div class="settings-tabs" role="tablist" aria-label="Seções de configurações" aria-orientation="vertical">
+                <button id="settings-tab-general" data-settings-tab="general" type="button" role="tab" aria-controls="settings-panel-general" aria-selected="true" tabindex="0">Geral</button>
+                <button id="settings-tab-profile" data-settings-tab="profile" type="button" role="tab" aria-controls="settings-panel-profile" aria-selected="false" tabindex="-1">Perfil</button>
+                <button id="settings-tab-security" data-settings-tab="security" type="button" role="tab" aria-controls="settings-panel-security" aria-selected="false" tabindex="-1">Segurança</button>
+                <button id="settings-tab-account" data-settings-tab="account" type="button" role="tab" aria-controls="settings-panel-account" aria-selected="false" tabindex="-1">Conta</button>
+                <button id="settings-tab-plans" data-settings-tab="plans" type="button" role="tab" aria-controls="settings-panel-plans" aria-selected="false" tabindex="-1">Planos <span class="settings-tab-note">Em breve</span></button>
+                <button id="settings-tab-pipeline" data-settings-tab="pipeline" type="button" role="tab" aria-controls="settings-panel-pipeline" aria-selected="false" tabindex="-1">Funil de vendas</button>
+              </div>
+            </aside>
+            <div class="settings-content">
+              <section id="settings-panel-general" data-settings-panel="general" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-general" tabindex="0">
+                <header class="settings-panel-heading"><h2>Seu espaço de trabalho</h2><p>Escolha o que deseja ajustar.</p></header>
+                <div class="settings-shortcuts">
+                  <button type="button" class="settings-shortcut" data-settings-open="profile"><strong>Perfil</strong><span>Atualize o nome que aparece no seu espaço.</span></button>
+                  <button type="button" class="settings-shortcut" data-settings-open="security"><strong>Segurança</strong><span>Confira sua forma de entrada e o acesso à conta.</span></button>
+                  <button type="button" class="settings-shortcut" data-settings-open="account"><strong>Conta e privacidade</strong><span>Veja seus dados e as informações legais.</span></button>
+                  <button type="button" class="settings-shortcut" data-settings-open="pipeline"><strong>Funil de vendas</strong><span>Personalize os nomes e a ordem das etapas abertas.</span></button>
+                </div>
+                <aside class="settings-card settings-plan-note"><span class="settings-badge">Em breve</span><h3>Planos</h3><p>A área de planos está em preparação. Você poderá acompanhar as opções disponíveis por aqui.</p></aside>
+              </section>
+              <section id="settings-panel-profile" data-settings-panel="profile" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-profile" tabindex="0" hidden>
+                <header class="settings-panel-heading"><h2>Perfil</h2><p>Como você aparece no SearchForLeads.</p></header>
+                <form id="settings-profile-form" class="settings-card settings-form">
+                  <div class="settings-profile-summary"><span class="settings-profile-avatar" id="settings-profile-avatar" aria-hidden="true">S</span><div><strong id="settings-profile-name">Sua conta</strong><span id="settings-profile-email">Carregando…</span></div></div>
+                  <div class="settings-field"><label for="settings-display-name">Nome de exibição</label><input id="settings-display-name" name="displayName" type="text" minlength="2" maxlength="80" required autocomplete="name" aria-describedby="settings-name-help" disabled><p id="settings-name-help">Use de 2 a 80 caracteres.</p></div>
+                  <div class="settings-field"><label for="settings-email">E-mail</label><input id="settings-email" type="email" readonly autocomplete="email" aria-describedby="settings-email-help"><p id="settings-email-help">O e-mail é usado para entrar na sua conta.</p></div>
+                  <div class="settings-form-actions"><button type="submit" id="settings-profile-save" class="app-button app-button--primary" disabled><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="fill:currentColor;stroke:none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg><span class="app-button-label">Salvar alterações</span></button><button type="button" id="settings-profile-cancel" class="settings-secondary" disabled>Cancelar</button></div>
+                  <p id="settings-profile-status" class="settings-status" role="status" aria-live="polite"></p>
+                </form>
+              </section>
+              <section id="settings-panel-security" data-settings-panel="security" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-security" tabindex="0" hidden>
+                <header class="settings-panel-heading"><h2>Segurança</h2><p>Confira como você acessa sua conta.</p></header>
+                <section class="settings-card settings-stack"><div><h3>Forma de entrada</h3><p id="settings-sign-in-method">Carregando…</p></div><p id="settings-password-help">Entre na sua conta para ver as opções de acesso.</p><button type="button" id="settings-password-reset" class="app-button app-button--primary" disabled hidden><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="fill:currentColor;stroke:none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg><span class="app-button-label">Enviar e-mail para redefinir senha</span></button><p id="settings-security-status" class="settings-status" role="status" aria-live="polite"></p></section>
+              </section>
+              <section id="settings-panel-account" data-settings-panel="account" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-account" tabindex="0" hidden>
+                <header class="settings-panel-heading"><h2>Conta e privacidade</h2><p>Seus dados de acesso e as informações do serviço.</p></header>
+                <section class="settings-card settings-stack"><h3>Dados da conta</h3><dl class="settings-account-details"><div><dt>Nome</dt><dd id="settings-account-name">Sua conta</dd></div><div><dt>E-mail</dt><dd id="settings-account-email">Carregando…</dd></div></dl></section>
+                <section class="settings-card settings-stack"><h3>Privacidade e informações legais</h3><nav class="settings-legal-links" aria-label="Informações legais"><a href="/politica-de-privacidade" data-settings-legal="privacy">Política de privacidade</a><a href="/politica-de-cookies" data-settings-legal="cookies">Política de cookies</a><a href="/termos-de-uso" data-settings-legal="terms">Termos de uso</a></nav></section>
+              </section>
+              <section id="settings-panel-plans" data-settings-panel="plans" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-plans" tabindex="0" hidden>
+                <header class="settings-panel-heading"><h2>Planos</h2><p>Acompanhe as opções do SearchForLeads.</p></header>
+                <section class="settings-card settings-stack"><span class="settings-badge">Em breve</span><h3>Estamos preparando esta área</h3><p>As informações sobre planos e opções disponíveis aparecerão aqui.</p></section>
+              </section>
+              <section id="settings-panel-pipeline" data-settings-panel="pipeline" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-pipeline" tabindex="0" hidden>
+                <header class="settings-panel-heading"><h2>Funil de vendas</h2><p>Personalize os nomes e a ordem das etapas abertas.</p></header>
+                <section class="settings-card settings-stack">
+                  <p>As etapas Fechado e Perdido permanecem no final do funil. No computador, arraste pelo número; no celular ou teclado, use os botões de mover.</p>
+                  <p class="settings-local-note">As alterações do funil ficam salvas neste dispositivo para sua conta.</p>
+                  <ol class="settings-pipeline-list" id="settings-pipeline-list" aria-label="Etapas do funil"></ol>
+                  <div class="settings-form-actions"><button type="button" id="settings-pipeline-save" class="app-button app-button--primary" disabled><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="fill:currentColor;stroke:none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg><span class="app-button-label">Salvar funil</span></button><button type="button" id="settings-pipeline-cancel" class="settings-secondary" disabled>Cancelar</button><button type="button" id="settings-pipeline-default" class="settings-secondary" disabled>Restaurar padrão</button></div>
+                  <p id="settings-pipeline-status" class="settings-status" role="status" aria-live="polite"></p>
+                </section>
+              </section>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
-    <script type="module" src="app.js?v=openrouter-20261117"></script>
+    <script type="module" src="app.js?v=settings-20261117"></script>
   </body>
 </html>
-

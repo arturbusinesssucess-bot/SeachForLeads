@@ -39,3 +39,6 @@
   .product-app .ai-result-header { flex-wrap: wrap; }
   .product-app .ai-result-company { flex: 1 1 140px; }
 }
+
+.product-app #ai-offer-panel { background: rgba(25,25,29,.63); }
+.product-app #ai-offer-panel .ai-summary-state svg { display: block; width: 20px; height: 20px; }

@@ -8,11 +8,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
+import { initializeSettings } from "./settings.js?v=20261117";
+import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=20261117";
+
 import { initializeAIWorkspace } from "./ai-workspace.js?v=20261117";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=custom-selects-20261117";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
-import { initializeAnalytics, classifyCRMStatus } from "./analytics.js?v=workspace-analytics-20261117";
+import { initializeAnalytics } from "./analytics.js?v=settings-20261117";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
@@ -24,7 +27,7 @@ const viewLinks = [...document.querySelectorAll("[data-view-link]")];
 const status = document.querySelector("#search-status");
 const searchForm = document.querySelector("#lead-search-form");
 const searchCriteria = initializeSearchCriteria(searchForm);
-const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics" };
+const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics", settings: "Configurações" };
 
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
@@ -144,6 +147,15 @@ document.querySelectorAll(".crm-filter").forEach((button) => {
 const crmFilter = document.querySelector("#crm-filter");
 const crmRows = document.querySelector("#crm-rows");
 const aiWorkspace = initializeAIWorkspace({ crmRows });
+const settingsWorkspace = initializeSettings({
+  getAuthInstance: () => auth,
+  onProfileUpdated(name) {
+    document.querySelector("#account-name").textContent = name;
+    const firstName = name.trim().split(/\s+/)[0].split(/[._-]/)[0] || "você";
+    document.querySelector("#home-greeting-name").textContent = firstName.charAt(0).toLocaleUpperCase("pt-BR") + firstName.slice(1);
+    document.querySelector("#account-avatar").textContent = Array.from(name)[0]?.toLocaleUpperCase("pt-BR") || "S";
+  },
+});
 const crmColumnLabels = [...document.querySelectorAll(".crm-table thead th")].map((header) => header.textContent.trim() || header.getAttribute("aria-label") || "");
 const crmEmpty = document.querySelector("#crm-empty");
 const crmEmptyTitle = document.querySelector("#crm-empty-title");
@@ -165,7 +177,7 @@ function renderCRM() {
       cell.dataset.label = crmColumnLabels[index] || "";
     }
     const matchesText = !query || row.textContent.toLocaleLowerCase("pt-BR").includes(query);
-    const matchesStage = stageFilter !== "new" || classifyCRMStatus(row.dataset.status || row.cells[3]?.textContent) === "new";
+    const matchesStage = stageFilter !== "new" || resolveRowStage(row) === "new";
     const matches = matchesText && matchesStage;
     row.hidden = !matches;
     return matches;
@@ -202,6 +214,8 @@ if (isFirebaseConfigured) {
   auth = getAuth(initializeApp(firebaseConfig));
   onAuthStateChanged(auth, (user) => {
     if (!user) {
+      setPipelineUser(null);
+      settingsWorkspace?.setUser(null);
       aiWorkspace?.setUser(null);
       window.location.replace("/auth?mode=login");
       return;
@@ -213,9 +227,10 @@ if (isFirebaseConfigured) {
     document.querySelector("#account-email").textContent = user.email || "";
     document.querySelector("#account-avatar").textContent = Array.from(name)[0]?.toLocaleUpperCase("pt-BR") || "S";
     authView.dataset.auth = "ready";
+    setPipelineUser(user.uid);
+    settingsWorkspace?.setUser(user);
     aiWorkspace?.setUser(user);
   });
 } else {
   window.location.replace("/auth?mode=login");
 }
-

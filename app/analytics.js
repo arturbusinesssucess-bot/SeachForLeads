@@ -1,31 +1,15 @@
-export const crmStages = [
-  { key: "new", label: "Novos" },
-  { key: "qualified", label: "Qualificados" },
-  { key: "contacted", label: "Primeiro contato" },
-  { key: "responded", label: "Em conversa" },
-  { key: "won", label: "Fechados" },
-  { key: "lost", label: "Perdidos" },
-  { key: "other", label: "Outros" },
-];
-const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();
-export function classifyCRMStatus(value) {
-  const status = normalize(value);
-  if (["new", "novo", "novos", "novo lead"].includes(status)) return "new";
-  if (["saved", "salvo", "qualificado", "qualified"].includes(status)) return "qualified";
-  if (["contacted", "contatado", "primeiro contato", "em contato"].includes(status)) return "contacted";
-  if (["responded", "interessado", "respondeu", "em conversa", "negociacao"].includes(status)) return "responded";
-  if (["won", "fechado", "ganho", "venda realizada"].includes(status)) return "won";
-  if (["lost", "perdido", "descartado"].includes(status)) return "lost";
-  return "other";
-}
+import { classifyStage, decorateRowStage, getAnalyticsStages, resolveRowStage } from "./pipeline.js?v=20261117";
+
+export let crmStages = getAnalyticsStages();
+export function classifyCRMStatus(value) { return classifyStage(value); }
 
 export function readCRMRecords(tbody) {
   return [...tbody.querySelectorAll("tr")].filter((row) => row.cells.length >= 4).map((row) => ({
     row,
     name: row.dataset.company || row.cells[0].textContent.trim(),
     city: row.dataset.city || row.cells[1].textContent.trim() || "Localização não informada",
-    stage: classifyCRMStatus(row.dataset.status || row.cells[3].textContent),
-    contacted: row.dataset.contacted === "true" || !!row.dataset.contactedAt || ["contacted", "responded", "won"].includes(classifyCRMStatus(row.dataset.status || row.cells[3].textContent)),
+    stage: resolveRowStage(row),
+    contacted: row.dataset.contacted === "true" || !!row.dataset.contactedAt || ["contacted", "responded", "won"].includes(resolveRowStage(row)),
   }));
 }
 
@@ -81,6 +65,7 @@ export function initializeAnalytics(tbody) {
   const reset = document.querySelector("#analytics-reset");
   let records = [];
   let citySignature = "";
+  let stageSignature = "";
 
   function renderFiltered() {
     const filtered = records.filter((record) => (stageFilter.value === "all" || stageFilter.value === record.stage) && (!cityFilter.value || cityFilter.value === record.city));
@@ -113,6 +98,18 @@ export function initializeAnalytics(tbody) {
   }
 
   function refresh() {
+    crmStages = getAnalyticsStages();
+    for (const row of tbody.querySelectorAll("tr")) decorateRowStage(row);
+    const nextStageSignature = JSON.stringify(crmStages);
+    if (nextStageSignature !== stageSignature) {
+      const previous = stageFilter.value;
+      const options = document.createDocumentFragment();
+      options.append(new Option("Todas as etapas", "all"));
+      for (const stage of crmStages) options.append(new Option(stage.label, stage.key));
+      stageFilter.replaceChildren(options);
+      stageFilter.value = previous === "all" || crmStages.some((stage) => stage.key === previous) ? previous : "all";
+      stageSignature = nextStageSignature;
+    }
     records = readCRMRecords(tbody);
     const summary = summarizeCRM(records);
     setText("#home-lead-total", number.format(summary.total));
@@ -157,6 +154,7 @@ export function initializeAnalytics(tbody) {
     renderFiltered();
   }
 
+  window.addEventListener("sfl:pipeline-changed", refresh);
   stageFilter.addEventListener("change", renderFiltered);
   cityFilter.addEventListener("change", renderFiltered);
   reset.addEventListener("click", () => {
