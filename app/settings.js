@@ -1,8 +1,7 @@
 import { updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-import { getPipeline, getDefaultPipeline, savePipeline, STAGE_COLOR_OPTIONS, validatePipeline } from "./pipeline.js?v=stage-colors";
+import { createCustomStage, getPipeline, getDefaultPipeline, isCustomStage, isOpenStage, MAX_PIPELINE_STAGES, savePipeline, STAGE_COLOR_OPTIONS, validatePipeline } from "./pipeline.js?v=pipeline-15";
 
 const SECTIONS = new Set(["general", "profile", "security", "account", "plans", "pipeline"]);
-const OPEN_STAGES = new Set(["new", "qualified", "contacted", "responded"]);
 const RIGHT_ARROW = "M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z";
 const copyStages = (stages) => stages.map(({ key, label, color }) => ({ key, label, color }));
 const equalStages = (left, right) => JSON.stringify(left) === JSON.stringify(right);
@@ -27,7 +26,7 @@ function moveArrow() {
   return svg;
 }
 
-export function initializeSettings({ getAuthInstance = () => null, onProfileUpdated } = {}) {
+export function initializeSettings({ getAuthInstance = () => null, onProfileUpdated, isStageInUse = () => false } = {}) {
   const root = document.querySelector('[data-view="settings"]');
   if (!root) return null;
   const tabs = [...root.querySelectorAll("[data-settings-tab]")];
@@ -45,11 +44,13 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
   const googlePasswordLink = root.querySelector("#settings-password-google");
   const securityStatus = root.querySelector("#settings-security-status");
   const pipelineList = root.querySelector("#settings-pipeline-list");
+  const pipelineAdd = root.querySelector("#settings-pipeline-add");
+  const pipelineCount = root.querySelector("#settings-pipeline-count");
   const pipelineSave = root.querySelector("#settings-pipeline-save");
   const pipelineCancel = root.querySelector("#settings-pipeline-cancel");
   const pipelineDefault = root.querySelector("#settings-pipeline-default");
   const pipelineStatus = root.querySelector("#settings-pipeline-status");
-  if (!tablist || !profileForm || !nameInput || !emailInput || !profileSave || !profileCancel || !profileStatus || !signInMethod || !passwordHelp || !resetButton || !googlePasswordLink || !securityStatus || !pipelineList || !pipelineSave || !pipelineCancel || !pipelineDefault || !pipelineStatus || tabs.length !== SECTIONS.size || panels.length !== SECTIONS.size) return null;
+  if (!tablist || !profileForm || !nameInput || !emailInput || !profileSave || !profileCancel || !profileStatus || !signInMethod || !passwordHelp || !resetButton || !googlePasswordLink || !securityStatus || !pipelineList || !pipelineAdd || !pipelineCount || !pipelineSave || !pipelineCancel || !pipelineDefault || !pipelineStatus || tabs.length !== SECTIONS.size || panels.length !== SECTIONS.size) return null;
 
   const mobile = window.matchMedia("(max-width: 767px)");
   const coarsePointer = window.matchMedia("(pointer: coarse)");
@@ -212,23 +213,29 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
   });
 
   function pipelineDirty() { return !equalStages(draftStages, savedStages); }
+  function openStageCount() { return draftStages.filter(({ key }) => isOpenStage(key)).length; }
   function refreshPipelineButtons() {
     const dirty = pipelineDirty();
     pipelineSave.disabled = !currentUser || pipelineBusy || !dirty;
     pipelineCancel.disabled = !currentUser || pipelineBusy || !dirty;
     pipelineDefault.disabled = !currentUser || pipelineBusy || equalStages(draftStages, getDefaultPipeline());
+    pipelineAdd.disabled = !currentUser || pipelineBusy || draftStages.length >= MAX_PIPELINE_STAGES;
+    pipelineCount.textContent = `${draftStages.length} de ${MAX_PIPELINE_STAGES} etapas`;
     pipelineSave.setAttribute("aria-busy", String(pipelineBusy));
   }
 
   function stageRow(key) { return [...pipelineList.children].find((row) => row.dataset.stageKey === key); }
   function updateMoveLabels(row, stage, index) {
+    const name = stage.label.trim() || "etapa";
+    const lastOpenIndex = openStageCount() - 1;
     for (const button of row.querySelectorAll("[data-move]")) {
       const up = button.dataset.move === "up";
-      button.disabled = !currentUser || pipelineBusy || (up ? index === 0 : index === 3);
-      const label = `Mover ${stage.label.trim() || "etapa"} para ${up ? "cima" : "baixo"}`;
+      button.disabled = !currentUser || pipelineBusy || (up ? index === 0 : index === lastOpenIndex);
+      const label = `Mover ${name} para ${up ? "cima" : "baixo"}`;
       button.setAttribute("aria-label", label);
       button.title = label;
     }
+    row.querySelector("[data-remove-stage]")?.setAttribute("aria-label", `Remover ${name}`);
   }
 
   function colorDot(color) {
@@ -270,21 +277,22 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     return picker;
   }
 
-  function renderPipeline(focusKey, direction) {
+  function renderPipeline(focusKey, direction, scroll = false) {
     const fragment = document.createDocumentFragment();
     draftStages.forEach((stage, index) => {
       const row = node("li", "settings-pipeline-row");
       row.dataset.stageKey = stage.key;
       const number = node("span", "settings-stage-number", String(index + 1).padStart(2, "0"));
       number.setAttribute("aria-hidden", "true");
-      if (OPEN_STAGES.has(stage.key)) {
+      const open = isOpenStage(stage.key);
+      if (open) {
         number.draggable = !!currentUser && !coarsePointer.matches;
         number.dataset.dragStage = stage.key;
         number.title = "Arraste para reordenar";
       }
       row.append(number);
       const colorPicker = createColorPicker(stage);
-      if (OPEN_STAGES.has(stage.key)) {
+      if (open) {
         const field = node("div", "settings-stage-main");
         const label = node("label", "", `Etapa ${index + 1}`);
         label.htmlFor = `settings-stage-${stage.key}`;
@@ -299,7 +307,16 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
         input.disabled = !currentUser || pipelineBusy;
         input.dataset.stageInput = stage.key;
         input.setAttribute("aria-describedby", "settings-pipeline-status");
-        field.append(label, input);
+        const fieldHeading = node("div", "settings-stage-heading");
+        fieldHeading.append(label);
+        if (isCustomStage(stage.key)) {
+          const remove = node("button", "settings-stage-remove", "Remover");
+          remove.type = "button";
+          remove.dataset.removeStage = "";
+          remove.disabled = !currentUser || pipelineBusy;
+          fieldHeading.append(remove);
+        }
+        field.append(fieldHeading, input);
         const controls = node("div", "settings-move-controls");
         for (const direction of ["up", "down"]) {
           const button = node("button", "settings-move");
@@ -323,25 +340,36 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     if (focusKey) {
       const row = stageRow(focusKey);
       const target = direction ? row?.querySelector(`[data-move="${direction}"]:not([disabled])`) : null;
-      (target || row?.querySelector("input"))?.focus({ preventScroll: true });
+      const control = target || row?.querySelector("input");
+      control?.focus({ preventScroll: !scroll });
+      if (scroll) control?.select();
     }
   }
 
   function moveStage(key, targetIndex, direction) {
-    if (!currentUser || pipelineBusy || !OPEN_STAGES.has(key) || targetIndex < 0 || targetIndex >= 4) return;
+    const openCount = openStageCount();
+    if (!currentUser || pipelineBusy || !isOpenStage(key) || targetIndex < 0 || targetIndex >= openCount) return;
     const index = draftStages.findIndex((stage) => stage.key === key);
     if (index < 0 || index === targetIndex) return;
     const [stage] = draftStages.splice(index, 1);
     draftStages.splice(targetIndex, 0, stage);
     renderPipeline(key, direction);
-    pipelineStatus.textContent = `${stage.label.trim() || "Etapa"} movido para a posição ${targetIndex + 1} de 4.`;
+    pipelineStatus.textContent = `${stage.label.trim() || "Etapa"} agora está na posição ${targetIndex + 1} de ${openCount}.`;
   }
+
+  pipelineAdd.addEventListener("click", () => {
+    if (!currentUser || pipelineBusy || draftStages.length >= MAX_PIPELINE_STAGES) return;
+    const stage = createCustomStage(draftStages);
+    draftStages.splice(openStageCount(), 0, stage);
+    renderPipeline(stage.key, null, true);
+    pipelineStatus.textContent = "Etapa adicionada ao rascunho. Salve o funil para aplicar.";
+  });
 
   pipelineList.addEventListener("input", (event) => {
     const input = event.target.closest("[data-stage-input]");
     if (!input || pipelineBusy) return;
     const index = draftStages.findIndex((stage) => stage.key === input.dataset.stageInput);
-    if (index < 0 || !OPEN_STAGES.has(draftStages[index].key)) return;
+    if (index < 0 || !isOpenStage(draftStages[index].key)) return;
     draftStages[index].label = input.value;
     input.setCustomValidity("");
     input.removeAttribute("aria-invalid");
@@ -352,6 +380,20 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     refreshPipelineButtons();
   });
   pipelineList.addEventListener("click", (event) => {
+    const remove = event.target.closest("[data-remove-stage]");
+    if (remove && currentUser && !pipelineBusy) {
+      const key = remove.closest("li").dataset.stageKey;
+      if (!isCustomStage(key)) return;
+      if (isStageInUse(key)) {
+        pipelineStatus.textContent = "Mova os leads dessa etapa antes de removê-la.";
+        return;
+      }
+      const index = draftStages.findIndex((stage) => stage.key === key);
+      draftStages.splice(index, 1);
+      renderPipeline(draftStages[Math.max(0, index - 1)].key);
+      pipelineStatus.textContent = "Etapa removida do rascunho. Salve o funil para aplicar.";
+      return;
+    }
     const choice = event.target.closest("[data-pick-color]");
     if (choice && currentUser && !pipelineBusy) {
       const picker = choice.closest("details");
@@ -390,14 +432,14 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
   pipelineList.addEventListener("dragstart", (event) => {
     const handle = event.target.closest("[data-drag-stage]");
     const key = handle?.dataset.dragStage;
-    if (!currentUser || pipelineBusy || coarsePointer.matches || !OPEN_STAGES.has(key) || !event.dataTransfer) { event.preventDefault(); return; }
+    if (!currentUser || pipelineBusy || coarsePointer.matches || !isOpenStage(key) || !event.dataTransfer) { event.preventDefault(); return; }
     draggingKey = key;
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.setData("text/plain", key);
   });
   pipelineList.addEventListener("dragover", (event) => {
     const row = event.target.closest("[data-stage-key]");
-    if (!draggingKey || !row || !OPEN_STAGES.has(row.dataset.stageKey)) return;
+    if (!draggingKey || !row || !isOpenStage(row.dataset.stageKey)) return;
     event.preventDefault();
     for (const item of pipelineList.children) item.dataset.dropTarget = String(item === row);
     if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
@@ -405,7 +447,7 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
   function clearDrag() { draggingKey = null; for (const row of pipelineList.children) delete row.dataset.dropTarget; }
   pipelineList.addEventListener("drop", (event) => {
     const row = event.target.closest("[data-stage-key]");
-    if (!draggingKey || !row || !OPEN_STAGES.has(row.dataset.stageKey)) return;
+    if (!draggingKey || !row || !isOpenStage(row.dataset.stageKey)) return;
     event.preventDefault();
     const key = draggingKey, target = draftStages.findIndex((stage) => stage.key === row.dataset.stageKey);
     clearDrag();
@@ -427,6 +469,11 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
   });
   pipelineSave.addEventListener("click", () => {
     if (!currentUser || pipelineBusy || !pipelineDirty()) return;
+    const removedInUse = savedStages.find(({ key }) => !draftStages.some((stage) => stage.key === key) && isStageInUse(key));
+    if (removedInUse) {
+      pipelineStatus.textContent = `Mova os leads de “${removedInUse.label}” antes de remover a etapa.`;
+      return;
+    }
     for (const input of pipelineList.querySelectorAll("input")) {
       const value = input.value.trim();
       input.setCustomValidity(value.length >= 2 && value.length <= 40 ? "" : "Use um nome de 2 a 40 caracteres.");

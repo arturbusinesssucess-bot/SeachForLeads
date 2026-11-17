@@ -8,14 +8,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
-import { initializeSettings } from "./settings.js?v=stage-colors";
-import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=stage-colors";
+import { initializeSettings } from "./settings.js?v=pipeline-15";
+import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=pipeline-15";
 
-import { initializeAIWorkspace } from "./ai-workspace.js?v=20261117";
+import { initializeAIWorkspace } from "./ai-workspace.js?v=pipeline-15";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=custom-selects-20261117";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
-import { initializeAnalytics } from "./analytics.js?v=stage-colors";
+import { initializeAnalytics } from "./analytics.js?v=pipeline-15";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
@@ -149,6 +149,7 @@ const crmRows = document.querySelector("#crm-rows");
 const aiWorkspace = initializeAIWorkspace({ crmRows });
 const settingsWorkspace = initializeSettings({
   getAuthInstance: () => auth,
+  isStageInUse: (key) => [...crmRows.rows].some((row) => resolveRowStage(row) === key),
   onProfileUpdated(name) {
     document.querySelector("#account-name").textContent = name;
     const firstName = name.trim().split(/\s+/)[0].split(/[._-]/)[0] || "você";

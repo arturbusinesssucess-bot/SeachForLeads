@@ -127,6 +127,79 @@ test('v1 saved stages without colors keep their names and order and receive defa
   assert.deepEqual(JSON.parse(entries.get(storageKey)), migrated);
 });
 
+test('supports up to 15 stages with four required defaults and the fixed outcomes last', async () => {
+  const { pipeline: p } = await setup();
+  const stages = p.getDefaultPipeline();
+  assert.equal(p.MAX_PIPELINE_STAGES, 15);
+  while (stages.length < p.MAX_PIPELINE_STAGES) stages.splice(-2, 0, p.createCustomStage(stages));
+  const custom = stages.filter(({ key }) => p.isCustomStage(key));
+  assert.equal(custom.length, 9);
+  assert.equal(new Set(custom.map(({ key }) => key)).size, 9);
+  assert.ok(custom.every(({ key }) => p.isOpenStage(key)));
+  assert.equal(p.isOpenStage('won'), false);
+  assert.equal(p.isOpenStage('lost'), false);
+  assert.equal(p.isOpenStage('other'), false);
+  assert.deepEqual(p.validatePipeline(stages), stages);
+  assert.throws(() => p.createCustomStage(stages), /até 15 etapas/i);
+  const overflow = p.createCustomStage(p.getDefaultPipeline());
+  assert.throws(() => p.validatePipeline([overflow, ...stages]), /até 15 etapas/i);
+  assert.throws(() => p.validatePipeline(stages.filter(({ key }) => key !== 'new')), /etapas abertas padrão/i);
+  assert.throws(() => p.validatePipeline([stages.at(-2), ...stages.slice(0, -2), stages.at(-1)]), /permanecem no fim/i);
+});
+
+test('custom stages retain their IDs, colors and position across account reloads', async () => {
+  const { pipeline: p } = await setup();
+  p.setPipelineUser('A');
+  const draft = rename(p.getPipeline(), 'new', 'Nova etapa');
+  const custom = p.createCustomStage(draft);
+  assert.equal(custom.label, 'Nova etapa 2');
+  assert.equal(custom.color, 'slate');
+  const expected = [{ ...custom, label: 'Pré-venda', color: 'cyan' }, ...draft];
+  p.savePipeline(expected);
+  assert.equal(p.classifyStage(custom.key.toUpperCase()), custom.key);
+  assert.equal(p.classifyStage('  pre-venda '), custom.key);
+  assert.equal(p.getStageColor(custom.key), 'cyan');
+  assert.deepEqual(p.getAnalyticsStages()[0], expected[0]);
+  p.setPipelineUser('B');
+  assert.equal(p.classifyStage(custom.key), 'other');
+  assert.equal(p.classifyStage('Pré-venda'), 'other');
+  assert.deepEqual(p.setPipelineUser('A'), expected);
+});
+
+test('validates custom stage IDs, labels and colors the same way on reload and save', async () => {
+  const { pipeline: p } = await setup();
+  const defaults = p.getDefaultPipeline();
+  const { key, label } = p.createCustomStage(defaults);
+  assert.equal(p.validatePipeline([{ key, label }, ...defaults])[0].color, 'slate');
+  assert.throws(() => p.validatePipeline([{ key: 'custom-1', label }, ...defaults]), /etapas abertas padrão/i);
+  assert.throws(() => p.validatePipeline([{ key, label }, { key, label: 'Nova etapa 2' }, ...defaults]), /etapas abertas padrão/i);
+  assert.throws(() => p.validatePipeline([{ key, label: 'Novos' }, ...defaults]), /nome/i);
+  assert.throws(() => p.validatePipeline([{ key, label, color: '#fff' }, ...defaults]), /cor da paleta/i);
+});
+
+test('removing and recreating an extra stage does not move its old rows to the new ID', async () => {
+  const { pipeline: p } = await setup();
+  p.setPipelineUser('A');
+  const defaults = p.getPipeline();
+  const old = p.createCustomStage(defaults);
+  p.savePipeline([old, ...defaults]);
+  const rowWithKey = row(old.label, old.key);
+  const rowWithLabel = row(old.label);
+  assert.equal(p.resolveRowStage(rowWithKey), old.key);
+  assert.equal(p.resolveRowStage(rowWithLabel), old.key);
+  p.savePipeline(defaults);
+  assert.equal(p.resolveRowStage(rowWithKey), 'other');
+  assert.equal(p.resolveRowStage(rowWithLabel), 'other');
+  const replacement = p.createCustomStage(defaults);
+  p.savePipeline([replacement, ...defaults]);
+  assert.notEqual(replacement.key, old.key);
+  assert.equal(replacement.label, old.label);
+  assert.equal(p.resolveRowStage(rowWithKey), 'other');
+  assert.equal(p.resolveRowStage(rowWithLabel), 'other');
+  assert.equal(p.resolveRowStage(row(old.label, old.key)), 'other');
+  assert.equal(p.resolveRowStage(row(replacement.label, replacement.key)), replacement.key);
+});
+
 test('custom palette colors persist per account even when final outcomes stay locked', async () => {
   const { pipeline: p, events } = await setup();
   p.setPipelineUser('account-A');

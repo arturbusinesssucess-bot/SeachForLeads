@@ -21,8 +21,8 @@
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
     <link rel="stylesheet" href="/public/app-corner-mist.v1.css" />
     <link rel="stylesheet" href="/public/app-mobile.v1.css" />
-    <link rel="stylesheet" href="/public/app-ai.v1.css?v=nichos-20261117" />
-    <link rel="stylesheet" href="/public/app-settings.v1.css?v=stage-colors" />
+    <link rel="stylesheet" href="/public/app-ai.v1.css?v=pipeline-15" />
+    <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <div class="app-corner-mist" aria-hidden="true"></div>
@@ -106,7 +106,7 @@
           </div>
           <div class="stat-grid" aria-label="Resumo do CRM">
             <article class="stat-card"><p class="stat-card-label">Leads no CRM</p><strong id="home-lead-total">0</strong><small>empresas salvas</small></article>
-            <article class="stat-card"><p class="stat-card-label">Para contatar</p><strong id="home-new-total">0</strong><small>novos e qualificados</small></article>
+            <article class="stat-card"><p class="stat-card-label">Para contatar</p><strong id="home-new-total">0</strong><small>leads aguardando contato</small></article>
             <article class="stat-card"><p class="stat-card-label">Em acompanhamento</p><strong id="home-following-total">0</strong><small>contatos em andamento</small></article>
             <article class="stat-card"><p class="stat-card-label">Fechados</p><strong id="home-won-total">0</strong><small>negócios concluídos</small></article>
           </div>
@@ -175,7 +175,7 @@
 
         <section class="app-view crm-view" data-view="crm" aria-labelledby="crm-title" hidden>
           <header class="search-page-header"><h1 id="crm-title">CRM</h1></header>
-          <div class="crm-metrics" aria-label="Resumo do CRM"><article class="metric-card"><p>Total no CRM</p><strong id="crm-metric-total">0</strong><small>empresas salvas</small></article><article class="metric-card"><p>Para contatar</p><strong id="crm-metric-pending">0</strong><small>novos e qualificados</small></article><article class="metric-card"><p>Fechados</p><strong id="crm-metric-won">0</strong><small>negócios concluídos</small></article></div>
+          <div class="crm-metrics" aria-label="Resumo do CRM"><article class="metric-card"><p>Total no CRM</p><strong id="crm-metric-total">0</strong><small>empresas salvas</small></article><article class="metric-card"><p>Para contatar</p><strong id="crm-metric-pending">0</strong><small>leads aguardando contato</small></article><article class="metric-card"><p>Fechados</p><strong id="crm-metric-won">0</strong><small>negócios concluídos</small></article></div>
           <details class="ai-pane" id="ai-crm-panel">
             <summary><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 17V9"/><path d="M18 17V5"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M8 17v-3"/></svg><span>Qualificar leads com IA</span><span class="ai-summary-state" aria-hidden="true"><span class="ai-when-closed">Abrir</span><span class="ai-when-open">Fechar</span></span></summary>
             <div class="ai-pane-body">
@@ -306,10 +306,14 @@
                 <section class="settings-card settings-stack"><span class="settings-badge">Em breve</span><h3>Estamos preparando esta área</h3><p>As informações sobre planos e opções disponíveis aparecerão aqui.</p></section>
               </section>
               <section id="settings-panel-pipeline" data-settings-panel="pipeline" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-pipeline" tabindex="0" hidden>
-                <header class="settings-panel-heading"><h2>Funil de vendas</h2><p>Personalize os nomes e a ordem das etapas abertas.</p></header>
+                <header class="settings-panel-heading"><h2>Funil de vendas</h2><p>Adicione etapas e personalize a ordem, os nomes e as cores do funil.</p></header>
                 <section class="settings-card settings-stack">
-                  <p>Selecione a bolinha para mudar a cor de uma etapa. Fechado e Perdido ficam no final do funil. Para reordenar as demais etapas, arraste pelo número ou use as setas.</p>
+                  <p>O limite inclui Fechado e Perdido, que ficam no fim. Use as setas ou arraste pelo número para reordenar as etapas abertas. Selecione a bolinha para mudar a cor.</p>
                   <p class="settings-local-note">As alterações do funil ficam salvas neste dispositivo para sua conta.</p>
+                  <div class="settings-pipeline-toolbar">
+                    <button type="button" id="settings-pipeline-add" class="app-button app-button--primary" aria-describedby="settings-pipeline-count" disabled><span class="app-button-icon settings-add-icon" aria-hidden="true">+</span><span class="app-button-label">Adicionar etapa</span></button>
+                    <span id="settings-pipeline-count">6 de 15 etapas</span>
+                  </div>
                   <ol class="settings-pipeline-list" id="settings-pipeline-list" aria-label="Etapas do funil"></ol>
                   <div class="settings-form-actions"><button type="button" id="settings-pipeline-save" class="app-button app-button--primary" disabled><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="fill:currentColor;stroke:none" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg><span class="app-button-label">Salvar funil</span></button><button type="button" id="settings-pipeline-cancel" class="settings-secondary" disabled>Cancelar</button><button type="button" id="settings-pipeline-default" class="settings-secondary" disabled>Restaurar padrão</button></div>
                   <p id="settings-pipeline-status" class="settings-status" role="status" aria-live="polite"></p>
@@ -321,7 +325,7 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=stage-colors"></script>
+    <script type="module" src="app.js?v=pipeline-15"></script>
   </body>
 </html>
 

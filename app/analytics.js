@@ -1,32 +1,42 @@
-import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, resolveRowStage } from "./pipeline.js?v=stage-colors";
+import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=pipeline-15";
 
 export let crmStages = getAnalyticsStages();
 export function classifyCRMStatus(value) { return classifyStage(value); }
 
 export function readCRMRecords(tbody) {
-  return [...tbody.querySelectorAll("tr")].filter((row) => row.cells.length >= 4).map((row) => ({
-    row,
-    name: row.dataset.company || row.cells[0].textContent.trim(),
-    city: row.dataset.city || row.cells[1].textContent.trim() || "Localização não informada",
-    stage: resolveRowStage(row),
-    contacted: row.dataset.contacted === "true" || !!row.dataset.contactedAt || ["contacted", "responded", "won"].includes(resolveRowStage(row)),
-  }));
+  return [...tbody.querySelectorAll("tr")].filter((row) => row.cells.length >= 4).map((row) => {
+    const stage = resolveRowStage(row);
+    return {
+      row,
+      name: row.dataset.company || row.cells[0].textContent.trim(),
+      city: row.dataset.city || row.cells[1].textContent.trim() || "Localização não informada",
+      stage,
+      contacted: row.dataset.contacted === "true" || !!row.dataset.contactedAt || ["contacted", "responded", "won"].includes(stage),
+    };
+  });
 }
 
 export function summarizeCRM(records) {
   const counts = Object.fromEntries(crmStages.map((stage) => [stage.key, 0]));
   let contacted = 0;
+  let customPending = 0;
+  let customFollowing = 0;
   const cities = new Map();
   for (const record of records) {
-    counts[record.stage]++;
+    const stage = Object.hasOwn(counts, record.stage) ? record.stage : "other";
+    counts[stage]++;
     if (record.contacted) contacted++;
+    if (isCustomStage(stage)) {
+      if (record.contacted) customFollowing++;
+      else customPending++;
+    }
     cities.set(record.city, (cities.get(record.city) || 0) + 1);
   }
   const total = records.length;
   return {
     total, counts, contacted,
-    pending: counts.new + counts.qualified,
-    following: counts.contacted + counts.responded,
+    pending: counts.new + counts.qualified + customPending,
+    following: counts.contacted + counts.responded + customFollowing,
     active: total - counts.won - counts.lost,
     contactRate: total ? contacted / total * 100 : null,
     winRate: counts.won + counts.lost ? counts.won / (counts.won + counts.lost) * 100 : null,

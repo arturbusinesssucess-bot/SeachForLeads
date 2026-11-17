@@ -54,6 +54,27 @@ export function initializeAIWorkspace({ crmRows } = {}) {
   };
   const offerLabel = offerButton.querySelector(".app-button-label");
   const leadLabel = leadButton.querySelector(".app-button-label");
+  const needsOfferResize = !CSS.supports("field-sizing", "content");
+
+  function resizeOffer() {
+    if (!needsOfferResize || !offerPane.open || !offer.clientWidth) return;
+    const scrollTop = offer.scrollTop;
+    offer.style.height = "0px";
+    const borderHeight = offer.offsetHeight - offer.clientHeight;
+    offer.style.height = `${offer.scrollHeight + borderHeight}px`;
+    offer.scrollTop = scrollTop;
+  }
+
+  if (needsOfferResize) {
+    offerPane.addEventListener("toggle", resizeOffer);
+    let paneWidth = 0;
+    new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      if (width === paneWidth) return;
+      paneWidth = width;
+      resizeOffer();
+    }).observe(offerPane);
+  }
 
   function visibleLeads() {
     return [...crmRows.querySelectorAll("tr")]
@@ -227,6 +248,7 @@ export function initializeAIWorkspace({ crmRows } = {}) {
 
   function changedOffer(source, destination) {
     destination.value = source.value;
+    resizeOffer();
     cancel("offer");
     cancel("leads");
     updateControls();

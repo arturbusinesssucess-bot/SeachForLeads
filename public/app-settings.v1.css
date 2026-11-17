@@ -93,6 +93,9 @@
 .product-app .settings-legal-links a { display: inline-flex; align-items: center; justify-self: start; min-height: 44px; max-width: 100%; color: #bfd4f7; font-size: 14px; line-height: 1.5; text-underline-offset: 4px; }
 .product-app :is(#settings-password-reset, #settings-password-google)[hidden] { display: none; }
 .product-app #settings-security-status:empty { position: absolute; width: 1px; height: 1px; min-height: 0; overflow: hidden; clip-path: inset(50%); }
+.product-app .settings-pipeline-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.product-app #settings-pipeline-count { color: var(--workspace-muted, #aaaab2); font-size: 13px; font-variant-numeric: tabular-nums; }
+.product-app .settings-add-icon { display: grid; place-items: center; font-size: 20px; font-weight: 400; line-height: 1; }
 .product-app .settings-pipeline-list { display: grid; container-type: inline-size; gap: 12px; margin: 0; padding: 0; list-style: none; }
 .product-app .settings-pipeline-row { position: relative; display: grid; grid-template-columns: 28px minmax(0,1fr) 44px 96px; align-items: center; gap: 12px; min-width: 0; padding: 16px; border-radius: 12px; background: #222222; }
 .product-app .settings-pipeline-row[data-fixed="true"] { grid-template-columns: 28px minmax(0,1fr) 44px; }
@@ -100,6 +103,9 @@
 .product-app .settings-stage-number { display: grid; place-items: center; min-height: 44px; color: #a6a9b5; font-size: 12px; cursor: grab; user-select: none; }
 .product-app .settings-pipeline-row[data-fixed="true"] .settings-stage-number { cursor: default; }
 .product-app .settings-stage-main { display: grid; gap: 8px; min-width: 0; }
+.product-app .settings-stage-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; }
+.product-app .settings-stage-remove { min-width: 44px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; color: #b7b7c0; font: inherit; font-size: 12px; cursor: pointer; }
+.product-app .settings-stage-remove:hover:not(:disabled) { background: #442b32; color: #ffcad5; }
 .product-app .settings-stage-final { grid-column: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-height: 44px; }
 .product-app .settings-stage-final strong { font-size: 14px; font-weight: 500; line-height: 1.5; }
 .product-app .settings-stage-final span { margin-left: auto; color: #aaaab2; font-size: 12px; }

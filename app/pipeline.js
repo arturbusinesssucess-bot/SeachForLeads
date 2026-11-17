@@ -16,11 +16,14 @@ export const STAGE_COLOR_OPTIONS = Object.freeze([
   { key: 'red', label: 'Vermelho' },
   { key: 'slate', label: 'Cinza' },
 ].map((option) => Object.freeze(option)));
+export const MAX_PIPELINE_STAGES = 15;
 const PALETTE_KEYS = new Set(STAGE_COLOR_OPTIONS.map(({ key }) => key));
-const OPEN_KEYS = new Set(['new', 'qualified', 'contacted', 'responded']);
+const DEFAULT_OPEN_KEYS = new Set(['new', 'qualified', 'contacted', 'responded']);
+const FINAL_STAGES = DEFAULT_PIPELINE.slice(-2);
 const DEFAULT_COLORS = new Map(DEFAULT_PIPELINE.map(({ key, color }) => [key, color]));
 const FALLBACK_COLOR = 'slate';
 const STORAGE_PREFIX = 'sfl:pipeline:v1:';
+const CUSTOM_STAGE_KEY = /^custom-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 const normalize = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim().replace(/\s+/g, ' ');
 const aliases = {
   new: ['new', 'novo', 'novos', 'novo lead'],
@@ -38,37 +41,53 @@ let currentStages = getDefaultPipeline();
 let rowStates = new WeakMap();
 
 function copy(stages) { return stages.map(({ key, label, color }) => ({ key, label, color })); }
-function invalidStructure() { return new Error('Mantenha as quatro etapas abertas e os resultados Fechado e Perdido.'); }
+function invalidStructure() { return new Error('Mantenha as quatro etapas abertas padrão e os resultados Fechado e Perdido.'); }
+function stageLimit() { return new Error(`O funil pode ter até ${MAX_PIPELINE_STAGES} etapas, incluindo Fechado e Perdido.`); }
 function storageFailure() { return new Error('Não foi possível salvar neste dispositivo. Verifique as permissões de armazenamento e tente novamente.'); }
 
 export function getDefaultPipeline() { return copy(DEFAULT_PIPELINE); }
 export function getPipeline() { return copy(currentStages); }
+export function isCustomStage(key) { return typeof key === 'string' && CUSTOM_STAGE_KEY.test(key); }
+export function isOpenStage(key) { return DEFAULT_OPEN_KEYS.has(key) || isCustomStage(key); }
 export function getStageColor(key) {
   return currentStages.find((stage) => stage.key === key)?.color ?? FALLBACK_COLOR;
 }
 
+export function createCustomStage(stages = currentStages) {
+  if (stages.length >= MAX_PIPELINE_STAGES) throw stageLimit();
+  const names = new Set(stages.map(({ label }) => normalize(label)));
+  const baseLabel = 'Nova etapa';
+  let label = baseLabel;
+  for (let number = 2; names.has(normalize(label)); number++) label = `${baseLabel} ${number}`;
+  return { key: `custom-${globalThis.crypto.randomUUID()}`, label, color: FALLBACK_COLOR };
+}
+
 export function validatePipeline(input) {
-  if (!Array.isArray(input) || input.length !== DEFAULT_PIPELINE.length) throw invalidStructure();
+  if (!Array.isArray(input) || input.length < DEFAULT_PIPELINE.length) throw invalidStructure();
+  if (input.length > MAX_PIPELINE_STAGES) throw stageLimit();
+  const finalStart = input.length - FINAL_STAGES.length;
   const keys = new Set(), names = new Set(), stages = [];
   for (let index = 0; index < input.length; index++) {
     const stage = input[index];
-    if (!stage || typeof stage !== 'object' || Array.isArray(stage) || Object.keys(stage).some((field) => field !== 'key' && field !== 'label' && field !== 'color') || !DEFAULT_COLORS.has(stage.key) || keys.has(stage.key)) throw invalidStructure();
-    if (index < 4 ? !OPEN_KEYS.has(stage.key) : stage.key !== DEFAULT_PIPELINE[index].key) {
+    if (!stage || typeof stage !== 'object' || Array.isArray(stage) || Object.keys(stage).some((field) => field !== 'key' && field !== 'label' && field !== 'color') || (!DEFAULT_COLORS.has(stage.key) && !isCustomStage(stage.key)) || keys.has(stage.key)) throw invalidStructure();
+    const finalStage = FINAL_STAGES[index - finalStart];
+    if (finalStage ? stage.key !== finalStage.key : !isOpenStage(stage.key)) {
       throw new Error('As etapas Fechado e Perdido permanecem no fim e não podem mudar de posição.');
     }
     if (typeof stage.label !== 'string' || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(stage.label)) throw new Error('Informe um nome de 2 a 40 caracteres para cada etapa.');
     const label = stage.label.trim().replace(/\s+/g, ' ');
     if (label.length < 2 || label.length > 40) throw new Error('Informe um nome de 2 a 40 caracteres para cada etapa.');
-    if (index >= 4 && label !== DEFAULT_PIPELINE[index].label) throw new Error('As etapas Fechado e Perdido não podem ser renomeadas.');
+    if (finalStage && label !== finalStage.label) throw new Error('As etapas Fechado e Perdido não podem ser renomeadas.');
     const normalized = normalize(label);
     if (names.has(normalized)) throw new Error('O nome de cada etapa deve ser único, mesmo sem acentos ou com letras maiúsculas.');
     if (reservedOther.has(normalized) || (aliasKeys.has(normalized) && aliasKeys.get(normalized) !== stage.key)) throw new Error('Esse nome já identifica outra etapa do funil ou é um nome reservado.');
-    const color = Object.hasOwn(stage, 'color') ? stage.color : DEFAULT_COLORS.get(stage.key);
+    const color = Object.hasOwn(stage, 'color') ? stage.color : DEFAULT_COLORS.get(stage.key) ?? FALLBACK_COLOR;
     if (!PALETTE_KEYS.has(color)) throw new Error('Escolha uma cor da paleta para cada etapa.');
     keys.add(stage.key);
     names.add(normalized);
     stages.push({ key: stage.key, label, color });
   }
+  if ([...DEFAULT_OPEN_KEYS].some((key) => !keys.has(key))) throw invalidStructure();
   return stages;
 }
 
@@ -112,6 +131,7 @@ export function resetPipeline() { return savePipeline(getDefaultPipeline()); }
 export function classifyStage(value) {
   const status = normalize(value);
   if (aliasKeys.has(status)) return aliasKeys.get(status);
+  if (isCustomStage(status)) return currentStages.some((stage) => stage.key === status) ? status : 'other';
   const current = currentStages.find((stage) => normalize(stage.label) === status);
   return current?.key || 'other';
 }
@@ -134,11 +154,13 @@ export function resolveRowStage(row) {
     state.sourceStatus = sourceStatus;
     state.renderedLabel = renderedLabel;
   } else if (renderedLabel !== state.renderedLabel) {
-    state.key = classifyStage(interactive(cell) && sourceStatus ? sourceStatus : renderedLabel);
+    const sourceKey = normalize(sourceStatus);
+    state.key = classifyStage(isCustomStage(sourceKey) || (interactive(cell) && sourceStatus) ? sourceStatus : renderedLabel);
     state.renderedLabel = renderedLabel;
   } else if (state.key === 'other') {
     state.key = classifyStage(sourceStatus || renderedLabel);
   }
+  if (isCustomStage(state.key) && !currentStages.some((stage) => stage.key === state.key)) return 'other';
   return state.key;
 }
 
