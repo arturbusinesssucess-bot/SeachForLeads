@@ -8,6 +8,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
+import { initializeSearchCriteria } from "./search-criteria.js?v=br-localities-20261116";
+
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
 
@@ -16,6 +18,7 @@ const views = [...document.querySelectorAll("[data-view]")];
 const viewLinks = [...document.querySelectorAll("[data-view-link]")];
 const status = document.querySelector("#search-status");
 const searchForm = document.querySelector("#lead-search-form");
+const searchCriteria = initializeSearchCriteria(searchForm);
 const viewNames = { home: "Home", search: "Busca", crm: "CRM" };
 
 function showView(name, updateUrl = true) {
@@ -117,6 +120,13 @@ if (installCard && installButton && installHelp) {
 
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  if (searchCriteria) {
+    const criteria = searchCriteria.read();
+    if (!criteria) return;
+    const locationLabel = criteria.cityName ? `${criteria.cityName}, ${criteria.state}` : criteria.stateName;
+    status.textContent = `Busca configurada para ${criteria.quantity} leads em ${locationLabel}. A fonte de prospecção ainda não está conectada.`;
+    return;
+  }
   status.textContent = "A fonte de prospecção ainda não está conectada. Quando estiver, os resultados desta busca poderão ser salvos no CRM.";
 });
 
