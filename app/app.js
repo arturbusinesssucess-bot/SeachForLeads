@@ -9,7 +9,7 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=custom-selects-20261117";
-import { initializeAppSelects } from "../public/app-selects.v1.js";
+import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
 import { initializeAnalytics, classifyCRMStatus } from "./analytics.js?v=workspace-analytics-20261117";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
@@ -141,6 +141,7 @@ document.querySelectorAll(".crm-filter").forEach((button) => {
 });
 const crmFilter = document.querySelector("#crm-filter");
 const crmRows = document.querySelector("#crm-rows");
+const crmColumnLabels = [...document.querySelectorAll(".crm-table thead th")].map((header) => header.textContent.trim() || header.getAttribute("aria-label") || "");
 const crmEmpty = document.querySelector("#crm-empty");
 const crmEmptyTitle = document.querySelector("#crm-empty-title");
 const crmEmptyDescription = document.querySelector("#crm-empty-description");
@@ -154,6 +155,12 @@ function renderCRM() {
   const stageFilter = document.querySelector(".crm-filter.is-active")?.dataset.filter;
   const rows = [...crmRows.querySelectorAll("tr")];
   const visibleRows = rows.filter((row) => {
+    row.setAttribute("role", "row");
+    for (let index = 0; index < row.cells.length; index++) {
+      const cell = row.cells[index];
+      cell.setAttribute("role", "cell");
+      cell.dataset.label = crmColumnLabels[index] || "";
+    }
     const matchesText = !query || row.textContent.toLocaleLowerCase("pt-BR").includes(query);
     const matchesStage = stageFilter !== "new" || classifyCRMStatus(row.dataset.status || row.cells[3]?.textContent) === "new";
     const matches = matchesText && matchesStage;
