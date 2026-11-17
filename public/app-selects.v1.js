@@ -94,7 +94,16 @@ function enhanceSelect(select) {
     const left = viewport?.offsetLeft || 0;
     const height = viewport?.height || window.innerHeight;
     const width = viewport?.width || window.innerWidth;
-    if (!control.getClientRects().length || rect.bottom < top || rect.top > top + height) { close(false); return; }
+    if (!control.isConnected || !control.getClientRects().length) { close(false); return; }
+    if (searchable && window.matchMedia("(max-width: 767px)").matches) {
+      panel.style.width = `${Math.max(1, width - 24)}px`;
+      panel.style.maxHeight = `${Math.max(0, Math.min(344, height - 24))}px`;
+      panel.style.left = `${left + 12}px`;
+      const actualHeight = panel.getBoundingClientRect().height;
+      panel.style.top = `${Math.max(top + 12, top + height - actualHeight - 12)}px`;
+      return;
+    }
+    if (rect.bottom < top || rect.top > top + height) { close(false); return; }
     const popupWidth = Math.min(Math.max(rect.width, 270), width - 24);
     const below = top + height - rect.bottom - 16;
     const above = rect.top - top - 16;
