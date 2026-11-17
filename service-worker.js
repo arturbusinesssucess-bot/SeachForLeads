@@ -1,4 +1,4 @@
-const CACHE_NAME = "sfl-pwa-v3";
+const CACHE_NAME = "sfl-pwa-v4";
 const APP_SHELL = [
   "/app/",
   "/app/app.css",
@@ -7,8 +7,7 @@ const APP_SHELL = [
   "/firebase-config.js",
   "/manifest.webmanifest",
   "/public/loupe-logo.svg",
-  "/public/pwa-icon.svg",
-  "/public/pwa-icon-maskable.svg"
+  "/public/pwa-icon.svg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -33,6 +32,7 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
   const isAppRequest = url.origin === self.location.origin;
+  const isManifest = isAppRequest && url.pathname === "/manifest.webmanifest";
   const isFirebaseModule = url.hostname === "www.gstatic.com" && url.pathname.startsWith("/firebasejs/");
 
   if (request.mode === "navigate" && isAppRequest) {
@@ -53,9 +53,9 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (!isAppRequest && !isFirebaseModule) return;
-  if (isAppRequest && !["script", "style", "image", "font"].includes(request.destination) && url.pathname !== "/manifest.webmanifest") return;
+  if (isAppRequest && !["script", "style", "image", "font"].includes(request.destination) && !isManifest) return;
 
-  if (isAppRequest && request.destination === "style") {
+  if (isManifest || (isAppRequest && request.destination === "style")) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       try {

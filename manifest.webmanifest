@@ -13,15 +13,21 @@
   "theme_color": "#08090b",
   "icons": [
     {
-      "src": "/public/pwa-icon.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
+      "src": "/public/pwa-mascot-v1-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/public/pwa-icon-maskable.svg",
+      "src": "/public/pwa-mascot-v1-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/pwa-mascot-v1-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
