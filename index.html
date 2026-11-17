@@ -17,7 +17,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=action-arrow-20261116" />
-    <link rel="stylesheet" href="/public/landing-product.v1.css?v=unframed-previews" />
+    <link rel="stylesheet" href="/public/landing-product.v1.css?v=compact-media" />
   </head>
   <body>
     <div class="site-shell">
@@ -108,17 +108,19 @@
 
           <div class="landing-search-gallery">
             <figure class="landing-search-media">
-              <picture>
+              <picture class="landing-media-frame">
                 <source media="(max-width: 600px)" srcset="/public/product-busca-mobile.webp" width="585" height="1482" />
                 <img src="/public/product-busca.webp" width="1294" height="865" alt="Tela de busca com campos de segmento, estado, cidade e quantidade, sobre o fundo azul e roxo do formulário." loading="lazy" decoding="async" />
               </picture>
               <figcaption>Formulário de busca</figcaption>
             </figure>
             <figure class="landing-search-media">
-              <video id="search-demo-video" controls muted loop playsinline preload="none" width="1272" height="632" poster="/public/product-busca-demo-poster.v1.webp" aria-label="Demonstração em vídeo do formulário de busca">
-                <source src="/public/product-busca-demo.v1.mp4" type="video/mp4" />
-                <a href="/public/product-busca-demo.v1.mp4">Abrir vídeo da Busca</a>
-              </video>
+              <div class="landing-media-frame">
+                <video id="search-demo-video" muted loop playsinline preload="none" width="1272" height="632" poster="/public/product-busca-demo-poster.v1.webp" aria-label="Demonstração em vídeo do formulário de busca">
+                  <source src="/public/product-busca-demo.v1.mp4" type="video/mp4" />
+                  <a href="/public/product-busca-demo.v1.mp4">Abrir vídeo da Busca</a>
+                </video>
+              </div>
               <figcaption>Demonstração em vídeo</figcaption>
             </figure>
           </div>
@@ -131,7 +133,7 @@
             <p>Veja o resumo de empresas salvas, leads para contatar e negócios fechados.</p>
           </header>
           <figure class="landing-preview-media">
-            <picture>
+            <picture class="landing-media-frame">
                 <source media="(max-width: 600px)" srcset="/public/product-crm-empty-mobile.webp" width="585" height="1172" />
                 <img src="/public/product-crm-empty.webp" width="1294" height="711" alt="Tela inicial do CRM sem leads salvos, com indicadores zerados e o botão Começar a busca." loading="lazy" decoding="async" />
               </picture>
@@ -157,7 +159,7 @@
             <small class="landing-preview-note">Prévia com dados ilustrativos.</small>
           </header>
           <figure class="landing-preview-media">
-            <picture>
+            <picture class="landing-media-frame">
                 <source media="(max-width: 600px)" srcset="/public/product-analytics-mobile.webp" width="585" height="1769" />
                 <img src="/public/product-analytics.webp" width="1368" height="826" alt="Painel de Analytics com indicadores do CRM, barras de distribuição por etapa e gráfico de cobertura de contato." loading="lazy" decoding="async" />
               </picture>
