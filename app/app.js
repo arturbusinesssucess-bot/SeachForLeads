@@ -11,7 +11,6 @@ import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 const authView = document.body;
 const views = [...document.querySelectorAll("[data-view]")];
 const viewLinks = [...document.querySelectorAll("[data-view-link]")];
-const breadcrumb = document.querySelector("#breadcrumb");
 const status = document.querySelector("#search-status");
 const searchForm = document.querySelector("#lead-search-form");
 const viewNames = { home: "Home", search: "Busca", crm: "CRM" };
@@ -23,7 +22,6 @@ function showView(name, updateUrl = true) {
     if (link.dataset.viewLink === view) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
-  breadcrumb.textContent = viewNames[view];
   if (updateUrl && location.hash !== `#${view}`) history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -37,6 +35,23 @@ document.querySelectorAll("[data-open-view]").forEach((button) => {
 });
 window.addEventListener("hashchange", () => showView(location.hash.slice(1), false));
 showView(location.hash.slice(1) || "home", false);
+
+const searchIntro = document.querySelector("#search-intro");
+const searchEditor = document.querySelector("#search-editor");
+const openSearchForm = document.querySelector("#open-search-form");
+const closeSearchForm = document.querySelector("#close-search-form");
+
+function setSearchEditor(open) {
+  searchIntro.hidden = open;
+  searchEditor.hidden = !open;
+  openSearchForm.setAttribute("aria-expanded", String(open));
+  window.requestAnimationFrame(() => {
+    (open ? document.querySelector("#search-niche") : openSearchForm).focus();
+  });
+}
+openSearchForm.addEventListener("click", () => setSearchEditor(true));
+closeSearchForm.addEventListener("click", () => setSearchEditor(false));
+
 
 const installCard = document.querySelector("#pwa-install-card");
 const installButton = document.querySelector("#pwa-install-button");
