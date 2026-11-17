@@ -43,10 +43,19 @@ const searchIntro = document.querySelector("#search-intro");
 const searchEditor = document.querySelector("#search-editor");
 const openSearchForm = document.querySelector("#open-search-form");
 const closeSearchForm = document.querySelector("#close-search-form");
+let dimensionalFieldLoad = null;
+function ensureDimensionalField() {
+  if (dimensionalFieldLoad || !searchEditor.querySelector(".search-dimensional-canvas")) return;
+  dimensionalFieldLoad = import("../public/dimensional-field.v1.js")
+    .then(({ mountDimensionalField }) => mountDimensionalField(searchEditor))
+    .catch(() => { searchEditor.dataset.fieldState = "fallback"; });
+}
+
 
 function setSearchEditor(open) {
   searchIntro.hidden = open;
   searchEditor.hidden = !open;
+  if (open) ensureDimensionalField();
   openSearchForm.setAttribute("aria-expanded", String(open));
   window.requestAnimationFrame(() => {
     (open ? document.querySelector("#search-niche") : openSearchForm).focus();
