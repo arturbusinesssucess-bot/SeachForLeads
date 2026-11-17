@@ -40,6 +40,6 @@
   .product-app .ai-result-company { flex: 1 1 140px; }
 }
 
-.product-app #ai-offer-panel { background: rgba(25,25,29,.63); }
+.product-app #ai-offer-panel { background: transparent; }
 .product-app #ai-offer-panel .ai-summary-state svg { display: block; width: 20px; height: 20px; }
 .product-app #ai-offer { min-height: 52px; max-height: min(300px, max(144px, 42svh)); field-sizing: content; resize: none; overflow-y: auto; }
