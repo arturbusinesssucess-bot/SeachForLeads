@@ -11,6 +11,7 @@
   -webkit-mask-image: radial-gradient(ellipse at top left, #000 12%, rgba(0,0,0,.8) 35%, transparent 74%);
   mask-image: radial-gradient(ellipse at top left, #000 12%, rgba(0,0,0,.8) 35%, transparent 74%);
 }
+.product-app:has([data-view="analytics"]:not([hidden])) .app-corner-mist,
 .product-app:has([data-view="search"]:not([hidden]) #search-editor:not([hidden])) .app-corner-mist { display: none; }
 .product-app .app-corner-mist::before,
 .product-app .app-corner-mist::after {
