@@ -153,3 +153,30 @@
   .landing-audience-list li { padding: 17px 0; }
   .landing-audience-list li + li { border-inline-start: 0; border-top: 1px solid var(--product-rule); }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .motion-ready .animar.run.landing-rise,
+  .motion-ready .animar.run .landing-rise {
+    animation: landing-rise 480ms cubic-bezier(.22, 1, .36, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  .motion-ready .animar.run .landing-sharpen {
+    animation: landing-sharpen 550ms cubic-bezier(.22, 1, .36, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  .motion-ready .animar.run.landing-rise:focus-within,
+  .motion-ready .animar.run .landing-rise:focus-within {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}
+
+@keyframes landing-rise {
+  from { opacity: .16; transform: translateY(16px); }
+}
+
+@keyframes landing-sharpen {
+  from { opacity: .2; transform: translateY(8px); filter: blur(8px); }
+}
