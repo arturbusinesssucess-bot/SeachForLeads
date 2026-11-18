@@ -12,7 +12,23 @@
 .product-app [data-view="home"] .home-panel { padding: 24px; }
 .product-app [data-view="home"] .start-mark { border: 0; background: transparent; box-shadow: none; }
 .product-app [data-view="home"] .empty-icon { border: 0; background: #242424; box-shadow: none; }
-.recent-lead-list[hidden], .recent-panel .empty-inline[hidden] { display: none; }
+.recent-panel .panel-heading h2 { font-size: 16px; line-height: 1.35; }
+.recent-panel .panel-heading p { color: var(--workspace-muted); font-size: 12px; }
+.recent-panel .panel-heading .text-link { flex-shrink: 0; font-size: 12px; white-space: nowrap; }
+.recent-empty {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: start;
+  margin-top: clamp(18px, 2vw, 24px);
+}
+.recent-empty-copy h3 { margin: 0; color: #ededf2; font-size: 14px; font-weight: 600; line-height: 1.45; }
+.recent-empty-copy p { max-width: 48ch; margin: 6px 0 0; color: var(--workspace-muted); font-size: 13px; line-height: 1.6; }
+.recent-empty > .app-button { grid-column: 2; justify-self: start; }
+.recent-lead-list[hidden], .recent-empty[hidden] { display: none; }
+@media (max-width: 480px) {
+  .recent-empty > .app-button { grid-column: 1 / -1; justify-self: stretch; }
+}
 .recent-lead-list { display: grid; gap: 4px; margin-top: 20px; }
 .recent-lead-item { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px 0; }
 .recent-lead-item > div { min-width: 0; display: grid; gap: 5px; }
