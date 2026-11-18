@@ -98,20 +98,13 @@ export function initializeAnalytics(tbody) {
 
   function updateFunnel() {
     if (!funnelHost || view.hidden) return;
-    if (!funnelStages.some((stage) => stage.value > 0)) {
-      if (!funnelHost.hidden) drawFunnel?.(funnelHost, []);
-      funnelHost.hidden = true;
-      funnelNote.hidden = true;
-      stageBars.hidden = false;
-      return;
-    }
     if (drawFunnel) {
       drawFunnel(funnelHost, funnelStages);
       funnelHost.hidden = false;
       funnelNote.hidden = false;
       stageBars.hidden = true;
     } else if (!loadingFunnel) {
-      loadingFunnel = import("/public/analytics-funnel.v1.js")
+      loadingFunnel = import("/public/analytics-funnel.v2.js")
         .then(({ renderAnalyticsFunnel }) => {
           drawFunnel = renderAnalyticsFunnel;
           updateFunnel();
@@ -134,6 +127,9 @@ export function initializeAnalytics(tbody) {
     renderBars(stageBars, funnelStages, summary.total);
     const stageDescription = funnelStages.map((stage) => `${stage.label}: ${number.format(stage.value)}`).join("; ");
     stageChart.setAttribute("aria-label", summary.total ? `Leads por etapa. ${stageDescription}.` : "Leads por etapa. Ainda não há leads para os filtros selecionados.");
+    if (funnelNote) funnelNote.textContent = summary.total
+      ? "A porcentagem compara cada etapa à que tem mais leads no recorte."
+      : "Prévia visual do funil. Nenhum lead neste recorte.";
     updateFunnel();
     const ring = document.querySelector("#analytics-contact-ring");
     const rate = summary.contactRate ?? 0;

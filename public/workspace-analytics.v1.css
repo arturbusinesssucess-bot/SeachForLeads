@@ -142,6 +142,7 @@
   user-select: none;
 }
 .analytics-funnel-plot .relative { position: relative; }
+.analytics-funnel-plot--preview svg { opacity: .58; }
 .analytics-funnel-plot .absolute { position: absolute; }
 .analytics-funnel-plot .inset-0 { inset: 0; }
 .analytics-funnel-plot .overflow-visible { overflow: visible; }

@@ -15,7 +15,7 @@ import { initializeAIWorkspace } from "./ai-workspace.js?v=niche-disclosure";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=custom-selects-20261117";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
-import { initializeAnalytics } from "./analytics.js?v=crm-funnel";
+import { initializeAnalytics } from "./analytics.js?v=funnel-empty-preview";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
