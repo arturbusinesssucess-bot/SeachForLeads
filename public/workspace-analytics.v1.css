@@ -122,6 +122,7 @@
 @media (max-width: 600px) { .product-app [data-view="home"] .stat-grid, .metrics-grid { gap: 10px; } .product-app [data-view="home"] .stat-card, .metric-card { min-height: 148px; padding: 20px 16px; } .product-app [data-view="home"] .stat-card > strong, .metric-card > strong { font-size: 36px; } .product-app [data-view="home"] .home-panel { padding: 20px; } .crm-metrics { grid-template-columns: minmax(0,1fr); } .crm-metrics .metric-card { min-height: 128px; } .analytics-toolbar { gap: 14px; } .analytics-filter { flex: 1 1 100%; width: 100%; } .analytics-result-count { flex: 1 1 100%; margin-left: 0; } .recent-lead-item { gap: 12px; } .recent-lead-stage { max-width: 100px; text-align: right; } }
 
 .analytics-funnel-scroll {
+  -webkit-tap-highlight-color: transparent;
   --chart-1: oklch(.488 .243 264.376);
   --chart-2: oklch(.696 .17 162.48);
   --chart-3: oklch(.769 .188 70.08);
