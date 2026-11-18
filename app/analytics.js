@@ -85,9 +85,41 @@ export function initializeAnalytics(tbody) {
   const cityFilter = document.querySelector("#analytics-city");
   if (!view || !stageFilter || !cityFilter) return null;
   const reset = document.querySelector("#analytics-reset");
+  const stageChart = document.querySelector("#analytics-stage-chart");
+  const stageBars = document.querySelector("#analytics-stage-bars");
+  const funnelHost = document.querySelector("#analytics-funnel");
+  const funnelNote = document.querySelector("#analytics-funnel-note");
+  let funnelStages = [];
+  let drawFunnel;
+  let loadingFunnel;
   let records = [];
   let citySignature = "";
   let stageSignature = "";
+
+  function updateFunnel() {
+    if (!funnelHost || view.hidden) return;
+    if (!funnelStages.some((stage) => stage.value > 0)) {
+      if (!funnelHost.hidden) drawFunnel?.(funnelHost, []);
+      funnelHost.hidden = true;
+      funnelNote.hidden = true;
+      stageBars.hidden = false;
+      return;
+    }
+    if (drawFunnel) {
+      drawFunnel(funnelHost, funnelStages);
+      funnelHost.hidden = false;
+      funnelNote.hidden = false;
+      stageBars.hidden = true;
+    } else if (!loadingFunnel) {
+      loadingFunnel = import("/public/analytics-funnel.v1.js")
+        .then(({ renderAnalyticsFunnel }) => {
+          drawFunnel = renderAnalyticsFunnel;
+          updateFunnel();
+        })
+        .catch(() => {})
+        .finally(() => { loadingFunnel = null; });
+    }
+  }
 
   function renderFiltered() {
     const filtered = records.filter((record) => (stageFilter.value === "all" || stageFilter.value === record.stage) && (!cityFilter.value || cityFilter.value === record.city));
@@ -98,10 +130,11 @@ export function initializeAnalytics(tbody) {
     setText("#analytics-win-rate", percent(summary.winRate));
     setText("#analytics-result-count", `${number.format(summary.total)} de ${number.format(records.length)} leads`);
     reset.hidden = stageFilter.value === "all" && !cityFilter.value;
-    const stages = crmStages.filter((stage) => stage.key !== "other" || summary.counts.other).map((stage) => ({ label: stage.label, color: stage.color, value: summary.counts[stage.key] }));
-    renderBars(document.querySelector("#analytics-stage-bars"), stages, summary.total);
-    const stageDescription = stages.map((stage) => `${stage.label}: ${number.format(stage.value)}`).join("; ");
-    document.querySelector("#analytics-stage-chart").setAttribute("aria-label", summary.total ? `Leads por etapa. ${stageDescription}.` : "Leads por etapa. Ainda não há leads para os filtros selecionados.");
+    funnelStages = crmStages.filter((stage) => stage.key !== "other" || summary.counts.other).map((stage) => ({ id: stage.key, label: stage.label, color: stage.color, value: summary.counts[stage.key] }));
+    renderBars(stageBars, funnelStages, summary.total);
+    const stageDescription = funnelStages.map((stage) => `${stage.label}: ${number.format(stage.value)}`).join("; ");
+    stageChart.setAttribute("aria-label", summary.total ? `Leads por etapa. ${stageDescription}.` : "Leads por etapa. Ainda não há leads para os filtros selecionados.");
+    updateFunnel();
     const ring = document.querySelector("#analytics-contact-ring");
     const rate = summary.contactRate ?? 0;
     ring.style.strokeDasharray = `${rate} ${100 - rate}`;
@@ -183,6 +216,7 @@ export function initializeAnalytics(tbody) {
     renderFiltered();
   }
 
+  new MutationObserver(updateFunnel).observe(view, { attributes: true, attributeFilter: ["hidden"] });
   window.addEventListener("sfl:pipeline-changed", refresh);
   stageFilter.addEventListener("change", renderFiltered);
   cityFilter.addEventListener("change", renderFiltered);

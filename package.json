@@ -1,10 +1,18 @@
 {
   "dependencies": {
+    "jose": "6.2.17",
     "motion": "^14.13.0",
-    "three": "0.128.0",
-    "jose": "6.2.17"
+    "three": "0.128.0"
   },
   "scripts": {
-    "test:ai": "node --test server/ai-auth.test.mjs server/ai-core.test.mjs server/ai-handler.test.mjs"
+    "test:ai": "node --test server/ai-auth.test.mjs server/ai-core.test.mjs server/ai-handler.test.mjs",
+    "build": "node scripts/build-analytics-funnel.mjs"
+  },
+  "devDependencies": {
+    "clsx": "2.1.1",
+    "esbuild": "0.25.12",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tailwind-merge": "3.7.0"
   }
 }
