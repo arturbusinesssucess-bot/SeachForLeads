@@ -26,7 +26,7 @@
 .product-app .crm-view .crm-filter.is-active { border-color: transparent; background: #292929; }
 .product-app .crm-view .crm-table th, .product-app .crm-view .crm-table td { border-color: #2c2c2c; }
 .product-app .app-main:has(> .analytics-view:not([hidden])) {
-  --analytics-grid-size: 60px;
+  --analytics-grid-size: 88px;
   --analytics-grid-lines: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px);
   position: relative;
   isolation: isolate;
@@ -55,7 +55,7 @@
 }
 @keyframes analytics-grid-colors { from { opacity: .04; } to { opacity: .24; } }
 @media (max-width: 767px) {
-  .product-app .app-main:has(> .analytics-view:not([hidden])) { --analytics-grid-size: 44px; }
+  .product-app .app-main:has(> .analytics-view:not([hidden])) { --analytics-grid-size: 64px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .product-app .app-main:has(> .analytics-view:not([hidden]))::before,
