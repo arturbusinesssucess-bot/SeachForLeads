@@ -27,9 +27,11 @@ function messageFor(status) {
   return "A análise por IA está temporariamente indisponível. Tente novamente mais tarde.";
 }
 
-function animateCRMDisclosure(panel) {
+function animateDisclosure(panel, prepareOpen) {
   const summary = panel?.querySelector("summary");
-  if (!summary || typeof panel.animate !== "function") return;
+  if (!summary || typeof panel.animate !== "function") {
+    return (open) => { if (panel) panel.open = open; };
+  }
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let animation = null;
@@ -42,36 +44,47 @@ function animateCRMDisclosure(panel) {
     animation = null;
   }
 
-  summary.addEventListener("click", (event) => {
-    // Pointer, Enter and Space all use the same native summary activation.
-    if (reducedMotion.matches && !animation) return;
-    event.preventDefault();
-    const nextOpen = animation ? !targetOpen : !panel.open;
-    const startHeight = panel.getBoundingClientRect().height;
-    animation?.cancel();
-    targetOpen = nextOpen;
-    panel.open = true;
-    const endHeight = (nextOpen ? panel : summary).getBoundingClientRect().height;
-    if (reducedMotion.matches || Math.abs(endHeight - startHeight) < 1) {
-      settle(nextOpen);
+  function setOpen(open) {
+    if (open === (animation ? targetOpen : panel.open)) return;
+    if (reducedMotion.matches) {
+      settle(open);
       return;
     }
 
-    panel.dataset.panelMotion = nextOpen ? "opening" : "closing";
+    const startHeight = panel.getBoundingClientRect().height;
+    animation?.cancel();
+    targetOpen = open;
+    panel.open = true;
+    if (open) prepareOpen?.();
+    const endHeight = (open ? panel : summary).getBoundingClientRect().height;
+    if (Math.abs(endHeight - startHeight) < 1) {
+      settle(open);
+      return;
+    }
+
+    panel.dataset.panelMotion = open ? "opening" : "closing";
     const transition = panel.animate({ height: [`${startHeight}px`, `${endHeight}px`] }, {
-      duration: nextOpen ? 240 : 200,
+      duration: open ? 240 : 200,
       easing: "cubic-bezier(.22, .72, .3, 1)",
       fill: "both",
     });
     animation = transition;
     transition.onfinish = () => {
-      if (animation === transition) settle(nextOpen);
+      if (animation === transition) settle(open);
     };
+  }
+
+  summary.addEventListener("click", (event) => {
+    if (reducedMotion.matches && !animation) return;
+    event.preventDefault();
+    setOpen(animation ? !targetOpen : !panel.open);
   });
 
   reducedMotion.addEventListener("change", ({ matches }) => {
     if (matches && animation) settle(targetOpen);
   });
+
+  return setOpen;
 }
 
 export function initializeAIWorkspace({ crmRows } = {}) {
@@ -87,7 +100,7 @@ export function initializeAIWorkspace({ crmRows } = {}) {
   const leadResults = document.querySelector("#ai-lead-results");
   const niche = document.querySelector("#search-niche");
   if (!offerPane || !offer || !offerButton || !offerStatus || !offerResults || !crmOffer || !leadButton || !leadStatus || !leadCount || !leadResults || !niche || !crmRows) return null;
-  animateCRMDisclosure(crmOffer.closest("details"));
+  animateDisclosure(crmOffer.closest("details"));
 
   let currentUser = null;
   let connection = null;
@@ -112,6 +125,8 @@ export function initializeAIWorkspace({ crmRows } = {}) {
     offer.style.height = `${offer.scrollHeight + borderHeight}px`;
     offer.scrollTop = scrollTop;
   }
+
+  const setOfferPaneOpen = animateDisclosure(offerPane, resizeOffer);
 
   if (needsOfferResize) {
     offerPane.addEventListener("toggle", resizeOffer);
@@ -211,7 +226,7 @@ export function initializeAIWorkspace({ crmRows } = {}) {
     button.addEventListener("click", () => {
       niche.value = name;
       niche.dispatchEvent(new Event("input", { bubbles: true }));
-      offerPane.open = false;
+      setOfferPaneOpen(false);
       niche.focus();
     });
     return button;

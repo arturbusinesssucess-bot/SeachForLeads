@@ -44,7 +44,8 @@
 .product-app #ai-offer-panel { background: transparent; }
 .product-app #ai-offer { min-height: 52px; max-height: min(300px, max(144px, 42svh)); field-sizing: content; resize: none; overflow-y: auto; }
 
-.product-app #ai-crm-panel[data-panel-motion] { overflow: hidden; overflow: clip; }
+.product-app .ai-pane[data-panel-motion] { overflow: hidden; overflow: clip; }
+.product-app #ai-offer-panel[data-panel-motion] > summary:focus-visible { outline-offset: -3px; }
 .product-app #ai-crm-panel > summary { padding-block: 10px; }
 .product-app #ai-crm-panel > summary:focus-visible { outline-offset: -3px; }
 .product-app #ai-crm-panel .ai-summary-state {
