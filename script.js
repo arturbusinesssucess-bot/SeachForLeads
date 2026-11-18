@@ -182,39 +182,3 @@ if (privacyNotice && privacyNoticeDismiss && !privacyNoticeSeen) {
     window.setTimeout(() => { privacyNotice.hidden = true; }, 330);
   });
 }
-
-const searchDemo = document.querySelector("#search-demo-video");
-if (searchDemo && "IntersectionObserver" in window) {
-  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const visibilityThreshold = .2;
-  let inView = false;
-  let manuallyPaused = false;
-  let pausingOffscreen = false;
-
-  function syncSearchVideo() {
-    if (!inView || document.hidden || motionPreference.matches) {
-      if (!searchDemo.paused) {
-        pausingOffscreen = true;
-        searchDemo.pause();
-      }
-      return;
-    }
-    if (!manuallyPaused && searchDemo.paused) {
-      searchDemo.play().catch(() => {});
-    }
-  }
-
-  searchDemo.addEventListener("pause", () => {
-    if (!pausingOffscreen) manuallyPaused = true;
-    pausingOffscreen = false;
-  });
-  searchDemo.addEventListener("play", () => { manuallyPaused = false; });
-
-  const visibilityObserver = new IntersectionObserver(([entry]) => {
-    inView = entry.isIntersecting && entry.intersectionRatio >= visibilityThreshold;
-    syncSearchVideo();
-  }, { threshold: visibilityThreshold });
-  visibilityObserver.observe(searchDemo);
-  document.addEventListener("visibilitychange", syncSearchVideo);
-  motionPreference.addEventListener("change", syncSearchVideo);
-}
