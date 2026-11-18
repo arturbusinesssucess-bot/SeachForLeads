@@ -1,0 +1,255 @@
+import { getPipeline } from "./pipeline.js?v=pipeline-15";
+
+const limit = 10;
+const contactedStages = new Set(["contacted", "responded", "won"]);
+
+function makeResults({ niche, state, stateName, cityId, cityName, quantity }) {
+  const normalized = niche.toLocaleLowerCase("pt-BR").replace(/\s+/gu, " ");
+  const location = cityName ? `${cityName}, ${state}` : stateName;
+  return Array.from({ length: Math.min(limit, quantity) }, (_, index) => ({
+    id: JSON.stringify([normalized, state, cityId, index]),
+    company: `Empresa de teste ${String(index + 1).padStart(2, "0")} · ${niche}`,
+    location,
+    category: niche,
+    stage: "new",
+    contacted: false,
+  }));
+}
+
+function readSaved(key) {
+  const raw = localStorage.getItem(key);
+  if (!raw) return [];
+  const parsed = JSON.parse(raw);
+  if (!Array.isArray(parsed)) throw new Error("invalid-trial-data");
+  return parsed.filter((lead) => lead && [lead.id, lead.company, lead.location, lead.category, lead.stage]
+    .every((field) => typeof field === "string")).slice(0, limit);
+}
+
+function csvCell(value) {
+  const text = String(value);
+  const safe = /^\s*[=+@-]|^[\t\r\n]/u.test(text) ? `'${text}` : text;
+  return `"${safe.replaceAll('"', '""')}"`;
+}
+
+export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
+  const status = document.querySelector("#search-status");
+  const notice = document.querySelector("#trial-search-notice");
+  const resultPanel = document.querySelector("#trial-results");
+  const resultStatus = document.querySelector("#trial-results-status");
+  const results = document.querySelector("#trial-result-list");
+  const template = document.querySelector("#trial-result-template");
+  const editForm = document.querySelector("#trial-stage-form");
+  const editStage = document.querySelector("#trial-stage");
+  const editStatus = document.querySelector("#trial-stage-status");
+  const crmStatus = document.querySelector("#trial-crm-status");
+  const exportButton = document.querySelector("#export-leads");
+  let storageKey = "";
+  let saved = [];
+  let editingId = null;
+  let editButtons = new Map();
+  let resultButtons = new Map();
+  let revision = 0;
+
+  function syncButtons() {
+    const savedIds = new Set(saved.map((lead) => lead.id));
+    for (const [id, { button, label }] of resultButtons) {
+      const stored = savedIds.has(id);
+      const full = saved.length >= limit;
+      button.disabled = stored || full;
+      button.querySelector(".app-button-label").textContent = stored ? "Salvo no CRM" : full ? "Limite do teste" : "Salvar no CRM";
+      button.setAttribute("aria-label", stored ? "Lead salvo no CRM" : full ? "Limite de 10 leads salvos atingido" : label);
+    }
+    exportButton.disabled = saved.length === 0;
+    exportButton.setAttribute("aria-disabled", String(exportButton.disabled));
+  }
+
+  function closeEditor(restoreFocus = true) {
+    const button = editButtons.get(editingId);
+    editingId = null;
+    editForm.hidden = true;
+    editStatus.textContent = "";
+    if (restoreFocus) button?.focus();
+  }
+
+  function openEditor(lead) {
+    editingId = lead.id;
+    document.querySelector("#trial-stage-company").textContent = lead.company;
+    const stages = getPipeline();
+    editStage.replaceChildren(...stages.map((stage) => new Option(stage.label, stage.key)));
+    editStage.value = stages.some((stage) => stage.key === lead.stage) ? lead.stage : "new";
+    editStage.dispatchEvent(new Event("change", { bubbles: true }));
+    editForm.hidden = false;
+    editStatus.textContent = "";
+    document.querySelector("#trial-stage-title").focus();
+  }
+
+  function renderRows() {
+    const items = document.createDocumentFragment();
+    const stageLabels = new Map(getPipeline().map((stage) => [stage.key, stage.label]));
+    editButtons = new Map();
+    for (const lead of saved) {
+      const row = document.createElement("tr");
+      row.dataset.company = lead.company;
+      row.dataset.city = lead.location;
+      row.dataset.category = lead.category;
+      row.dataset.status = lead.stage;
+      row.dataset.contacted = String(lead.contacted === true);
+      for (const value of [lead.company, lead.location, "Busca de teste", stageLabels.get(lead.stage) || "Outros"]) row.insertCell().textContent = value;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "text-link trial-edit-stage";
+      button.textContent = "Alterar etapa";
+      button.setAttribute("aria-label", `Alterar etapa de ${lead.company}`);
+      button.addEventListener("click", () => openEditor(lead));
+      row.insertCell().append(button);
+      editButtons.set(lead.id, button);
+      items.append(row);
+    }
+    rows.replaceChildren(items);
+    syncButtons();
+  }
+
+  async function updateSaved(action) {
+    const key = storageKey;
+    if (!key) throw new Error("trial-not-authorized");
+    const commit = () => {
+      if (key !== storageKey) return false;
+      const leads = readSaved(key);
+      const next = action(leads);
+      localStorage.setItem(key, JSON.stringify(next));
+      saved = next;
+      renderRows();
+      return true;
+    };
+    return navigator.locks?.request ? navigator.locks.request(key, commit) : commit();
+  }
+
+  async function saveResult(lead, button) {
+    button.disabled = true;
+    try {
+      const updated = await updateSaved((leads) => {
+        if (leads.some((item) => item.id === lead.id)) return leads;
+        if (leads.length >= limit) throw new Error("trial-limit");
+        return [lead, ...leads];
+      });
+      if (updated) resultStatus.textContent = `Lead salvo no CRM. ${saved.length} de ${limit} leads do teste salvos.`;
+    } catch (error) {
+      resultStatus.textContent = error.message === "trial-limit" ? "O CRM já tem os 10 leads permitidos neste teste." : "Não foi possível salvar o lead neste navegador.";
+      syncButtons();
+    }
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!storageKey) {
+      if (!status.textContent) status.textContent = "A busca de teste está indisponível para esta conta.";
+      return;
+    }
+    const input = criteria?.read();
+    if (!input) return;
+    const batch = makeResults(input);
+    const items = document.createDocumentFragment();
+    resultButtons = new Map();
+    for (const lead of batch) {
+      const item = template.content.cloneNode(true);
+      item.querySelector("h3").textContent = lead.company;
+      item.querySelector("p").textContent = lead.location;
+      const button = item.querySelector("button");
+      const label = `Salvar ${lead.company} no CRM`;
+      button.addEventListener("click", () => saveResult(lead, button));
+      resultButtons.set(lead.id, { button, label });
+      items.append(item);
+    }
+    results.replaceChildren(items);
+    resultPanel.hidden = false;
+    syncButtons();
+    status.textContent = "";
+    resultStatus.textContent = batch.length === 1 ? "1 lead fictício gerado para o teste." : `${batch.length} leads fictícios gerados para o teste.`;
+    document.querySelector("#trial-results-title").focus();
+  });
+
+  editForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const id = editingId;
+    const stage = editStage.value;
+    if (!id || !getPipeline().some((item) => item.key === stage)) return;
+    try {
+      const updated = await updateSaved((leads) => leads.map((lead) => lead.id === id
+        ? { ...lead, stage, contacted: lead.contacted || contactedStages.has(stage) }
+        : lead));
+      if (updated && editingId === id) {
+        closeEditor();
+        crmStatus.textContent = "Etapa atualizada.";
+      }
+    } catch {
+      editStatus.textContent = "Não foi possível salvar a etapa neste navegador.";
+    }
+  });
+
+  document.querySelector("#trial-stage-close").addEventListener("click", () => closeEditor());
+  document.querySelector("#trial-open-crm").addEventListener("click", openCRM);
+  exportButton.addEventListener("click", () => {
+    if (!storageKey || !saved.length) return;
+    const labels = new Map(getPipeline().map((stage) => [stage.key, stage.label]));
+    const records = [["Empresa", "Localização", "Origem", "Etapa"], ...saved.map((lead) => [lead.company, lead.location, "Busca de teste", labels.get(lead.stage) || "Outros"])];
+    const csv = records.map((row) => row.map(csvCell).join(";")).join("\r\n");
+    const url = URL.createObjectURL(new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "leads-de-teste.csv";
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
+  window.addEventListener("sfl:pipeline-changed", () => {
+    if (!storageKey) return;
+    closeEditor(false);
+    renderRows();
+  });
+  window.addEventListener("storage", (event) => {
+    if (!storageKey || (event.key !== storageKey && event.key !== null)) return;
+    try {
+      saved = readSaved(storageKey);
+      closeEditor(false);
+      renderRows();
+    } catch { crmStatus.textContent = "Não foi possível ler os leads de teste deste navegador."; }
+  });
+
+  return {
+    async setUser(user) {
+      const current = ++revision;
+      const wasEnabled = Boolean(storageKey);
+      storageKey = "";
+      saved = [];
+      resultButtons = new Map();
+      results.replaceChildren();
+      resultPanel.hidden = true;
+      resultStatus.textContent = "";
+      crmStatus.textContent = "";
+      notice.hidden = true;
+      closeEditor(false);
+      if (wasEnabled) renderRows();
+      if (!user) return;
+      status.textContent = "Verificando acesso à busca de teste…";
+      try {
+        const token = await user.getIdToken();
+        if (current !== revision) return;
+        const response = await fetch("/api/search-trial", { headers: { Authorization: `Bearer ${token}` }, cache: "no-store", signal: AbortSignal.timeout(10000) });
+        const available = response.ok && (await response.json()).available === true;
+        if (current !== revision) return;
+        if (!available) {
+          status.textContent = [401, 403].includes(response.status) ? "A busca de teste ainda não está liberada para esta conta." : "Não foi possível verificar a busca de teste.";
+          return;
+        }
+        const key = `sfl:search-trial:v1:${user.uid}`;
+        saved = readSaved(key);
+        storageKey = key;
+        renderRows();
+        notice.hidden = false;
+        status.textContent = "";
+      } catch {
+        if (current === revision) status.textContent = "Não foi possível abrir a busca de teste. Recarregue a página para tentar novamente.";
+      }
+    },
+  };
+}

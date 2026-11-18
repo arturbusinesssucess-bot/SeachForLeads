@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="/public/app-mobile.v1.css?v=install-card" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-disclosure" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
+    <link rel="stylesheet" href="/public/search-trial.v1.css" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <header class="sidebar-mobile-bar"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
@@ -159,20 +160,32 @@
               </div>
             </details>
             <form class="search-clean-form" id="lead-search-form" aria-labelledby="search-form-title">
-              <div class="search-field"><label for="search-niche">Que tipo de empresa você procura?</label><input id="search-niche" name="niche" type="text" placeholder="Ex.: clínicas odontológicas" required autocomplete="off"></div>
+              <div class="search-field"><label for="search-niche">Que tipo de empresa você procura?</label><input id="search-niche" name="niche" type="text" maxlength="100" placeholder="Ex.: clínicas odontológicas" required autocomplete="off"></div>
               <div class="search-location-fields">
                 <div class="search-field"><label for="search-state">Estado</label><select id="search-state" data-select-search="true" data-select-search-placeholder="Pesquisar estado" name="state" required autocomplete="address-level1"><option value="" disabled selected>Selecione um estado</option><option value="AC">Acre (AC)</option><option value="AL">Alagoas (AL)</option><option value="AP">Amapá (AP)</option><option value="AM">Amazonas (AM)</option><option value="BA">Bahia (BA)</option><option value="CE">Ceará (CE)</option><option value="DF">Distrito Federal (DF)</option><option value="ES">Espírito Santo (ES)</option><option value="GO">Goiás (GO)</option><option value="MA">Maranhão (MA)</option><option value="MT">Mato Grosso (MT)</option><option value="MS">Mato Grosso do Sul (MS)</option><option value="MG">Minas Gerais (MG)</option><option value="PA">Pará (PA)</option><option value="PB">Paraíba (PB)</option><option value="PR">Paraná (PR)</option><option value="PE">Pernambuco (PE)</option><option value="PI">Piauí (PI)</option><option value="RJ">Rio de Janeiro (RJ)</option><option value="RN">Rio Grande do Norte (RN)</option><option value="RS">Rio Grande do Sul (RS)</option><option value="RO">Rondônia (RO)</option><option value="RR">Roraima (RR)</option><option value="SC">Santa Catarina (SC)</option><option value="SP">São Paulo (SP)</option><option value="SE">Sergipe (SE)</option><option value="TO">Tocantins (TO)</option></select></div>
                 <div class="search-field"><label for="search-city">Cidade <span class="search-field-optional">(opcional)</span></label><select id="search-city" data-select-search="true" data-select-search-placeholder="Pesquisar cidade" name="city" aria-describedby="search-city-help" autocomplete="address-level2" disabled><option value="">Escolha o estado primeiro</option></select></div>
               </div>
               <p class="search-field-help" id="search-city-help" role="status" aria-live="polite">Selecione um estado para ver as cidades.</p>
               <button class="search-city-retry" id="retry-search-cities" type="button" hidden>Tentar carregar cidades novamente</button>
-              <div class="search-field"><label for="search-quantity">Quantidade de leads</label><input class="quantity-input" id="search-quantity" name="quantity" type="number" inputmode="numeric" min="1" max="100" step="1" value="10" required aria-describedby="search-quantity-help"></div>
-              <p class="search-field-help" id="search-quantity-help">De 1 a 100 leads por busca.</p>
+              <div class="search-field"><label for="search-quantity">Quantidade de leads</label><input class="quantity-input" id="search-quantity" name="quantity" type="number" inputmode="numeric" min="1" max="10" step="1" value="10" required aria-describedby="search-quantity-help"></div>
+              <p class="search-field-help" id="search-quantity-help">De 1 a 10 leads por busca.</p>
+              <p class="search-field-help" id="trial-search-notice" hidden>Modo de teste. Os resultados são fictícios. Você pode salvar até 10 leads neste navegador.</p>
               <button class="search-clean-submit app-button app-button--primary" type="submit"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Buscar empresas</span></button>
               <p class="search-status" id="search-status" role="status" aria-live="polite"></p>
             </form>
             </div>
           </div>
+          <section class="trial-results" id="trial-results" aria-labelledby="trial-results-title" hidden>
+            <header>
+              <div><h2 id="trial-results-title" tabindex="-1">Resultados do teste</h2><p>Empresas fictícias para testar o CRM.</p></div>
+              <button class="text-link trial-link" id="trial-open-crm" type="button">Abrir CRM</button>
+            </header>
+            <ul id="trial-result-list"></ul>
+            <template id="trial-result-template">
+              <li><div><h3></h3><p></p></div><button class="app-button app-button--primary app-button--compact" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" class="app-button-icon" aria-hidden="true"><path d="M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21"/><path d="M3 7h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="app-button-label">Salvar no CRM</span></button></li>
+            </template>
+            <p id="trial-results-status" role="status"></p>
+          </section>
         </section>
 
         <section class="app-view crm-view" data-view="crm" aria-labelledby="crm-title" hidden>
@@ -205,6 +218,17 @@
               <table class="crm-table" role="table" aria-label="Empresas salvas no CRM"><thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">EMPRESA</th><th role="columnheader" scope="col">LOCALIZAÇÃO</th><th role="columnheader" scope="col">ORIGEM</th><th role="columnheader" scope="col">STATUS</th><th role="columnheader" scope="col" aria-label="Ações"></th></tr></thead><tbody id="crm-rows" role="rowgroup"></tbody></table>
             </div>
           </div>
+          <form class="trial-stage-form" id="trial-stage-form" aria-labelledby="trial-stage-title" hidden>
+            <header>
+              <div><h2 id="trial-stage-title" tabindex="-1">Alterar etapa</h2><p id="trial-stage-company"></p></div>
+              <button class="trial-stage-close" id="trial-stage-close" type="button" aria-label="Fechar edição de etapa"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+            </header>
+            <label for="trial-stage">Etapa do lead</label>
+            <select id="trial-stage" required></select>
+            <button type="submit" class="app-button app-button--primary app-button--compact"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" class="app-button-icon" aria-hidden="true"><path d="M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21"/><path d="M3 7h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="app-button-label">Salvar etapa</span></button>
+            <p id="trial-stage-status" role="status"></p>
+          </form>
+          <p class="trial-crm-status" id="trial-crm-status" role="status"></p>
           <div class="crm-empty" id="crm-empty">
             <h2 id="crm-empty-title">Seu CRM começa aqui.</h2>
             <p id="crm-empty-description">Encontre empresas na Busca e salve os contatos que quiser acompanhar por aqui.</p>
@@ -334,7 +358,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=funnel-empty-preview"></script>
+    <script type="module" src="app.js?v=crm-trial"></script>
   </body>
 </html>
-

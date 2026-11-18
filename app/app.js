@@ -13,7 +13,8 @@ import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=pipeline-15";
 
 import { initializeAIWorkspace } from "./ai-workspace.js?v=niche-disclosure";
 
-import { initializeSearchCriteria } from "./search-criteria.js?v=custom-selects-20261117";
+import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
+import { initializeSearchTrial } from "./search-trial.js?v=crm-trial";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
 import { initializeAnalytics } from "./analytics.js?v=funnel-empty-preview";
 
@@ -24,7 +25,6 @@ initializeAppSelects();
 const authView = document.body;
 const views = [...document.querySelectorAll("[data-view]")];
 const viewLinks = [...document.querySelectorAll("[data-view-link]")];
-const status = document.querySelector("#search-status");
 const searchForm = document.querySelector("#lead-search-form");
 const searchCriteria = initializeSearchCriteria(searchForm);
 const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics", settings: "Configurações" };
@@ -163,18 +163,6 @@ if (installCard && installButton && installHelp) {
   checkInstallation();
 }
 
-searchForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  if (searchCriteria) {
-    const criteria = searchCriteria.read();
-    if (!criteria) return;
-    const locationLabel = criteria.cityName ? `${criteria.cityName}, ${criteria.state}` : criteria.stateName;
-    status.textContent = `Busca configurada para ${criteria.quantity} leads em ${locationLabel}. A fonte de prospecção ainda não está conectada.`;
-    return;
-  }
-  status.textContent = "A fonte de prospecção ainda não está conectada. Quando estiver, os resultados desta busca poderão ser salvos no CRM.";
-});
-
 document.querySelectorAll(".crm-filter").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".crm-filter").forEach((filter) => filter.classList.toggle("is-active", filter === button));
@@ -183,6 +171,7 @@ document.querySelectorAll(".crm-filter").forEach((button) => {
 });
 const crmFilter = document.querySelector("#crm-filter");
 const crmRows = document.querySelector("#crm-rows");
+const searchTrial = initializeSearchTrial({ form: searchForm, criteria: searchCriteria, rows: crmRows, openCRM: () => showView("crm") });
 const aiWorkspace = initializeAIWorkspace({ crmRows });
 const settingsWorkspace = initializeSettings({
   getAuthInstance: () => auth,
@@ -255,6 +244,7 @@ if (isFirebaseConfigured) {
       setPipelineUser(null);
       settingsWorkspace?.setUser(null);
       aiWorkspace?.setUser(null);
+      searchTrial.setUser(null);
       window.location.replace("/auth?mode=login");
       return;
     }
@@ -268,8 +258,8 @@ if (isFirebaseConfigured) {
     setPipelineUser(user.uid);
     settingsWorkspace?.setUser(user);
     aiWorkspace?.setUser(user);
+    searchTrial.setUser(user);
   });
 } else {
   window.location.replace("/auth?mode=login");
 }
-

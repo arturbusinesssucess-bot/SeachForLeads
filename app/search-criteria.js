@@ -94,7 +94,8 @@ export function initializeSearchCriteria(form) {
       niche.setCustomValidity(niche.value.trim() ? "" : "Informe o tipo de empresa que você procura.");
       state.setCustomValidity(stateCodes.has(state.value) ? "" : "Selecione um estado brasileiro.");
       const limit = Number(quantity.value);
-      quantity.setCustomValidity(quantity.value.trim() && Number.isInteger(limit) && limit >= 1 && limit <= 100 ? "" : "Informe um número inteiro de 1 a 100 leads.");
+      const maximum = Number(quantity.max);
+      quantity.setCustomValidity(quantity.value.trim() && Number.isInteger(limit) && limit >= 1 && limit <= maximum ? "" : `Informe um número inteiro de 1 a ${maximum} leads.`);
       if (!form.reportValidity()) return null;
       if (!selectedState || selectedState.code !== state.value || city.disabled) {
         help.textContent = "Carregue as cidades do estado escolhido antes de continuar.";
