@@ -8,121 +8,124 @@ service cloud.firestore {
         return request.auth != null && request.auth.uid == uid;
       }
 
-      function shortText(value, limit) {
-        return value is string && value.size() > 0 && value.size() <= limit;
-      }
-
       function stageKey(value) {
-        return value is string && (value in ['new', 'qualified', 'contacted', 'responded', 'won', 'lost']
-          || value.matches('^custom-[0-9a-f-]{36}$'));
+        return value.matches('^(new|qualified|contacted|responded|won|lost|custom-[0-9a-f-]{36})$');
       }
 
       function validStage(stage) {
-        return stage is map
-          && stage.keys().hasAll(['key', 'label', 'color'])
-          && stage.keys().hasOnly(['key', 'label', 'color'])
+        return stage.keys().hasOnly(['key', 'label', 'color'])
           && stageKey(stage.key)
-          && shortText(stage.label, 40)
-          && stage.label.size() >= 2
+          && stage.label.matches('(?s)^.{2,40}$')
           && stage.color in ['blue', 'purple', 'cyan', 'amber', 'pink', 'green', 'red', 'slate'];
-      }
-
-      function optionalText(lead, key, limit) {
-        let value = lead.get(key, '');
-        return value is string && value.size() <= limit;
       }
 
       function validLeadContact(lead) {
         let rating = lead.get('rating', 0);
         let reviews = lead.get('reviewCount', 0);
-        return optionalText(lead, 'address', 300)
-          && optionalText(lead, 'phone', 30)
-          && optionalText(lead, 'website', 300)
-          && optionalText(lead, 'mapsUrl', 300)
-          && optionalText(lead, 'source', 60)
+        return lead.get('address', '').matches('(?s)^.{0,300}$')
+          && lead.get('phone', '').matches('(?s)^.{0,30}$')
+          && lead.get('website', '').matches('(?s)^.{0,300}$')
+          && lead.get('mapsUrl', '').matches('(?s)^.{0,300}$')
+          && lead.get('source', '').matches('(?s)^.{0,60}$')
           && lead.get('websiteChecked', false) is bool
           && rating is number && rating >= 0 && rating <= 5
           && reviews is int && reviews >= 0 && reviews <= 100000000;
       }
 
-      function validLead(lead) {
-        return lead is map
-          && lead.keys().hasAll(['id', 'company', 'location', 'category', 'stage'])
-          && lead.keys().hasOnly(['id', 'company', 'location', 'category', 'stage', 'contacted', 'savedAt', 'address', 'phone', 'website', 'mapsUrl', 'source', 'websiteChecked', 'rating', 'reviewCount'])
-          && shortText(lead.id, 350)
-          && shortText(lead.company, 160)
-          && shortText(lead.location, 100)
-          && shortText(lead.category, 100)
+      function validLead(lead, basicKeys, keys) {
+        let fields = lead.keys();
+        return lead.id.matches('(?s)^.{1,350}$')
+          && lead.company.matches('(?s)^.{1,160}$')
+          && lead.location.matches('(?s)^.{1,100}$')
+          && lead.category.matches('(?s)^.{1,100}$')
           && stageKey(lead.stage)
-          && (!('contacted' in lead) || lead.contacted is bool)
-          && (!('savedAt' in lead) || shortText(lead.savedAt, 32))
-          && validLeadContact(lead);
+          && lead.get('contacted', false) is bool
+          && lead.get('savedAt', '').matches('(?s)^.{0,32}$')
+          && (fields.hasOnly(basicKeys) || (fields.hasOnly(keys) && validLeadContact(lead)));
       }
 
       function validPipeline(stages) {
-        return stages is list && stages.size() >= 6 && stages.size() <= 15
-        && (stages.size() <= 0 || validStage(stages[0]))
-        && (stages.size() <= 1 || validStage(stages[1]))
-        && (stages.size() <= 2 || validStage(stages[2]))
-        && (stages.size() <= 3 || validStage(stages[3]))
-        && (stages.size() <= 4 || validStage(stages[4]))
-        && (stages.size() <= 5 || validStage(stages[5]))
-        && (stages.size() <= 6 || validStage(stages[6]))
-        && (stages.size() <= 7 || validStage(stages[7]))
-        && (stages.size() <= 8 || validStage(stages[8]))
-        && (stages.size() <= 9 || validStage(stages[9]))
-        && (stages.size() <= 10 || validStage(stages[10]))
-        && (stages.size() <= 11 || validStage(stages[11]))
-        && (stages.size() <= 12 || validStage(stages[12]))
-        && (stages.size() <= 13 || validStage(stages[13]))
-        && (stages.size() <= 14 || validStage(stages[14]));
+        let count = stages.size();
+        return stages is list && count >= 6 && count <= 15
+          && (count <= 0 || validStage(stages[0]))
+          && (count <= 1 || validStage(stages[1]))
+          && (count <= 2 || validStage(stages[2]))
+          && (count <= 3 || validStage(stages[3]))
+          && (count <= 4 || validStage(stages[4]))
+          && (count <= 5 || validStage(stages[5]))
+          && (count <= 6 || validStage(stages[6]))
+          && (count <= 7 || validStage(stages[7]))
+          && (count <= 8 || validStage(stages[8]))
+          && (count <= 9 || validStage(stages[9]))
+          && (count <= 10 || validStage(stages[10]))
+          && (count <= 11 || validStage(stages[11]))
+          && (count <= 12 || validStage(stages[12]))
+          && (count <= 13 || validStage(stages[13]))
+          && (count <= 14 || validStage(stages[14]));
       }
 
-      function validLeads(leads) {
-        return leads is list && leads.size() <= 10
-        && (leads.size() <= 0 || validLead(leads[0]))
-        && (leads.size() <= 1 || validLead(leads[1]))
-        && (leads.size() <= 2 || validLead(leads[2]))
-        && (leads.size() <= 3 || validLead(leads[3]))
-        && (leads.size() <= 4 || validLead(leads[4]))
-        && (leads.size() <= 5 || validLead(leads[5]))
-        && (leads.size() <= 6 || validLead(leads[6]))
-        && (leads.size() <= 7 || validLead(leads[7]))
-        && (leads.size() <= 8 || validLead(leads[8]))
-        && (leads.size() <= 9 || validLead(leads[9]));
+      function validLeads(leads, previous, count) {
+        let basicKeys = ['id', 'company', 'location', 'category', 'stage', 'contacted', 'savedAt'];
+        let keys = basicKeys.concat(['address', 'phone', 'website', 'mapsUrl', 'source',
+          'websiteChecked', 'rating', 'reviewCount']);
+        return (count <= 0 || leads[0] in previous || validLead(leads[0], basicKeys, keys))
+          && (count <= 1 || leads[1] in previous || validLead(leads[1], basicKeys, keys))
+          && (count <= 2 || leads[2] in previous || validLead(leads[2], basicKeys, keys))
+          && (count <= 3 || leads[3] in previous || validLead(leads[3], basicKeys, keys))
+          && (count <= 4 || leads[4] in previous || validLead(leads[4], basicKeys, keys))
+          && (count <= 5 || leads[5] in previous || validLead(leads[5], basicKeys, keys))
+          && (count <= 6 || leads[6] in previous || validLead(leads[6], basicKeys, keys))
+          && (count <= 7 || leads[7] in previous || validLead(leads[7], basicKeys, keys))
+          && (count <= 8 || leads[8] in previous || validLead(leads[8], basicKeys, keys))
+          && (count <= 9 || leads[9] in previous || validLead(leads[9], basicKeys, keys));
       }
 
-      function validWorkspace(data) {
+      function validWorkspaceKeys(data) {
         return data.keys().hasOnly(['pipeline', 'leads'])
-          && data.keys().hasAny(['pipeline', 'leads'])
-          && (!('pipeline' in data) || validPipeline(data.pipeline))
-          && (!('leads' in data) || validLeads(data.leads));
+          && data.keys().hasAny(['pipeline', 'leads']);
       }
 
-      function uniqueLeadIds(data) {
-        let leads = data.get('leads', []);
+      function validPipelineField(data) {
+        return !('pipeline' in data) || validPipeline(data.pipeline);
+      }
+
+      function uniqueLeadIds(leads, count) {
         let ids = [
-          leads.size() > 0 ? leads[0].id : null,
-          leads.size() > 1 ? leads[1].id : null,
-          leads.size() > 2 ? leads[2].id : null,
-          leads.size() > 3 ? leads[3].id : null,
-          leads.size() > 4 ? leads[4].id : null,
-          leads.size() > 5 ? leads[5].id : null,
-          leads.size() > 6 ? leads[6].id : null,
-          leads.size() > 7 ? leads[7].id : null,
-          leads.size() > 8 ? leads[8].id : null,
-          leads.size() > 9 ? leads[9].id : null
+          count > 0 ? leads[0].id : null,
+          count > 1 ? leads[1].id : null,
+          count > 2 ? leads[2].id : null,
+          count > 3 ? leads[3].id : null,
+          count > 4 ? leads[4].id : null,
+          count > 5 ? leads[5].id : null,
+          count > 6 ? leads[6].id : null,
+          count > 7 ? leads[7].id : null,
+          count > 8 ? leads[8].id : null,
+          count > 9 ? leads[9].id : null
         ];
-        return ids.removeAll([null]).toSet().size() == leads.size();
+        // Unused slots are null. Every actual entry must have a valid ID.
+        return ids.toSet().size() == (count < 10 ? count + 1 : count);
+      }
+
+      function validLeadsField(data, previous) {
+        let leads = data.get('leads', []);
+        let count = leads.size();
+        return leads is list && count <= 10 && uniqueLeadIds(leads, count)
+          && validLeads(leads, previous, count);
+      }
+
+      // Unchanged fields and identical lead records were validated when written.
+      function validWorkspaceUpdate(data, previous) {
+        let changed = data.diff(previous).affectedKeys();
+        return validWorkspaceKeys(data)
+          && (!changed.hasAny(['pipeline']) || validPipelineField(data))
+          && (!changed.hasAny(['leads']) || validLeadsField(data, previous.get('leads', [])));
       }
 
       allow get: if isOwner();
-      allow create: if isOwner() && validWorkspace(request.resource.data)
-        && uniqueLeadIds(request.resource.data);
-      allow update: if isOwner() && validWorkspace(request.resource.data)
-        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['leads'])
-          || uniqueLeadIds(request.resource.data));
+      allow create: if isOwner() && validWorkspaceKeys(request.resource.data)
+        && validPipelineField(request.resource.data) && validLeadsField(request.resource.data, []);
+      allow update: if isOwner()
+        && validWorkspaceUpdate(request.resource.data, resource.data);
     }
   }
 }
-
