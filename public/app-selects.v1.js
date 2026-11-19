@@ -72,7 +72,9 @@ function enhanceSelect(select) {
   filter?.setAttribute("aria-controls", list.id);
   select.before(wrapper);
   wrapper.append(select, control, error);
-  document.body.append(panel);
+  // Modal dialogs sit above the rest of the page in the browser's top layer.
+  const dialog = select.closest("dialog");
+  (dialog ?? document.body).append(panel);
   select.classList.add("app-select-native");
   select.tabIndex = -1;
   select.setAttribute("aria-hidden", "true");
@@ -237,6 +239,8 @@ function enhanceSelect(select) {
     const option = event.target.closest('[role="option"]');
     if (option && list.contains(option)) commit(Number(option.dataset.index));
   }, eventOptions);
+  dialog?.addEventListener("close", () => close(false), eventOptions);
+  dialog?.addEventListener("animationend", position, eventOptions);
   select.addEventListener("change", () => window.queueMicrotask(sync), eventOptions);
   select.addEventListener("focus", () => control.focus({ preventScroll: true }), eventOptions);
   select.addEventListener("invalid", (event) => {

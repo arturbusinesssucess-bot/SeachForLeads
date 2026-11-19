@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-disclosure" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
     <link rel="stylesheet" href="/public/search-trial.v1.css?v=search-flow" />
-    <link rel="stylesheet" href="/public/crm-views.v1.css" />
+    <link rel="stylesheet" href="/public/crm-views.v1.css?v=lead-details" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <header class="sidebar-mobile-bar"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
@@ -278,19 +278,36 @@
                 <div><p>Detalhes do lead</p><h2 id="trial-stage-title" tabindex="-1" autofocus></h2></div>
                 <button class="trial-stage-close" id="trial-stage-close" type="button" aria-label="Fechar detalhes do lead"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
               </header>
-              <dl class="crm-lead-details">
-                <div><dt>Localização</dt><dd data-lead-detail="location"></dd></div>
-                <div><dt>Categoria</dt><dd data-lead-detail="category"></dd></div>
-                <div><dt>Origem</dt><dd data-lead-detail="source"></dd></div>
-                <div><dt>Salvo no CRM</dt><dd data-lead-detail="savedAt"></dd></div>
-                <div><dt>Contato</dt><dd data-lead-detail="contact"></dd></div>
-              </dl>
+              <div class="crm-contact-actions" id="crm-contact-actions" aria-label="Contatos da empresa" hidden>
+                <a class="crm-contact-link crm-whatsapp-link" data-lead-action="whatsapp" target="_blank" rel="noopener noreferrer" hidden>WhatsApp <small data-lead-whatsapp-phone></small></a>
+                <a class="crm-contact-link" data-lead-action="call" hidden>Ligar</a>
+                <a class="crm-contact-link" data-lead-action="maps" target="_blank" rel="noopener noreferrer" hidden>Google Maps</a>
+                <a class="crm-contact-link" data-lead-action="website" target="_blank" rel="noopener noreferrer" hidden>Site</a>
+              </div>
               <form class="crm-lead-stage-form" id="trial-stage-form">
                 <label for="trial-stage">Etapa do lead</label>
-                <select id="trial-stage" data-native-select required></select>
+                <select id="trial-stage" required></select>
                 <button type="submit" class="app-button app-button--primary app-button--compact"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" class="app-button-icon" aria-hidden="true"><path d="M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21"/><path d="M3 7h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span class="app-button-label">Salvar etapa</span></button>
                 <p id="trial-stage-status" role="status"></p>
               </form>
+              <section class="crm-drawer-section" aria-labelledby="crm-lead-analysis-title">
+                <h3 id="crm-lead-analysis-title">Sinais de oportunidade</h3>
+                <ul id="crm-lead-signals" class="crm-lead-signals"></ul>
+                <details class="crm-lead-ai" id="crm-lead-ai">
+                  <summary>Análise com IA</summary>
+                  <form id="crm-lead-ai-form">
+                    <label for="crm-lead-ai-offer">O que você oferece?</label>
+                    <textarea id="crm-lead-ai-offer" maxlength="2000" rows="2" required></textarea>
+                    <button class="app-button app-button--primary" type="submit"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 17V9"/><path d="M18 17V5"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M8 17v-3"/></svg><span class="app-button-label">Analisar com IA</span></button>
+                    <p id="crm-lead-ai-status" role="status"></p>
+                  </form>
+                  <div id="crm-lead-ai-result" hidden></div>
+                </details>
+              </section>
+              <section class="crm-drawer-section" aria-labelledby="crm-lead-company-information">
+                <h3 id="crm-lead-company-information">Informações da empresa</h3>
+                <dl class="crm-lead-details" id="crm-company-fields"></dl>
+              </section>
             </div>
           </dialog>
           <p class="trial-crm-status" id="trial-crm-status" role="status">Carregando leads…</p>
@@ -448,6 +465,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=status-length"></script>
+    <script type="module" src="app.js?v=lead-details"></script>
   </body>
 </html>

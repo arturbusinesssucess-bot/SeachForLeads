@@ -27,17 +27,36 @@ service cloud.firestore {
           && stage.color in ['blue', 'purple', 'cyan', 'amber', 'pink', 'green', 'red', 'slate'];
       }
 
+      function optionalText(lead, key, limit) {
+        let value = lead.get(key, '');
+        return value is string && value.size() <= limit;
+      }
+
+      function validLeadContact(lead) {
+        let rating = lead.get('rating', 0);
+        let reviews = lead.get('reviewCount', 0);
+        return optionalText(lead, 'address', 300)
+          && optionalText(lead, 'phone', 30)
+          && optionalText(lead, 'website', 300)
+          && optionalText(lead, 'mapsUrl', 300)
+          && optionalText(lead, 'source', 60)
+          && lead.get('websiteChecked', false) is bool
+          && rating is number && rating >= 0 && rating <= 5
+          && reviews is int && reviews >= 0 && reviews <= 100000000;
+      }
+
       function validLead(lead) {
         return lead is map
           && lead.keys().hasAll(['id', 'company', 'location', 'category', 'stage'])
-          && lead.keys().hasOnly(['id', 'company', 'location', 'category', 'stage', 'contacted', 'savedAt'])
+          && lead.keys().hasOnly(['id', 'company', 'location', 'category', 'stage', 'contacted', 'savedAt', 'address', 'phone', 'website', 'mapsUrl', 'source', 'websiteChecked', 'rating', 'reviewCount'])
           && shortText(lead.id, 350)
           && shortText(lead.company, 160)
           && shortText(lead.location, 100)
           && shortText(lead.category, 100)
           && stageKey(lead.stage)
           && (!('contacted' in lead) || lead.contacted is bool)
-          && (!('savedAt' in lead) || shortText(lead.savedAt, 32));
+          && (!('savedAt' in lead) || shortText(lead.savedAt, 32))
+          && validLeadContact(lead);
       }
 
       function validPipeline(stages) {

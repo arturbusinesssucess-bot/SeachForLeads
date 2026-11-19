@@ -1,3 +1,4 @@
+import { readLeadContact } from "../shared/lead-contact.mjs";
 import { getPipeline } from "./pipeline.js?v=status-length";
 
 const limit = 10;
@@ -24,7 +25,7 @@ function csvCell(value) {
   return `"${safe.replaceAll('"', '""')}"`;
 }
 
-export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearchScreen, onCRMReady }) {
+export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearchScreen, leadDetails, onCRMReady }) {
   const status = document.querySelector("#search-status");
   const notice = document.querySelector("#trial-search-notice");
   const loadingDescription = document.querySelector("#trial-search-loading-description");
@@ -35,8 +36,6 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
   const template = document.querySelector("#trial-result-template");
   const drawer = document.querySelector("#crm-lead-drawer");
   const drawerTitle = document.querySelector("#trial-stage-title");
-  const detailFields = new Map([...drawer.querySelectorAll("[data-lead-detail]")].map((field) => [field.dataset.leadDetail, field]));
-  const savedDate = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" });
   const editForm = document.querySelector("#trial-stage-form");
   const editSave = editForm.querySelector('[type="submit"]');
   const editStage = document.querySelector("#trial-stage");
@@ -93,6 +92,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     returnFocus = undefined;
     editingId = null;
     editStatus.textContent = "";
+    leadDetails.clear();
     drawer.close();
     if (restoreFocus) focusTarget?.()?.focus();
   }
@@ -101,15 +101,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     const draft = preserveDraft && editStage.value && editStage.value !== confirmedStage ? editStage.value : null;
     confirmedStage = lead.stage;
     drawerTitle.textContent = lead.company;
-    const timestamp = Date.parse(lead.savedAt);
-    const details = {
-      location: lead.location || "Não informada",
-      category: lead.category || "Não informada",
-      source: leadSource(lead),
-      savedAt: Number.isFinite(timestamp) ? savedDate.format(timestamp) : "Data não registrada",
-      contact: lead.contacted === true || contactedStages.has(lead.stage) ? "Contato iniciado" : "Aguardando contato",
-    };
-    for (const [key, value] of Object.entries(details)) detailFields.get(key).textContent = value;
+    leadDetails.render(lead);
     const stages = getPipeline();
     editStage.replaceChildren(new Option("Selecione uma etapa", ""), ...stages.map(({ label, key }) => new Option(label, key)));
     const selected = draft && stages.some(({ key }) => key === draft) ? draft : confirmedStage;
@@ -128,7 +120,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     drawerTitle.focus();
   }
 
-  function leadSource(lead) { return lead.id.startsWith("vps:") ? "Busca" : "Busca de teste"; }
+  function leadSource(lead) { return readLeadContact(lead).source ?? (lead.id.startsWith("vps:") ? "Busca" : "Busca de teste"); }
 
   function renderRows() {
     const items = document.createDocumentFragment();
@@ -139,6 +131,8 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
       row.dataset.company = lead.company;
       row.dataset.city = lead.location;
       row.dataset.category = lead.category;
+      const { website } = readLeadContact(lead);
+      if (website) row.dataset.website = website;
       row.dataset.status = lead.stage;
       row.dataset.contacted = String(lead.contacted === true);
       if (typeof lead.savedAt === "string") row.dataset.savedAt = lead.savedAt;

@@ -1,3 +1,4 @@
+import { readLeadContact } from '../shared/lead-contact.mjs';
 import { verifyAIUser } from '../server/ai-auth.mjs';
 
 const limit = 10;
@@ -55,6 +56,7 @@ async function fetchVPSResults(criteria, env, fetchSearch) {
       company: lead.company.trim(),
       location: lead.location.trim(),
       category: validText(lead.category, 100) ? lead.category.trim() : criteria.niche,
+      ...readLeadContact(lead),
       stage: 'new',
       contacted: false,
     });

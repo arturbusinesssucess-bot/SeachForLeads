@@ -11,11 +11,12 @@ import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 import { initializeSettings } from "./settings.js?v=status-length";
 import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=status-length";
 
-import { initializeAIWorkspace } from "./ai-workspace.js?v=niche-disclosure";
+import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=status-length";
-import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-views";
+import { initializeSearchTrial } from "./search-trial.js?v=lead-details";
+import { initializeAppSelects } from "../public/app-selects.v1.js?v=lead-details";
+import { initializeLeadDetails } from "./crm-lead-details.js";
 import { initializeCRMViews } from "./crm-views.js?v=status-length";
 import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=status-length";
 
@@ -193,12 +194,17 @@ document.querySelectorAll(".crm-filter").forEach((button) => {
 const crmFilter = document.querySelector("#crm-filter");
 const crmRows = document.querySelector("#crm-rows");
 let crmReady = false;
+const leadDetails = initializeLeadDetails({
+  analyze: (...args) => aiWorkspace.analyzeLead(...args),
+  getOffer: () => document.querySelector("#ai-crm-offer").value,
+});
 const searchTrial = initializeSearchTrial({
   form: searchForm,
   criteria: searchCriteria,
   rows: crmRows,
   openCRM: () => showView("crm"),
   showSearchScreen,
+  leadDetails,
   onCRMReady(ready) {
     if (crmReady === ready) return;
     crmReady = ready;

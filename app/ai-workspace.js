@@ -250,18 +250,21 @@ export function initializeAIWorkspace({ crmRows } = {}) {
     offerResults.hidden = false;
   }
 
-  function renderLeads(data, leads) {
+  function readLeadAnalyses(data, leads) {
     if (!Array.isArray(data?.analyses) || data.analyses.length !== leads.length) throw new Error("invalid-response");
     const known = new Map(leads.map((lead) => [lead.id, lead]));
-    const analyses = data.analyses.map((item) => {
+    return data.analyses.map((item) => {
       if (!known.has(item?.id) || !Number.isInteger(item?.score) || item.score < 0 || item.score > 100) throw new Error("invalid-response");
       const lead = known.get(item.id);
       known.delete(item.id);
       return { lead, score: item.score, reasons: strings(item.reasons, 250, 3), missingData: strings(item.missingData, 250, 3, true), nextStep: text(item.nextStep, 300) };
     });
+  }
+
+  function renderLeads(data, leads) {
     const fragment = document.createDocumentFragment();
     fragment.append(element("h3", "ai-result-heading", "Compatibilidade com sua oferta"));
-    for (const item of analyses) {
+    for (const item of readLeadAnalyses(data, leads)) {
       const card = element("article", "ai-result-card");
       const header = element("header", "ai-result-header");
       const company = element("div", "ai-result-company");
@@ -331,6 +334,11 @@ export function initializeAIWorkspace({ crmRows } = {}) {
   updateControls();
   idleStatus();
   return {
+    async analyzeLead(lead, offer, controller) {
+      const leads = [lead];
+      const data = await request({ task: "leads", offer, leads }, controller);
+      return readLeadAnalyses(data, leads)[0];
+    },
     async setUser(user) {
       const revision = ++userRevision;
       connection?.abort();
