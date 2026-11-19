@@ -222,8 +222,7 @@ const settingsWorkspace = initializeSettings({
 });
 const crmMetrics = document.querySelector("#crm-metrics");
 const crmEmpty = document.querySelector("#crm-empty");
-const crmEmptyTitle = document.querySelector("#crm-empty-title");
-const crmEmptyDescription = document.querySelector("#crm-empty-description");
+const crmNoResults = document.querySelector("#crm-no-results");
 const crmWorkspace = document.querySelector("#crm-workspace");
 const crmViews = initializeCRMViews({ openLead: searchTrial.openLead });
 const crmAnalytics = initializeAnalytics(crmRows);
@@ -256,17 +255,12 @@ function renderCRM() {
     row.hidden = !matches;
     return matches;
   });
-  crmWorkspace.hidden = !crmReady || records.length === 0;
+  const hasLeads = records.length > 0;
+  crmWorkspace.hidden = !crmReady || !hasLeads;
   crmMetrics.hidden = !crmReady;
-  crmEmpty.hidden = !crmReady || visible.length > 0;
+  crmEmpty.hidden = !crmReady || hasLeads;
+  crmNoResults.hidden = crmWorkspace.hidden || visible.length > 0;
   crmViews.render(crmReady ? visible : [], stageFilter);
-  if (records.length && !visible.length) {
-    crmEmptyTitle.textContent = "Nenhum lead corresponde à busca";
-    crmEmptyDescription.textContent = "Tente outro nome, cidade ou etapa do CRM.";
-  } else {
-    crmEmptyTitle.textContent = "Seu CRM começa aqui.";
-    crmEmptyDescription.textContent = "Encontre empresas na Busca e salve os contatos que quiser acompanhar por aqui.";
-  }
 }
 crmFilter.addEventListener("input", renderCRM);
 crmStage.addEventListener("change", renderCRM);
