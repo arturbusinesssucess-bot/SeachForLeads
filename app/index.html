@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="/public/app-mobile.v1.css?v=crm-toolbar" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-disclosure" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
-    <link rel="stylesheet" href="/public/search-trial.v1.css?v=results-header" />
+    <link rel="stylesheet" href="/public/search-trial.v1.css?v=step-feedback" />
     <link rel="stylesheet" href="/public/crm-views.v1.css?v=drag-outline" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
@@ -193,10 +193,28 @@
             </div>
           </div>
           <section class="trial-search-loading" id="trial-search-loading" aria-labelledby="trial-search-loading-title" hidden>
-            <div class="trial-search-spinner" aria-hidden="true"></div>
-            <h2 id="trial-search-loading-title" tabindex="-1">Buscando empresas…</h2>
-            <p id="trial-search-loading-description" role="status"></p>
-            <button class="text-link trial-link" id="trial-cancel-search" type="button">Cancelar busca</button>
+            <div class="trial-search-feedback">
+              <header class="trial-search-feedback-heading">
+                <span class="trial-search-feedback-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></span>
+                <div>
+                  <h2 id="trial-search-loading-title" tabindex="-1" aria-describedby="trial-search-loading-description">Buscando empresas…</h2>
+                  <p id="trial-search-loading-description"></p>
+                </div>
+              </header>
+              <div class="trial-search-progress-meta">
+                <span id="trial-search-mode"></span>
+                <span id="trial-search-step-position"></span>
+              </div>
+              <div class="trial-search-progress" id="trial-search-progress" role="progressbar" aria-label="Progresso da busca"><span></span></div>
+              <p class="trial-search-step-status" id="trial-search-step-status" role="status" aria-atomic="true"></p>
+              <ol class="trial-search-steps" id="trial-search-steps" aria-label="Etapas da busca">
+                <li><span class="trial-search-step-marker" aria-hidden="true">1</span><span>Preparar filtros</span></li>
+                <li><span class="trial-search-step-marker" aria-hidden="true">2</span><span>Consultar empresas</span></li>
+                <li><span class="trial-search-step-marker" aria-hidden="true">3</span><span>Organizar resultados</span></li>
+                <li><span class="trial-search-step-marker" aria-hidden="true">4</span><span>Exibir leads</span></li>
+              </ol>
+              <button class="text-link trial-link" id="trial-cancel-search" type="button">Cancelar busca</button>
+            </div>
           </section>
           <section class="trial-results" id="trial-results" aria-labelledby="search-title" hidden>
             <header class="trial-results-heading">
@@ -493,6 +511,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=funnel-label-spacing"></script>
+    <script type="module" src="app.js?v=step-feedback"></script>
   </body>
 </html>
