@@ -1,4 +1,5 @@
 .trial-results,
+.trial-search-loading,
 .trial-stage-form {
   min-width: 0;
   padding: clamp(18px, 3vw, 26px);
@@ -6,9 +7,70 @@
   border-radius: 18px;
   background: var(--workspace-card, #191919);
 }
-.trial-results { width: min(100%, 720px); margin: 22px auto 0; }
+.trial-results { margin: 18px 0 0; }
+.trial-search-loading {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 12px;
+  min-height: min(420px, 64svh);
+  text-align: center;
+}
+.trial-search-loading h2,
+.trial-search-loading p { margin: 0; }
+.trial-search-loading h2 { font-size: clamp(20px, 4vw, 26px); letter-spacing: -.025em; }
+.trial-search-loading p { max-width: 50ch; color: var(--workspace-muted); font-size: 14px; overflow-wrap: anywhere; }
+.trial-search-spinner {
+  width: 42px;
+  height: 42px;
+  border: 3px solid #253552;
+  border-top-color: #79aaff;
+  border-radius: 50%;
+  animation: trial-search-spin .85s linear infinite;
+}
+@keyframes trial-search-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .trial-search-spinner { animation: none; }
+}
+.trial-results-heading { flex-wrap: wrap; }
+.trial-result-count {
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--workspace-card-raised, #222);
+  color: var(--workspace-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.trial-results-tools,
+.trial-result-actions,
+.trial-result-company {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.trial-results-tools {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+.trial-result-actions { flex-wrap: wrap; }
+.trial-selection,
+.trial-result-choice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.trial-result-choice { width: 44px; flex: 0 0 44px; }
+.trial-selection input,
+.trial-result-choice input { width: 16px; height: 16px; margin: 0; accent-color: #4b89ed; }
+.trial-result-company > div { min-width: 0; }
+.product-app .trial-result-actions .app-button { max-width: 100%; }
 .trial-stage-form { display: grid; gap: 12px; width: min(100%, 480px); margin-top: 18px; }
-:is(.trial-results, .trial-stage-form)[hidden],
+:is(.trial-results, .trial-search-loading, .trial-stage-form)[hidden],
 #trial-results-status:empty,
 #trial-stage-status:empty,
 .trial-crm-status:empty { display: none; }

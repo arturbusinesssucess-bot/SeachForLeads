@@ -14,7 +14,7 @@ import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=workspace-sync
 import { initializeAIWorkspace } from "./ai-workspace.js?v=niche-disclosure";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=crm-reload";
+import { initializeSearchTrial } from "./search-trial.js?v=search-flow";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
 import { initializeAnalytics } from "./analytics.js?v=analytics-metrics";
 
@@ -54,6 +54,20 @@ const searchIntro = document.querySelector("#search-intro");
 const searchEditor = document.querySelector("#search-editor");
 const openSearchForm = document.querySelector("#open-search-form");
 const closeSearchForm = document.querySelector("#close-search-form");
+const searchScreens = {
+  intro: searchIntro,
+  form: searchEditor,
+  loading: document.querySelector("#trial-search-loading"),
+  results: document.querySelector("#trial-results"),
+};
+const searchFocusTargets = {
+  intro: openSearchForm,
+  form: document.querySelector("#search-niche"),
+  loading: document.querySelector("#trial-search-loading-title"),
+  results: document.querySelector("#trial-results-title"),
+};
+let searchScreen = "intro";
+let searchFormReturn = "intro";
 let dimensionalFieldLoad = null;
 function ensureDimensionalField() {
   if (dimensionalFieldLoad || !searchEditor.querySelector(".search-dimensional-canvas")) return;
@@ -63,17 +77,22 @@ function ensureDimensionalField() {
 }
 
 
-function setSearchEditor(open) {
-  searchIntro.hidden = open;
-  searchEditor.hidden = !open;
-  if (open) ensureDimensionalField();
-  openSearchForm.setAttribute("aria-expanded", String(open));
-  window.requestAnimationFrame(() => {
-    (open ? document.querySelector("#search-niche") : openSearchForm).focus();
-  });
+function showSearchScreen(screen, restoreFocus = true) {
+  searchScreen = screen;
+  for (const [key, panel] of Object.entries(searchScreens)) panel.hidden = key !== screen;
+  openSearchForm.setAttribute("aria-expanded", String(screen === "form"));
+  if (screen === "form") ensureDimensionalField();
+  if (!restoreFocus || searchIntro.closest("[data-view]").hidden) return;
+  window.scrollTo({ top: 0, behavior: "instant" });
+  searchFocusTargets[screen].focus({ preventScroll: true });
 }
-openSearchForm.addEventListener("click", () => setSearchEditor(true));
-closeSearchForm.addEventListener("click", () => setSearchEditor(false));
+function openSearchEditor() {
+  searchFormReturn = searchScreen;
+  showSearchScreen("form");
+}
+openSearchForm.addEventListener("click", openSearchEditor);
+document.querySelector("#trial-new-search").addEventListener("click", openSearchEditor);
+closeSearchForm.addEventListener("click", () => showSearchScreen(searchFormReturn));
 
 
 const installCard = document.querySelector("#pwa-install-card");
@@ -177,6 +196,7 @@ const searchTrial = initializeSearchTrial({
   criteria: searchCriteria,
   rows: crmRows,
   openCRM: () => showView("crm"),
+  showSearchScreen,
   onCRMReady(ready) {
     if (crmReady === ready) return;
     crmReady = ready;

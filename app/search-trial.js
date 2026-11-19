@@ -1,21 +1,9 @@
 import { getPipeline } from "./pipeline.js?v=workspace-sync";
 
 const limit = 10;
+const trialLoadingMs = 10000;
 const cacheKey = (uid) => `sfl:search-trial:cache:v1:${uid}`;
 const contactedStages = new Set(["contacted", "responded", "won"]);
-
-function makeResults({ niche, state, stateName, cityId, cityName, quantity }) {
-  const normalized = niche.toLocaleLowerCase("pt-BR").replace(/\s+/gu, " ");
-  const location = cityName ? `${cityName}, ${state}` : stateName;
-  return Array.from({ length: Math.min(limit, quantity) }, (_, index) => ({
-    id: JSON.stringify([normalized, state, cityId, index]),
-    company: `Empresa de teste ${String(index + 1).padStart(2, "0")} · ${niche}`,
-    location,
-    category: niche,
-    stage: "new",
-    contacted: false,
-  }));
-}
 
 function readSaved(key, fallback = []) {
   const raw = localStorage.getItem(key);
@@ -36,10 +24,12 @@ function csvCell(value) {
   return `"${safe.replaceAll('"', '""')}"`;
 }
 
-export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMReady }) {
+export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearchScreen, onCRMReady }) {
   const status = document.querySelector("#search-status");
   const notice = document.querySelector("#trial-search-notice");
-  const resultPanel = document.querySelector("#trial-results");
+  const loadingDescription = document.querySelector("#trial-search-loading-description");
+  const selectAll = document.querySelector("#trial-select-all");
+  const saveSelected = document.querySelector("#trial-save-selected");
   const resultStatus = document.querySelector("#trial-results-status");
   const results = document.querySelector("#trial-result-list");
   const template = document.querySelector("#trial-result-template");
@@ -49,6 +39,10 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
   const crmStatus = document.querySelector("#trial-crm-status");
   const exportButton = document.querySelector("#export-leads");
   let uid = "";
+  let trialUser;
+  let trialMode = true;
+  let pendingSearch;
+  let savingResults = false;
   let syncClient;
   let stopWatching;
   let legacyLeads = [];
@@ -61,13 +55,22 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
 
   function syncButtons() {
     const savedIds = new Set(saved.map((lead) => lead.id));
-    for (const [id, { button, label }] of resultButtons) {
+    const availableChoices = [];
+    for (const [id, { button, label, choice }] of resultButtons) {
       const stored = savedIds.has(id);
       const full = saved.length >= limit;
-      button.disabled = stored || full || !syncClient;
+      button.disabled = stored || full || !syncClient || savingResults;
+      choice.disabled = button.disabled;
+      if (stored || full) choice.checked = false;
+      if (!choice.disabled) availableChoices.push(choice);
       button.querySelector(".app-button-label").textContent = stored ? "Salvo no CRM" : full ? "Limite do teste" : "Salvar no CRM";
       button.setAttribute("aria-label", stored ? "Lead salvo no CRM" : full ? "Limite de 10 leads salvos atingido" : label);
     }
+    const selected = availableChoices.filter((choice) => choice.checked).length;
+    selectAll.disabled = !availableChoices.length;
+    selectAll.checked = Boolean(selected) && selected === availableChoices.length;
+    selectAll.indeterminate = selected > 0 && !selectAll.checked;
+    saveSelected.disabled = selected === 0;
     for (const button of editButtons.values()) button.disabled = !syncClient;
     exportButton.disabled = saved.length === 0;
     exportButton.setAttribute("aria-disabled", String(exportButton.disabled));
@@ -93,6 +96,8 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
     document.querySelector("#trial-stage-title").focus();
   }
 
+  function leadSource(lead) { return lead.id.startsWith("vps:") ? "Busca" : "Busca de teste"; }
+
   function renderRows() {
     const items = document.createDocumentFragment();
     const stageLabels = new Map(getPipeline().map((stage) => [stage.key, stage.label]));
@@ -105,7 +110,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
       row.dataset.status = lead.stage;
       row.dataset.contacted = String(lead.contacted === true);
       if (typeof lead.savedAt === "string") row.dataset.savedAt = lead.savedAt;
-      for (const value of [lead.company, lead.location, "Busca de teste", stageLabels.get(lead.stage) || "Outros"]) row.insertCell().textContent = value;
+      for (const value of [lead.company, lead.location, leadSource(lead), stageLabels.get(lead.stage) || "Outros"]) row.insertCell().textContent = value;
       const button = document.createElement("button");
       button.type = "button";
       button.className = "text-link trial-edit-stage";
@@ -149,30 +154,38 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
     return true;
   }
 
-  async function saveResult(lead, button) {
-    button.disabled = true;
+  async function saveResults(batch) {
+    if (savingResults || !batch.length) return;
+    const session = revision;
+    savingResults = true;
+    syncButtons();
+    let added = 0;
     try {
       const updated = await updateSaved((leads) => {
-        if (leads.some((item) => item.id === lead.id)) return leads;
-        if (leads.length >= limit) throw new Error("trial-limit");
-        return [{ ...lead, savedAt: new Date().toISOString() }, ...leads];
+        const savedIds = new Set(leads.map(({ id }) => id));
+        const missing = batch.filter(({ id }) => !savedIds.has(id));
+        added = missing.length;
+        if (leads.length + added > limit) throw new Error("trial-limit");
+        const savedAt = new Date().toISOString();
+        return added ? [...missing.map((lead) => ({ ...lead, savedAt })), ...leads] : leads;
       });
-      if (updated) resultStatus.textContent = `Lead salvo no CRM. ${saved.length} de ${limit} leads do teste salvos.`;
+      if (updated) {
+        const label = added === 1 ? "Lead salvo no CRM." : added ? `${added} leads salvos no CRM.` : "Os leads selecionados já estão no CRM.";
+        resultStatus.textContent = `${label} ${saved.length} de ${limit} leads ${trialMode ? "do teste " : ""}salvos.`;
+      }
     } catch (error) {
-      resultStatus.textContent = error.message === "trial-limit" ? "O CRM já tem os 10 leads permitidos neste teste." : "Não foi possível sincronizar o lead. Verifique sua conexão e tente novamente.";
-      syncButtons();
+      if (session === revision) resultStatus.textContent = error.message === "trial-limit"
+        ? "A seleção ultrapassa o limite de 10 leads no CRM. Selecione menos empresas."
+        : "Não foi possível sincronizar os leads. Verifique sua conexão e tente novamente.";
+    } finally {
+      if (session === revision) {
+        savingResults = false;
+        syncButtons();
+      }
     }
   }
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (!syncClient) {
-      if (!status.textContent) status.textContent = "A busca de teste está indisponível para esta conta.";
-      return;
-    }
-    const input = criteria?.read();
-    if (!input) return;
-    const batch = makeResults(input);
+  function renderResults(batch, scope, mode) {
     const items = document.createDocumentFragment();
     resultButtons = new Map();
     for (const lead of batch) {
@@ -180,17 +193,77 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
       item.querySelector("h3").textContent = lead.company;
       item.querySelector("p").textContent = lead.location;
       const button = item.querySelector("button");
+      const choice = item.querySelector('input[type="checkbox"]');
       const label = `Salvar ${lead.company} no CRM`;
-      button.addEventListener("click", () => saveResult(lead, button));
-      resultButtons.set(lead.id, { button, label });
+      choice.setAttribute("aria-label", `Selecionar ${lead.company}`);
+      choice.addEventListener("change", syncButtons);
+      button.addEventListener("click", () => saveResults([lead]));
+      resultButtons.set(lead.id, { button, choice, label, lead });
       items.append(item);
     }
     results.replaceChildren(items);
-    resultPanel.hidden = false;
+    document.querySelector("#trial-results-summary").textContent = mode === "trial" ? `${scope} · Resultados fictícios do teste` : scope;
+    document.querySelector("#trial-result-count").textContent = batch.length === 1 ? "1 lead encontrado" : `${batch.length} leads encontrados`;
+    resultStatus.textContent = batch.length ? "" : "Nenhuma empresa encontrada neste recorte.";
     syncButtons();
+    showSearchScreen("results");
+  }
+
+  selectAll.addEventListener("change", () => {
+    for (const { choice } of resultButtons.values()) if (!choice.disabled) choice.checked = selectAll.checked;
+    syncButtons();
+  });
+  saveSelected.addEventListener("click", () => {
+    saveResults([...resultButtons.values()].filter(({ choice }) => choice.checked && !choice.disabled).map(({ lead }) => lead));
+  });
+  document.querySelector("#trial-cancel-search").addEventListener("click", () => {
+    pendingSearch?.abort();
+    pendingSearch = undefined;
+    showSearchScreen("form");
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!syncClient || !trialUser) {
+      if (!status.textContent) status.textContent = "A busca de teste está indisponível para esta conta.";
+      return;
+    }
+    if (pendingSearch) return;
+    const input = criteria?.read();
+    if (!input) return;
+    const scope = `${input.niche} · ${input.cityName ? `${input.cityName}, ${input.state}` : input.stateName}`;
+    const controller = new AbortController();
+    pendingSearch = controller;
     status.textContent = "";
-    resultStatus.textContent = batch.length === 1 ? "1 lead fictício gerado para o teste." : `${batch.length} leads fictícios gerados para o teste.`;
-    document.querySelector("#trial-results-title").focus();
+    loadingDescription.textContent = scope;
+    const startedAt = performance.now();
+    showSearchScreen("loading");
+    try {
+      const token = await trialUser.getIdToken();
+      if (pendingSearch !== controller) return;
+      const response = await fetch("/api/search-trial", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(55000)]),
+      });
+      if (!response.ok) throw new Error("search-response");
+      const { leads, mode } = await response.json();
+      if (pendingSearch !== controller) return;
+      if (!Array.isArray(leads) || leads.length > limit || !["trial", "live"].includes(mode)) throw new Error("search-results");
+      if (mode === "trial") {
+        const remaining = Math.max(0, trialLoadingMs - (performance.now() - startedAt));
+        await new Promise((resolve) => window.setTimeout(resolve, remaining));
+      }
+      if (pendingSearch !== controller) return;
+      renderResults(readLeads(leads), scope, mode);
+    } catch {
+      if (pendingSearch !== controller) return;
+      status.textContent = "Não foi possível concluir a busca. Verifique sua conexão e tente novamente.";
+      showSearchScreen("form");
+    } finally {
+      if (pendingSearch === controller) pendingSearch = undefined;
+    }
   });
 
   editForm.addEventListener("submit", async (event) => {
@@ -221,12 +294,12 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
   exportButton.addEventListener("click", () => {
     if (!uid || !saved.length) return;
     const labels = new Map(getPipeline().map((stage) => [stage.key, stage.label]));
-    const records = [["Empresa", "Localização", "Origem", "Etapa"], ...saved.map((lead) => [lead.company, lead.location, "Busca de teste", labels.get(lead.stage) || "Outros"])];
+    const records = [["Empresa", "Localização", "Origem", "Etapa"], ...saved.map((lead) => [lead.company, lead.location, leadSource(lead), labels.get(lead.stage) || "Outros"])];
     const csv = records.map((row) => row.map(csvCell).join(";")).join("\r\n");
     const url = URL.createObjectURL(new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
-    link.download = "leads-de-teste.csv";
+    link.download = saved.some((lead) => lead.id.startsWith("vps:")) ? "leads.csv" : "leads-de-teste.csv";
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
@@ -242,12 +315,16 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
       stopWatching?.();
       stopWatching = undefined;
       uid = "";
+      trialUser = undefined;
+      pendingSearch?.abort();
+      pendingSearch = undefined;
+      savingResults = false;
       syncClient = undefined;
       legacyLeads = [];
       saved = [];
       resultButtons = new Map();
       results.replaceChildren();
-      resultPanel.hidden = true;
+      if (wasEnabled) showSearchScreen("intro", false);
       resultStatus.textContent = "";
       crmStatus.textContent = user ? "Carregando leads…" : "";
       onCRMReady(false);
@@ -260,7 +337,8 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
         const token = await user.getIdToken();
         if (current !== revision) return;
         const response = await fetch("/api/search-trial", { headers: { Authorization: `Bearer ${token}` }, cache: "no-store", signal: AbortSignal.timeout(10000) });
-        const available = response.ok && (await response.json()).available === true;
+        const access = response.ok ? await response.json() : null;
+        const available = access?.available === true;
         if (current !== revision) return;
         if (!available) {
           const denied = response.status === 401 || response.status === 403;
@@ -271,6 +349,8 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
         }
         const account = user.uid;
         uid = account;
+        trialUser = user;
+        trialMode = access.mode !== "live";
         try { legacyLeads = readSaved(`sfl:search-trial:v1:${account}`); } catch { legacyLeads = []; }
         try { saved = readSaved(cacheKey(account), legacyLeads); } catch { saved = legacyLeads; }
         renderRows();
@@ -305,7 +385,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMRead
           syncClient = sync;
           receiveLeads(readLeads(leads));
           syncButtons();
-          notice.hidden = false;
+          notice.hidden = !trialMode;
           status.textContent = "";
         }, unavailable);
       } catch {

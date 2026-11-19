@@ -12,6 +12,9 @@
   "functions": {
     "api/ai.mjs": {
       "maxDuration": 30
+    },
+    "api/search-trial.mjs": {
+      "maxDuration": 60
     }
   }
 }
