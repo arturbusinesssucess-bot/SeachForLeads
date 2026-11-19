@@ -10,6 +10,7 @@ export function initializeCRMViews({ openLead }) {
   const toggles = [...document.querySelectorAll("[data-crm-mode]")];
   let mode = "list";
   let records = [];
+  let selectedStage = "all";
   let cardButtons = new Map();
   try {
     if (sessionStorage.getItem(modeKey) === "board") mode = "board";
@@ -39,8 +40,9 @@ export function initializeCRMViews({ openLead }) {
     return item;
   }
 
-  function render(next = records) {
+  function render(next = records, stageFilter = selectedStage) {
     records = next;
+    selectedStage = stageFilter;
     const focusedLead = document.activeElement?.dataset.crmLeadId;
     cardButtons = new Map();
     host.hidden = records.length === 0;
@@ -59,6 +61,7 @@ export function initializeCRMViews({ openLead }) {
       const recordsByStage = new Map(stages.map(({ key }) => [key, []]));
       for (const record of records) (recordsByStage.get(record.stage) ?? recordsByStage.get("other")).push(record);
       for (const stage of stages) {
+        if (selectedStage !== "all" && stage.key !== selectedStage) continue;
         const leads = recordsByStage.get(stage.key);
         if (stage.key === "other" && !leads.length) continue;
         const column = document.createElement("section");

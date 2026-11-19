@@ -14,13 +14,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css?v=action-arrow-20261116" />
-    <link rel="stylesheet" href="app.css?v=install-card" />
+    <link rel="stylesheet" href="app.css?v=crm-status-search" />
     <link rel="stylesheet" href="/public/app-selects.v1.css" data-app-select-styles />
-    <link rel="stylesheet" href="/public/workspace-analytics.v1.css?v=city-gradient" />
+    <link rel="stylesheet" href="/public/workspace-analytics.v1.css?v=crm-status-search" />
     <link rel="stylesheet" href="/public/analytics-activity.v1.css?v=heatmap-controls" />
     <link rel="stylesheet" href="/public/app-buttons.v1.css" />
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
-    <link rel="stylesheet" href="/public/app-mobile.v1.css?v=install-card" />
+    <link rel="stylesheet" href="/public/app-mobile.v1.css?v=crm-status-search" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-disclosure" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
     <link rel="stylesheet" href="/public/search-trial.v1.css?v=lead-results" />
@@ -245,12 +245,18 @@
           </details>
           <div class="crm-workspace" id="crm-workspace" hidden>
             <div class="crm-controls">
-              <div class="crm-tabs" role="group" aria-label="Filtrar leads">
-                <button class="crm-filter is-active" type="button" data-filter="all">Todos <span id="crm-total">0</span></button>
-                <button class="crm-filter" type="button" data-filter="new">Novos <span id="crm-new">0</span></button>
-              </div>
               <div class="crm-tools">
-                <label class="crm-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="crm-filter" type="search" placeholder="Buscar empresa ou cidade" aria-label="Buscar leads no CRM"></label>
+                <form class="crm-search-form" id="crm-lead-search" role="search" aria-label="Busca no CRM">
+                  <label for="crm-filter">Buscar no CRM</label>
+                  <div class="crm-search">
+                    <label for="crm-search-stage" hidden>Status do lead</label>
+                    <select id="crm-search-stage">
+                      <option value="all">Todos</option>
+                    </select>
+                    <input id="crm-filter" type="search" placeholder="Empresa ou cidade" autocomplete="off" />
+                    <button class="crm-search-submit" type="submit" aria-label="Buscar leads"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></button>
+                  </div>
+                </form>
                 <button class="crm-export" id="export-leads" type="button" disabled aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar</button>
               </div>
             </div>
@@ -465,6 +471,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=lead-results"></script>
+    <script type="module" src="app.js?v=crm-status-search"></script>
   </body>
 </html>

@@ -197,8 +197,6 @@ export function initializeAnalytics(tbody) {
     setText("#crm-metric-total", number.format(summary.total));
     setText("#crm-metric-pending", number.format(summary.pending));
     setText("#crm-metric-won", number.format(summary.counts.won));
-    setText("#crm-total", number.format(summary.total));
-    setText("#crm-new", number.format(summary.counts.new));
     setText("#lead-count", number.format(summary.total));
     const navCount = document.querySelector("#lead-count"); if (navCount) navCount.hidden = !summary.total;
     const cities = [...new Set(records.map((record) => record.city))].sort((a, b) => a.localeCompare(b, "pt-BR"));

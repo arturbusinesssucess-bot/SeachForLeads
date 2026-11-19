@@ -39,7 +39,6 @@
 .product-app .crm-view .crm-table-wrap, .product-app .crm-view .crm-empty { border: 0; background: var(--workspace-card); box-shadow: none; border-radius: 18px; }
 .product-app .crm-view .crm-empty { min-height: 340px; }
 .product-app .crm-view .crm-table tr:hover { background: #222222; }
-.product-app .crm-view .crm-filter.is-active { border-color: transparent; background: #292929; }
 .product-app .crm-view .crm-table th, .product-app .crm-view .crm-table td { border-color: #2c2c2c; }
 .product-app .app-main:has(> .grid-background-view:not([hidden])) {
   --analytics-grid-size: 88px;

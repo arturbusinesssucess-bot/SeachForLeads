@@ -9,7 +9,7 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
 import { initializeSettings } from "./settings.js?v=status-length";
-import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=status-length";
+import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline.js?v=status-length";
 
 import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
 
@@ -17,8 +17,8 @@ import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
 import { initializeSearchTrial } from "./search-trial.js?v=lead-results";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=lead-details";
 import { initializeLeadDetails } from "./crm-lead-details.js";
-import { initializeCRMViews } from "./crm-views.js?v=status-length";
-import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=status-length";
+import { initializeCRMViews } from "./crm-views.js?v=crm-status-search";
+import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=crm-status-search";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
@@ -188,13 +188,9 @@ if (installCard && installButton && installHelp) {
   checkInstallation();
 }
 
-document.querySelectorAll(".crm-filter").forEach((button) => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(".crm-filter").forEach((filter) => filter.classList.toggle("is-active", filter === button));
-    renderCRM();
-  });
-});
+const crmSearch = document.querySelector("#crm-lead-search");
 const crmFilter = document.querySelector("#crm-filter");
+const crmStage = document.querySelector("#crm-search-stage");
 const crmRows = document.querySelector("#crm-rows");
 let crmReady = false;
 const leadDetails = initializeLeadDetails({
@@ -232,22 +228,38 @@ const crmWorkspace = document.querySelector("#crm-workspace");
 const crmViews = initializeCRMViews({ openLead: searchTrial.openLead });
 const crmAnalytics = initializeAnalytics(crmRows);
 
+function syncCRMStageOptions(records) {
+  const hasOtherStages = records.some(({ stage }) => stage === "other");
+  const stages = getAnalyticsStages().filter(({ key }) => key !== "other" || hasOtherStages);
+  const options = [{ key: "all", label: "Todos" }, ...stages];
+  const current = [...crmStage.options];
+
+  if (current.length === options.length && options.every(({ key, label }, index) => (
+    current[index].value === key && current[index].text === label
+  ))) return;
+
+  const selection = crmStage.value;
+  crmStage.replaceChildren(...options.map(({ key, label }) => new Option(label, key)));
+  crmStage.value = options.some(({ key }) => key === selection) ? selection : "all";
+}
+
 function renderCRM() {
   crmAnalytics?.refresh();
   const query = crmFilter.value.trim().toLocaleLowerCase("pt-BR");
-  const stageFilter = document.querySelector(".crm-filter.is-active")?.dataset.filter;
   const records = readCRMRecords(crmRows);
+  syncCRMStageOptions(records);
+  const stageFilter = crmStage.value;
   const visible = records.filter(({ row, stage }) => {
     const matchesText = !query || row.textContent.toLocaleLowerCase("pt-BR").includes(query)
       || row.dataset.category?.toLocaleLowerCase("pt-BR").includes(query);
-    const matches = matchesText && (stageFilter !== "new" || stage === "new");
+    const matches = matchesText && (stageFilter === "all" || stage === stageFilter);
     row.hidden = !matches;
     return matches;
   });
   crmWorkspace.hidden = !crmReady || records.length === 0;
   crmMetrics.hidden = !crmReady;
   crmEmpty.hidden = !crmReady || visible.length > 0;
-  crmViews.render(crmReady ? visible : []);
+  crmViews.render(crmReady ? visible : [], stageFilter);
   if (records.length && !visible.length) {
     crmEmptyTitle.textContent = "Nenhum lead corresponde à busca";
     crmEmptyDescription.textContent = "Tente outro nome, cidade ou etapa do CRM.";
@@ -257,6 +269,12 @@ function renderCRM() {
   }
 }
 crmFilter.addEventListener("input", renderCRM);
+crmStage.addEventListener("change", renderCRM);
+crmSearch.addEventListener("submit", (event) => {
+  event.preventDefault();
+  renderCRM();
+});
+window.addEventListener("sfl:pipeline-changed", renderCRM);
 new MutationObserver(renderCRM).observe(crmRows, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["data-status", "data-contacted", "data-contacted-at", "data-city", "data-company", "data-saved-at"] });
 renderCRM();
 
