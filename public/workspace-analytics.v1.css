@@ -35,7 +35,7 @@
 .recent-lead-item strong { color: #f0f0f3; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .recent-lead-item div > span { color: #a0a0a9; font-size: 12px; }
 .recent-lead-stage { flex-shrink: 0; color: #c0c0c8; font-size: 11px; }
-.crm-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-bottom: 28px; }
+.crm-metrics:not([hidden]) { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-bottom: 28px; }
 .product-app .crm-view .crm-table-wrap, .product-app .crm-view .crm-empty { border: 0; background: var(--workspace-card); box-shadow: none; border-radius: 18px; }
 .product-app .crm-view .crm-empty { min-height: 340px; }
 .product-app .crm-view .crm-table tr:hover { background: #222222; }

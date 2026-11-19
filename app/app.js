@@ -14,7 +14,7 @@ import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=workspace-sync
 import { initializeAIWorkspace } from "./ai-workspace.js?v=niche-disclosure";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=workspace-sync";
+import { initializeSearchTrial } from "./search-trial.js?v=crm-reload";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
 import { initializeAnalytics } from "./analytics.js?v=workspace-sync";
 
@@ -171,7 +171,18 @@ document.querySelectorAll(".crm-filter").forEach((button) => {
 });
 const crmFilter = document.querySelector("#crm-filter");
 const crmRows = document.querySelector("#crm-rows");
-const searchTrial = initializeSearchTrial({ form: searchForm, criteria: searchCriteria, rows: crmRows, openCRM: () => showView("crm") });
+let crmReady = false;
+const searchTrial = initializeSearchTrial({
+  form: searchForm,
+  criteria: searchCriteria,
+  rows: crmRows,
+  openCRM: () => showView("crm"),
+  onCRMReady(ready) {
+    if (crmReady === ready) return;
+    crmReady = ready;
+    renderCRM();
+  },
+});
 const aiWorkspace = initializeAIWorkspace({ crmRows });
 const settingsWorkspace = initializeSettings({
   getAuthInstance: () => auth,
@@ -184,6 +195,7 @@ const settingsWorkspace = initializeSettings({
   },
 });
 const crmColumnLabels = [...document.querySelectorAll(".crm-table thead th")].map((header) => header.textContent.trim() || header.getAttribute("aria-label") || "");
+const crmMetrics = document.querySelector("#crm-metrics");
 const crmEmpty = document.querySelector("#crm-empty");
 const crmEmptyTitle = document.querySelector("#crm-empty-title");
 const crmEmptyDescription = document.querySelector("#crm-empty-description");
@@ -209,9 +221,10 @@ function renderCRM() {
     row.hidden = !matches;
     return matches;
   });
-  if (crmWorkspace) crmWorkspace.hidden = rows.length === 0;
-  if (crmTableWrap) crmTableWrap.hidden = visibleRows.length === 0;
-  crmEmpty.hidden = visibleRows.length > 0;
+  if (crmWorkspace) crmWorkspace.hidden = !crmReady || rows.length === 0;
+  if (crmTableWrap) crmTableWrap.hidden = !crmReady || visibleRows.length === 0;
+  crmMetrics.hidden = !crmReady;
+  crmEmpty.hidden = !crmReady || visibleRows.length > 0;
   if (rows.length && !visibleRows.length) {
     crmEmptyTitle.textContent = "Nenhum lead corresponde à busca";
     crmEmptyDescription.textContent = "Tente outro nome, cidade ou etapa do CRM.";

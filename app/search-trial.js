@@ -1,6 +1,7 @@
 import { getPipeline } from "./pipeline.js?v=workspace-sync";
 
 const limit = 10;
+const cacheKey = (uid) => `sfl:search-trial:cache:v1:${uid}`;
 const contactedStages = new Set(["contacted", "responded", "won"]);
 
 function makeResults({ niche, state, stateName, cityId, cityName, quantity }) {
@@ -16,9 +17,9 @@ function makeResults({ niche, state, stateName, cityId, cityName, quantity }) {
   }));
 }
 
-function readSaved(key) {
+function readSaved(key, fallback = []) {
   const raw = localStorage.getItem(key);
-  if (!raw) return [];
+  if (!raw) return fallback;
   const parsed = JSON.parse(raw);
   if (!Array.isArray(parsed)) throw new Error("invalid-trial-data");
   return readLeads(parsed);
@@ -35,7 +36,7 @@ function csvCell(value) {
   return `"${safe.replaceAll('"', '""')}"`;
 }
 
-export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
+export function initializeSearchTrial({ form, criteria, rows, openCRM, onCRMReady }) {
   const status = document.querySelector("#search-status");
   const notice = document.querySelector("#trial-search-notice");
   const resultPanel = document.querySelector("#trial-results");
@@ -67,6 +68,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
       button.querySelector(".app-button-label").textContent = stored ? "Salvo no CRM" : full ? "Limite do teste" : "Salvar no CRM";
       button.setAttribute("aria-label", stored ? "Lead salvo no CRM" : full ? "Limite de 10 leads salvos atingido" : label);
     }
+    for (const button of editButtons.values()) button.disabled = !syncClient;
     exportButton.disabled = saved.length === 0;
     exportButton.setAttribute("aria-disabled", String(exportButton.disabled));
   }
@@ -122,9 +124,14 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
     const ids = new Set(next.map(({ id }) => id));
     const archived = legacyLeads.filter((lead) => !ids.has(lead.id)).length;
     crmStatus.textContent = archived ? "O CRM atingiu 10 leads. Os leads excedentes continuam salvos neste navegador." : "";
-    if (JSON.stringify(saved) === JSON.stringify(next)) return;
-    saved = next;
-    renderRows();
+    try {
+      localStorage.setItem(cacheKey(uid), JSON.stringify(next));
+    } catch { /* CRM stays usable when browser storage is unavailable. */ }
+    if (JSON.stringify(saved) !== JSON.stringify(next)) {
+      saved = next;
+      renderRows();
+    }
+    onCRMReady(true);
   }
 
   async function updateSaved(action) {
@@ -242,7 +249,8 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
       results.replaceChildren();
       resultPanel.hidden = true;
       resultStatus.textContent = "";
-      crmStatus.textContent = "";
+      crmStatus.textContent = user ? "Carregando leads…" : "";
+      onCRMReady(false);
       notice.hidden = true;
       closeEditor(false);
       if (wasEnabled) renderRows();
@@ -255,14 +263,21 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
         const available = response.ok && (await response.json()).available === true;
         if (current !== revision) return;
         if (!available) {
-          status.textContent = [401, 403].includes(response.status) ? "A busca de teste ainda não está liberada para esta conta." : "Não foi possível verificar a busca de teste.";
+          const denied = response.status === 401 || response.status === 403;
+          status.textContent = denied ? "A busca de teste ainda não está liberada para esta conta." : "Não foi possível verificar a busca de teste.";
+          crmStatus.textContent = denied ? "" : "Não foi possível carregar os leads. Recarregue a página para tentar novamente.";
+          onCRMReady(denied);
           return;
         }
         const account = user.uid;
         uid = account;
         try { legacyLeads = readSaved(`sfl:search-trial:v1:${account}`); } catch { legacyLeads = []; }
-        saved = legacyLeads;
+        try { saved = readSaved(cacheKey(account), legacyLeads); } catch { saved = legacyLeads; }
         renderRows();
+        if (saved.length) {
+          crmStatus.textContent = "";
+          onCRMReady(true);
+        }
         status.textContent = "Sincronizando os leads da sua conta…";
         const sync = await import("./workspace-sync.js");
         if (current !== revision) return;
@@ -296,7 +311,9 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
       } catch {
         if (current === revision) {
           status.textContent = "Não foi possível abrir a busca de teste. Recarregue a página para tentar novamente.";
-          if (uid) crmStatus.textContent = "Não foi possível sincronizar o CRM. Os leads já salvos neste navegador continuam disponíveis.";
+          crmStatus.textContent = saved.length
+            ? "Não foi possível sincronizar o CRM. Exibindo os leads salvos neste navegador."
+            : "Não foi possível carregar os leads. Recarregue a página para tentar novamente.";
         }
       }
     },
