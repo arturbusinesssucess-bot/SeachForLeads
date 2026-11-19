@@ -50,9 +50,10 @@ function csvCell(value) {
 
 export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, leadDetails, onCRMReady }) {
   const status = document.querySelector("#search-status");
+  const searchSubmit = form.querySelector('button[type="submit"]');
   const notice = document.querySelector("#trial-search-notice");
   const loadingDescription = document.querySelector("#trial-search-loading-description");
-  const restoring = document.querySelector("#trial-search-restoring");
+  const accessStatus = document.querySelector("#trial-search-access-status");
   const selectAll = document.querySelector("#trial-select-all");
   const saveSelected = document.querySelector("#trial-save-selected");
   const resultStatus = document.querySelector("#trial-results-status");
@@ -84,12 +85,13 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   let revision = 0;
 
   function syncButtons() {
+    searchSubmit.disabled = !trialUser;
     const savedIds = new Set(saved.map((lead) => lead.id));
     const availableChoices = [];
     for (const [id, { button, label, choice }] of resultButtons) {
       const stored = savedIds.has(id);
       const full = saved.length >= limit;
-      button.disabled = stored || full || !syncClient || savingResults;
+      button.disabled = stored || full || !trialUser || !syncClient || savingResults;
       choice.disabled = button.disabled;
       if (stored || full) choice.checked = false;
       if (!choice.disabled) availableChoices.push(choice);
@@ -202,7 +204,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   }
 
   async function saveResults(batch) {
-    if (savingResults || !batch.length) return;
+    if (!trialUser || !syncClient || savingResults || !batch.length) return;
     const session = revision;
     savingResults = true;
     syncButtons();
@@ -272,10 +274,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!syncClient || !trialUser) {
-      if (!status.textContent) status.textContent = "A busca de teste está indisponível para esta conta.";
-      return;
-    }
+    if (!trialUser) return;
     if (pendingSearch) return;
     const input = criteria?.read();
     if (!input) return;
@@ -385,14 +384,88 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     if (uid) renderRows();
   });
 
+  async function checkSearchAccess(user, current) {
+    const requestAccess = (token) => fetch("/api/search-trial", {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000),
+    });
+    const unavailableMessage = "Não foi possível verificar o acesso à busca. Recarregue a página para tentar novamente.";
+    let message = "";
+    try {
+      const token = await user.getIdToken();
+      if (current !== revision) return;
+      let response = await requestAccess(token);
+      if (current !== revision) return;
+      if (response.status === 401) {
+        const refreshedToken = await user.getIdToken(true);
+        if (current !== revision) return;
+        response = await requestAccess(refreshedToken);
+      }
+      const access = response.ok ? await response.json() : null;
+      if (current !== revision) return;
+      if (access?.available === true) {
+        trialUser = user;
+        trialMode = access.mode !== "live";
+      } else if (response.status === 401) {
+        message = "Sua sessão expirou. Entre novamente para fazer novas buscas.";
+      } else if (response.status === 403) {
+        message = "A busca de teste ainda não está liberada para esta conta.";
+      } else {
+        message = unavailableMessage;
+      }
+    } catch {
+      if (current !== revision) return;
+      message = unavailableMessage;
+    }
+    status.textContent = "";
+    accessStatus.textContent = message;
+    accessStatus.hidden = !message;
+    notice.hidden = !trialUser || !trialMode;
+    syncButtons();
+  }
+
+  async function connectCRM(account, current) {
+    const unavailable = () => {
+      if (current !== revision) return;
+      syncClient = undefined;
+      syncButtons();
+      crmStatus.textContent = saved.length
+        ? "Não foi possível sincronizar o CRM. Exibindo os leads salvos neste navegador."
+        : "Não foi possível sincronizar o CRM. Recarregue a página para tentar novamente.";
+    };
+    try {
+      const sync = await import("./workspace-sync.js");
+      if (current !== revision) return;
+      const backup = legacyLeads;
+      if (backup.length) {
+        await sync.updateWorkspace(account, ({ leads }) => {
+          const existing = readLeads(leads);
+          const known = new Set(existing.map(({ id }) => id));
+          const missing = backup.filter(({ id }) => !known.has(id)).slice(0, limit - existing.length);
+          return missing.length ? { leads: [...existing, ...missing] } : null;
+        });
+      }
+      if (current !== revision) return;
+      stopWatching = sync.watchWorkspace(account, ({ leads }) => {
+        if (current !== revision) return;
+        snapshotVersion++;
+        syncClient = sync;
+        receiveLeads(readLeads(leads));
+        syncButtons();
+      }, unavailable);
+    } catch {
+      unavailable();
+    }
+  }
+
   return {
     openLead,
     async setUser(user) {
       const current = ++revision;
-      const wasEnabled = Boolean(uid);
       stopWatching?.();
       stopWatching = undefined;
-      uid = "";
+      uid = user?.uid ?? "";
       trialUser = undefined;
       pendingSearch?.abort();
       pendingSearch = undefined;
@@ -403,84 +476,32 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       saved = [];
       resultButtons = new Map();
       results.replaceChildren();
-      const lastSearch = user ? readLastSearch(user.uid) : null;
-      restoring.textContent = "Carregando sua última busca…";
-      showSearchScreen(lastSearch ? "restoring" : "intro", false);
       resultStatus.textContent = "";
-      crmStatus.textContent = user ? "Carregando leads…" : "";
-      onCRMReady(false);
+      status.textContent = user ? "Verificando acesso à busca…" : "";
+      accessStatus.textContent = "";
+      accessStatus.hidden = true;
       notice.hidden = true;
       closeEditor(false);
-      if (wasEnabled) renderRows();
-      if (!user) return;
-      status.textContent = "Verificando acesso à busca de teste…";
-      try {
-        const token = await user.getIdToken();
-        if (current !== revision) return;
-        const response = await fetch("/api/search-trial", { headers: { Authorization: `Bearer ${token}` }, cache: "no-store", signal: AbortSignal.timeout(10000) });
-        const access = response.ok ? await response.json() : null;
-        const available = access?.available === true;
-        if (current !== revision) return;
-        if (!available) {
-          const denied = response.status === 401 || response.status === 403;
-          status.textContent = denied ? "A busca de teste ainda não está liberada para esta conta." : "Não foi possível verificar a busca de teste.";
-          crmStatus.textContent = denied ? "" : "Não foi possível carregar os leads. Recarregue a página para tentar novamente.";
-          if (denied) showSearchScreen("intro", false);
-          else if (lastSearch) restoring.textContent = "Não foi possível carregar sua última busca. Recarregue a página para tentar novamente.";
-          onCRMReady(denied);
-          return;
-        }
-        const account = user.uid;
-        uid = account;
-        trialUser = user;
-        trialMode = access.mode !== "live";
-        if (lastSearch) renderResults(lastSearch.leads, lastSearch.scope, lastSearch.mode, false);
-        try { legacyLeads = readSaved(`sfl:search-trial:v1:${account}`); } catch { legacyLeads = []; }
-        try { saved = readSaved(cacheKey(account), legacyLeads); } catch { saved = legacyLeads; }
+      if (!user) {
         renderRows();
-        if (saved.length) {
-          crmStatus.textContent = "";
-          onCRMReady(true);
-        }
-        status.textContent = "Sincronizando os leads da sua conta…";
-        const sync = await import("./workspace-sync.js");
-        if (current !== revision) return;
-        const backup = legacyLeads;
-        if (backup.length) {
-          await sync.updateWorkspace(account, ({ leads }) => {
-            const existing = readLeads(leads);
-            const known = new Set(existing.map(({ id }) => id));
-            const missing = backup.filter(({ id }) => !known.has(id)).slice(0, limit - existing.length);
-            return missing.length ? { leads: [...existing, ...missing] } : null;
-          });
-        }
-        if (current !== revision) return;
-        const unavailable = () => {
-          if (current !== revision) return;
-          syncClient = undefined;
-          syncButtons();
-          const message = "Não foi possível sincronizar o CRM. Verifique sua conexão e recarregue a página.";
-          status.textContent = message;
-          crmStatus.textContent = message;
-        };
-        stopWatching = sync.watchWorkspace(account, ({ leads }) => {
-          if (current !== revision) return;
-          snapshotVersion++;
-          syncClient = sync;
-          receiveLeads(readLeads(leads));
-          syncButtons();
-          notice.hidden = !trialMode;
-          status.textContent = "";
-        }, unavailable);
-      } catch {
-        if (current === revision) {
-          status.textContent = "Não foi possível abrir a busca de teste. Recarregue a página para tentar novamente.";
-          if (lastSearch && !uid) restoring.textContent = "Não foi possível carregar sua última busca. Recarregue a página para tentar novamente.";
-          crmStatus.textContent = saved.length
-            ? "Não foi possível sincronizar o CRM. Exibindo os leads salvos neste navegador."
-            : "Não foi possível carregar os leads. Recarregue a página para tentar novamente.";
-        }
+        crmStatus.textContent = "";
+        onCRMReady(false);
+        showSearchScreen("intro", false);
+        return;
       }
+
+      const account = user.uid;
+      try { legacyLeads = readSaved(`sfl:search-trial:v1:${account}`); } catch { legacyLeads = []; }
+      try { saved = readSaved(cacheKey(account), legacyLeads); } catch { saved = legacyLeads; }
+      crmStatus.textContent = saved.length ? "" : "Carregando leads…";
+      renderRows();
+      onCRMReady(saved.length > 0);
+
+      const lastSearch = readLastSearch(account);
+      if (lastSearch) renderResults(lastSearch.leads, lastSearch.scope, lastSearch.mode, false);
+      else showSearchScreen("intro", false);
+
+      await Promise.all([checkSearchAccess(user, current), connectCRM(account, current)]);
     },
   };
 }
