@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/public/analytics-activity.v1.css?v=heatmap-controls" />
     <link rel="stylesheet" href="/public/app-buttons.v1.css" />
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
+    <link rel="stylesheet" href="/public/home-onboarding.v1.css" />
     <link rel="stylesheet" href="/public/app-mobile.v1.css?v=crm-toolbar" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-disclosure" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
@@ -103,12 +104,39 @@
               <p>Defina o perfil de empresa que procura, escolha uma região e guarde no CRM os contatos que fazem sentido para o seu negócio.</p>
               <button class="hero-cta app-button app-button--primary" type="button" data-open-view="search"><svg xmlns="http://www.w3.org/2000/svg" class="app-button-icon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg><span class="app-button-label">Começar uma busca</span></button>
             </div>
-            <div class="home-hero-steps" aria-label="Como começar">
-              <span class="panel-overline">UM FLUXO SIMPLES</span>
-              <div class="hero-step"><span>01</span><p>Descreva o nicho que você atende</p></div>
-              <div class="hero-step"><span>02</span><p>Escolha onde quer prospectar</p></div>
-              <div class="hero-step"><span>03</span><p>Organize os contatos no CRM</p></div>
-            </div>
+            <section class="home-onboarding" id="home-onboarding" aria-labelledby="home-onboarding-title" hidden>
+              <header class="home-onboarding-heading">
+                <h3 id="home-onboarding-title">Primeiros passos</h3>
+                <span id="home-onboarding-count" role="status" aria-atomic="true"></span>
+              </header>
+              <div class="home-onboarding-progress" id="home-onboarding-progress" role="progressbar" aria-label="Progresso dos primeiros passos"><span></span></div>
+              <ol class="home-onboarding-steps">
+                <li data-onboarding-step="search">
+                  <button class="app-button app-button--quick" type="button" data-onboarding-view="search">
+                    <svg class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+                    <span class="app-button-label">Faça sua primeira busca</span><span class="home-onboarding-check" aria-hidden="true"></span>
+                  </button>
+                </li>
+                <li data-onboarding-step="save">
+                  <button class="app-button app-button--quick" type="button" data-onboarding-view="search">
+                    <svg class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21M3 7h18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                    <span class="app-button-label">Salve um lead no CRM</span><span class="home-onboarding-check" aria-hidden="true"></span>
+                  </button>
+                </li>
+                <li data-onboarding-step="move">
+                  <button class="app-button app-button--quick" type="button" data-onboarding-view="crm">
+                    <svg class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"/></svg>
+                    <span class="app-button-label">Mova um lead no funil</span><span class="home-onboarding-check" aria-hidden="true"></span>
+                  </button>
+                </li>
+                <li data-onboarding-step="analytics">
+                  <button class="app-button app-button--quick" type="button" data-onboarding-view="analytics">
+                    <svg class="app-button-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 17V9M18 17V5M3 3v16a2 2 0 0 0 2 2h16M8 17v-3"/></svg>
+                    <span class="app-button-label">Confira o Analytics</span><span class="home-onboarding-check" aria-hidden="true"></span>
+                  </button>
+                </li>
+              </ol>
+            </section>
           </section>
 
           <div class="home-section-heading">
@@ -511,6 +539,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=step-feedback"></script>
+    <script type="module" src="app.js?v=home-onboarding"></script>
   </body>
 </html>

@@ -14,7 +14,8 @@ import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline
 import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=step-feedback";
+import { initializeSearchTrial } from "./search-trial.js?v=home-onboarding";
+import { initializeHomeOnboarding } from "./home-onboarding.js";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
@@ -30,6 +31,10 @@ const viewLinks = [...document.querySelectorAll("[data-view-link]")];
 const searchForm = document.querySelector("#lead-search-form");
 const searchCriteria = initializeSearchCriteria(searchForm);
 const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics", plans: "Planos", referrals: "Indique e ganhe", settings: "Configurações" };
+const onboarding = initializeHomeOnboarding((view) => {
+  showView(view);
+  if (view === "search" && searchScreen === "intro") openSearchEditor();
+});
 
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
@@ -42,6 +47,7 @@ function showView(name, updateUrl = true) {
     if (link.dataset.viewLink === view) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
+  if (view === "analytics") onboarding.complete("analytics");
   if (updateUrl && location.hash !== `#${view}`) history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -204,6 +210,7 @@ const searchTrial = initializeSearchTrial({
   rows: crmRows,
   showSearchScreen,
   leadDetails,
+  onProgress: onboarding.complete,
   onCRMReady(ready) {
     if (crmReady === ready) return;
     crmReady = ready;
@@ -303,6 +310,7 @@ let auth = null;
 if (isFirebaseConfigured) {
   auth = getAuth(initializeApp(firebaseConfig));
   onAuthStateChanged(auth, (user) => {
+    onboarding.setUser(user?.uid);
     if (!user) {
       setPipelineUser(null);
       settingsWorkspace?.setUser(null);
@@ -318,6 +326,7 @@ if (isFirebaseConfigured) {
     document.querySelector("#account-email").textContent = user.email || "";
     document.querySelector("#account-avatar").textContent = Array.from(name)[0]?.toLocaleUpperCase("pt-BR") || "S";
     authView.dataset.auth = "ready";
+    if (!document.querySelector('[data-view="analytics"]').hidden) onboarding.complete("analytics");
     setPipelineUser(user.uid);
     settingsWorkspace?.setUser(user);
     aiWorkspace?.setUser(user);

@@ -70,7 +70,7 @@ async function waitForTrialStep(startedAt, offset, signal) {
   signal.throwIfAborted();
 }
 
-export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, leadDetails, onCRMReady }) {
+export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, leadDetails, onCRMReady, onProgress = () => {} }) {
   const status = document.querySelector("#search-status");
   const searchSubmit = form.querySelector('button[type="submit"]');
   const notice = document.querySelector("#trial-search-notice");
@@ -221,6 +221,11 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     syncButtons();
   }
 
+  function markCRMProgress(leads) {
+    if (leads.some(({ stage, contacted }) => stage !== "new" || contacted === true)) onProgress("search", "save", "move");
+    else if (leads.length) onProgress("search", "save");
+  }
+
   function receiveLeads(next) {
     const ids = new Set(next.map(({ id }) => id));
     const archived = legacyLeads.filter((lead) => !ids.has(lead.id)).length;
@@ -233,6 +238,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       renderRows();
     }
     onCRMReady(true);
+    markCRMProgress(next);
   }
 
   async function updateSaved(action) {
@@ -250,8 +256,9 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     return true;
   }
 
-  function moveLeadStage(id, stage, expectedStage) {
-    return updateSaved((leads, pipeline) => {
+  async function moveLeadStage(id, stage, expectedStage) {
+    const session = revision;
+    const updated = await updateSaved((leads, pipeline) => {
       if (!(pipeline ?? getDefaultPipeline()).some(({ key }) => key === stage)) throw new Error("trial-stage-changed");
       const index = leads.findIndex((lead) => lead.id === id);
       if (index === -1) throw new Error("trial-lead-missing");
@@ -261,6 +268,8 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       const updated = { ...lead, stage, contacted: lead.contacted === true || contactedStages.has(stage) };
       return leads.with(index, updated);
     });
+    if (updated && session === revision && stage !== expectedStage) onProgress("search", "save", "move");
+    return updated;
   }
 
   async function saveResults(batch) {
@@ -283,6 +292,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
         const label = added === 1 ? "Lead salvo no CRM." : added ? `${added} leads salvos no CRM.` : "Esses leads já estão no CRM.";
         resultStatus.textContent = `${label} ${saved.length} de ${limit} leads ${trialMode ? "do teste " : ""}salvos.`;
       }
+      if (updated && session === revision && added) onProgress("search", "save");
     } catch (error) {
       if (session === revision && activeResults === resultButtons) resultStatus.textContent = error.message === "trial-limit"
         ? "A seleção ultrapassa o limite de 10 leads no CRM. Selecione menos empresas."
@@ -342,6 +352,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     document.querySelector("#trial-result-count").textContent = foundLeadCount(batch.length);
     resultStatus.textContent = batch.length ? "" : "Nenhuma empresa encontrada neste recorte.";
     syncButtons();
+    onProgress("search");
     showSearchScreen("results", restoreFocus);
   }
 
@@ -601,6 +612,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       crmStatus.textContent = saved.length ? "" : "Carregando leads…";
       renderRows();
       onCRMReady(saved.length > 0);
+      markCRMProgress(saved);
 
       const lastSearch = readLastSearch(account);
       if (lastSearch) renderResults(lastSearch.leads, lastSearch.scope, lastSearch.mode, false);
