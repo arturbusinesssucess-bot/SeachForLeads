@@ -172,6 +172,7 @@
   color: #f0f0f2;
 }
 
+.product-app .trial-card-actions .app-button-icon { color: #fff; }
 .product-app .trial-card-actions [data-result-whatsapp]:not([aria-disabled="true"]) { color: #9deabc; }
 .product-app .trial-card-actions .app-button:hover:not(:disabled, [aria-disabled="true"]) { background: #232323; }
 .product-app .trial-card-actions .app-button[aria-disabled="true"],
