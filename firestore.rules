@@ -99,8 +99,29 @@ service cloud.firestore {
           && (!('leads' in data) || validLeads(data.leads));
       }
 
+      function uniqueLeadIds(data) {
+        let leads = data.get('leads', []);
+        let ids = [
+          leads.size() > 0 ? leads[0].id : null,
+          leads.size() > 1 ? leads[1].id : null,
+          leads.size() > 2 ? leads[2].id : null,
+          leads.size() > 3 ? leads[3].id : null,
+          leads.size() > 4 ? leads[4].id : null,
+          leads.size() > 5 ? leads[5].id : null,
+          leads.size() > 6 ? leads[6].id : null,
+          leads.size() > 7 ? leads[7].id : null,
+          leads.size() > 8 ? leads[8].id : null,
+          leads.size() > 9 ? leads[9].id : null
+        ];
+        return ids.removeAll([null]).toSet().size() == leads.size();
+      }
+
       allow get: if isOwner();
-      allow create, update: if isOwner() && validWorkspace(request.resource.data);
+      allow create: if isOwner() && validWorkspace(request.resource.data)
+        && uniqueLeadIds(request.resource.data);
+      allow update: if isOwner() && validWorkspace(request.resource.data)
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['leads'])
+          || uniqueLeadIds(request.resource.data));
     }
   }
 }

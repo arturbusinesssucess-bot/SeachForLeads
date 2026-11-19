@@ -14,7 +14,7 @@ import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=status-length"
 import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=last-search";
+import { initializeSearchTrial } from "./search-trial.js?v=lead-results";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=lead-details";
 import { initializeLeadDetails } from "./crm-lead-details.js";
 import { initializeCRMViews } from "./crm-views.js?v=status-length";
@@ -69,7 +69,7 @@ const searchFocusTargets = {
   intro: openSearchForm,
   form: document.querySelector("#search-niche"),
   loading: document.querySelector("#trial-search-loading-title"),
-  results: document.querySelector("#trial-results-title"),
+  results: document.querySelector("#search-title"),
 };
 let searchScreen = "restoring";
 let searchFormReturn = "intro";
@@ -205,7 +205,6 @@ const searchTrial = initializeSearchTrial({
   form: searchForm,
   criteria: searchCriteria,
   rows: crmRows,
-  openCRM: () => showView("crm"),
   showSearchScreen,
   leadDetails,
   onCRMReady(ready) {

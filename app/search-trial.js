@@ -15,9 +15,19 @@ function readSaved(key, fallback = []) {
   return readLeads(parsed);
 }
 
+function isLead(lead) {
+  return lead && typeof lead.id === "string" && lead.id.trim()
+    && [lead.company, lead.location, lead.category, lead.stage].every((field) => typeof field === "string");
+}
+
 function readLeads(value) {
-  return (value ?? []).filter((lead) => lead && [lead.id, lead.company, lead.location, lead.category, lead.stage]
-    .every((field) => typeof field === "string")).slice(0, limit);
+  const unique = new Map();
+  for (const lead of Array.isArray(value) ? value : []) {
+    if (!isLead(lead) || unique.has(lead.id)) continue;
+    unique.set(lead.id, lead);
+    if (unique.size === limit) break;
+  }
+  return [...unique.values()];
 }
 
 function readLastSearch(uid) {
@@ -27,8 +37,8 @@ function readLastSearch(uid) {
     const result = JSON.parse(raw);
     if (!result || !Array.isArray(result.leads) || result.leads.length > limit || typeof result.scope !== "string"
       || !result.scope.trim() || result.scope.length > 220 || !["trial", "live"].includes(result.mode)) return null;
-    const leads = readLeads(result.leads);
-    return leads.length === result.leads.length ? { leads, scope: result.scope, mode: result.mode } : null;
+    if (!result.leads.every(isLead)) return null;
+    return { leads: readLeads(result.leads), scope: result.scope, mode: result.mode };
   } catch { return null; }
 }
 
@@ -38,7 +48,7 @@ function csvCell(value) {
   return `"${safe.replaceAll('"', '""')}"`;
 }
 
-export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearchScreen, leadDetails, onCRMReady }) {
+export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, leadDetails, onCRMReady }) {
   const status = document.querySelector("#search-status");
   const notice = document.querySelector("#trial-search-notice");
   const loadingDescription = document.querySelector("#trial-search-loading-description");
@@ -200,14 +210,14 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     try {
       const updated = await updateSaved((leads) => {
         const savedIds = new Set(leads.map(({ id }) => id));
-        const missing = batch.filter(({ id }) => !savedIds.has(id));
+        const missing = readLeads(batch).filter(({ id }) => !savedIds.has(id));
         added = missing.length;
         if (leads.length + added > limit) throw new Error("trial-limit");
         const savedAt = new Date().toISOString();
         return added ? [...missing.map((lead) => ({ ...lead, savedAt })), ...leads] : leads;
       });
       if (updated) {
-        const label = added === 1 ? "Lead salvo no CRM." : added ? `${added} leads salvos no CRM.` : "Os leads selecionados já estão no CRM.";
+        const label = added === 1 ? "Lead salvo no CRM." : added ? `${added} leads salvos no CRM.` : "Esses leads já estão no CRM.";
         resultStatus.textContent = `${label} ${saved.length} de ${limit} leads ${trialMode ? "do teste " : ""}salvos.`;
       }
     } catch (error) {
@@ -225,8 +235,9 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
   function renderResults(batch, scope, mode, restoreFocus = true) {
     const items = document.createDocumentFragment();
     resultButtons = new Map();
-    for (const lead of batch) {
+    for (const [index, lead] of batch.entries()) {
       const item = template.content.cloneNode(true);
+      item.firstElementChild.style.setProperty("--lead-enter-delay", `${index * 30}ms`);
       item.querySelector("h3").textContent = lead.company;
       item.querySelector("p").textContent = lead.location;
       const button = item.querySelector("button");
@@ -357,7 +368,6 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     const { left, right, top, bottom } = drawer.getBoundingClientRect();
     if (event.clientX < left || event.clientX > right || event.clientY < top || event.clientY > bottom) closeEditor();
   });
-  document.querySelector("#trial-open-crm").addEventListener("click", openCRM);
   exportButton.addEventListener("click", () => {
     if (!uid || !saved.length) return;
     const labels = new Map(getPipeline().map((stage) => [stage.key, stage.label]));
