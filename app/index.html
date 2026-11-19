@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="../styles.css?v=action-arrow-20261116" />
     <link rel="stylesheet" href="app.css?v=install-card" />
     <link rel="stylesheet" href="/public/app-selects.v1.css" data-app-select-styles />
-    <link rel="stylesheet" href="/public/workspace-analytics.v1.css?v=funnel-tap-highlight" />
+    <link rel="stylesheet" href="/public/workspace-analytics.v1.css?v=plans" />
     <link rel="stylesheet" href="/public/analytics-activity.v1.css?v=heatmap-controls" />
     <link rel="stylesheet" href="/public/app-buttons.v1.css" />
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
@@ -55,6 +55,12 @@
           <a href="#analytics" data-view-link="analytics" aria-label="Analytics" title="Analytics">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-column-increasing preview-icon" style="stroke-width:2" aria-hidden="true" focusable="false"><path d="M13 17V9"/><path d="M18 17V5"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M8 17v-3"/></svg>
             <span class="sidebar-label">Analytics</span>
+          </a>
+          <a href="#plans" data-view-link="plans" aria-label="Planos" title="Planos">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" style="stroke-width:1.5" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m9 7.5 3 4.5m0 0 3-4.5M12 12v5.25M15 12H9m6 3H9m12-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+            </svg>
+            <span class="sidebar-label">Planos</span>
           </a>
         </nav>
         <div class="sidebar-bottom"><button id="sign-out" class="sign-out" type="button" aria-label="Sair da conta" title="Sair"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-9h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-8"/></svg><span class="sidebar-label">Sair da conta</span></button><div class="account-row"><div class="account-avatar" id="account-avatar">S</div>
@@ -237,7 +243,7 @@
           </div>
         </section>
         
-        <section class="app-view analytics-view" data-view="analytics" aria-labelledby="analytics-title" hidden>
+        <section class="app-view analytics-view grid-background-view" data-view="analytics" aria-labelledby="analytics-title" hidden>
           <header class="analytics-page-heading"><h1 id="analytics-title">Analytics</h1><p>Entenda o avanço dos seus leads e onde concentrar o próximo contato.</p></header>
           <div class="analytics-toolbar" aria-label="Filtros dos indicadores">
             <div class="analytics-filter"><label for="analytics-stage">Etapa do CRM</label><select id="analytics-stage"><option value="all">Todas as etapas</option><option value="new">Novos</option><option value="qualified">Qualificados</option><option value="contacted">Primeiro contato</option><option value="responded">Em conversa</option><option value="won">Fechados</option><option value="lost">Perdidos</option><option value="other">Outros</option></select></div>
@@ -269,6 +275,10 @@
             </section>
             <section class="analytics-card analytics-city-card"><header><h2>Onde estão seus leads</h2><p id="analytics-city-description">As localidades aparecerão conforme você salvar leads.</p></header><div class="analytics-bars" id="analytics-city-bars"></div><p class="analytics-chart-empty" id="analytics-city-empty">Ainda não há localidades para mostrar neste recorte.</p></section>
           </div>
+        </section>
+
+        <section class="app-view grid-background-view" data-view="plans" aria-labelledby="plans-title" hidden>
+          <header class="analytics-page-heading"><h1 id="plans-title">Planos</h1></header>
         </section>
 
         <section class="app-view settings-view" data-view="settings" aria-labelledby="settings-title" hidden>
@@ -364,6 +374,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=workspace-sync"></script>
+    <script type="module" src="app.js?v=plans"></script>
   </body>
 </html>

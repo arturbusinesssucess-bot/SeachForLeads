@@ -41,14 +41,14 @@
 .product-app .crm-view .crm-table tr:hover { background: #222222; }
 .product-app .crm-view .crm-filter.is-active { border-color: transparent; background: #292929; }
 .product-app .crm-view .crm-table th, .product-app .crm-view .crm-table td { border-color: #2c2c2c; }
-.product-app .app-main:has(> .analytics-view:not([hidden])) {
+.product-app .app-main:has(> .grid-background-view:not([hidden])) {
   --analytics-grid-size: 88px;
   --analytics-grid-lines: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px);
   position: relative;
   isolation: isolate;
 }
-.product-app .app-main:has(> .analytics-view:not([hidden]))::before,
-.product-app .app-main:has(> .analytics-view:not([hidden]))::after {
+.product-app .app-main:has(> .grid-background-view:not([hidden]))::before,
+.product-app .app-main:has(> .grid-background-view:not([hidden]))::after {
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -60,26 +60,26 @@
   mask-size: var(--analytics-grid-size) var(--analytics-grid-size);
   animation: analytics-grid-colors 12s ease-in-out infinite alternate;
 }
-.product-app .app-main:has(> .analytics-view:not([hidden]))::before {
+.product-app .app-main:has(> .grid-background-view:not([hidden]))::before {
   background: linear-gradient(125deg, #548fff, #253b75 46%, #995bff 84%, #567bea);
   opacity: .24;
   animation-direction: alternate-reverse;
 }
-.product-app .app-main:has(> .analytics-view:not([hidden]))::after {
+.product-app .app-main:has(> .grid-background-view:not([hidden]))::after {
   background: linear-gradient(125deg, #9b69ff, #3a3678 38%, #538dff 79%, #875dff);
   opacity: .04;
 }
 @keyframes analytics-grid-colors { from { opacity: .04; } to { opacity: .24; } }
 @media (max-width: 767px) {
-  .product-app .app-main:has(> .analytics-view:not([hidden])) { --analytics-grid-size: 64px; }
+  .product-app .app-main:has(> .grid-background-view:not([hidden])) { --analytics-grid-size: 64px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .product-app .app-main:has(> .analytics-view:not([hidden]))::before,
-  .product-app .app-main:has(> .analytics-view:not([hidden]))::after { animation: none; }
+  .product-app .app-main:has(> .grid-background-view:not([hidden]))::before,
+  .product-app .app-main:has(> .grid-background-view:not([hidden]))::after { animation: none; }
 }
 @media (forced-colors: active) {
-  .product-app .app-main:has(> .analytics-view:not([hidden]))::before,
-  .product-app .app-main:has(> .analytics-view:not([hidden]))::after { content: none; }
+  .product-app .app-main:has(> .grid-background-view:not([hidden]))::before,
+  .product-app .app-main:has(> .grid-background-view:not([hidden]))::after { content: none; }
 }
 
 .analytics-page-heading { margin-bottom: 26px; }
