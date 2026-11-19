@@ -27,7 +27,7 @@ const views = [...document.querySelectorAll("[data-view]")];
 const viewLinks = [...document.querySelectorAll("[data-view-link]")];
 const searchForm = document.querySelector("#lead-search-form");
 const searchCriteria = initializeSearchCriteria(searchForm);
-const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics", plans: "Planos", settings: "Configurações" };
+const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics", plans: "Planos", referrals: "Indique e ganhe", settings: "Configurações" };
 
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
