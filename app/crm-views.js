@@ -1,4 +1,4 @@
-import { getAnalyticsStages } from "./pipeline.js?v=workspace-sync";
+import { getAnalyticsStages } from "./pipeline.js?v=status-length";
 
 const modeKey = "sfl:crm:view";
 

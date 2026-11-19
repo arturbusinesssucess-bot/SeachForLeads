@@ -1,4 +1,4 @@
-import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=workspace-sync";
+import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=status-length";
 
 const unspecifiedCity = "Localização não informada";
 

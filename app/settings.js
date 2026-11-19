@@ -1,5 +1,5 @@
 import { updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-import { createCustomStage, getPipeline, getDefaultPipeline, isCustomStage, isOpenStage, MAX_PIPELINE_STAGES, savePipeline, STAGE_COLOR_OPTIONS, validatePipeline } from "./pipeline.js?v=workspace-sync";
+import { createCustomStage, getPipeline, getDefaultPipeline, isCustomStage, isOpenStage, MAX_PIPELINE_STAGES, MAX_STAGE_NAME_LENGTH, savePipeline, STAGE_COLOR_OPTIONS, validatePipeline, validateStageName } from "./pipeline.js?v=status-length";
 
 const SECTIONS = new Set(["general", "profile", "security", "account", "plans", "pipeline"]);
 const RIGHT_ARROW = "M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z";
@@ -301,7 +301,7 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
         input.type = "text";
         input.value = stage.label;
         input.minLength = 2;
-        input.maxLength = 40;
+        input.maxLength = MAX_STAGE_NAME_LENGTH;
         input.required = true;
         input.autocomplete = "off";
         input.disabled = !currentUser || pipelineBusy;
@@ -475,12 +475,19 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
       return;
     }
     for (const input of pipelineList.querySelectorAll("input")) {
-      const value = input.value.trim();
-      input.setCustomValidity(value.length >= 2 && value.length <= 40 ? "" : "Use um nome de 2 a 40 caracteres.");
-      if (!input.reportValidity()) { input.setAttribute("aria-invalid", "true"); pipelineStatus.textContent = "Use um nome de 2 a 40 caracteres em cada etapa."; return; }
+      const previousLabel = savedStages.find(({ key }) => key === input.dataset.stageInput)?.label;
+      let message = "";
+      try { validateStageName(input.value, previousLabel); }
+      catch (error) { message = error.message; }
+      input.setCustomValidity(message);
+      if (!input.reportValidity()) {
+        input.setAttribute("aria-invalid", "true");
+        pipelineStatus.textContent = input.validationMessage;
+        return;
+      }
     }
     let normalized;
-    try { normalized = validatePipeline(draftStages); }
+    try { normalized = validatePipeline(draftStages, savedStages); }
     catch (error) { pipelineStatus.textContent = error.message || "Revise os nomes e a ordem das etapas."; return; }
     const revision = userRevision;
     pipelineBusy = true;

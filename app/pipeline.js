@@ -17,6 +17,8 @@ export const STAGE_COLOR_OPTIONS = Object.freeze([
   { key: 'slate', label: 'Cinza' },
 ].map((option) => Object.freeze(option)));
 export const MAX_PIPELINE_STAGES = 15;
+export const MAX_STAGE_NAME_LENGTH = 20;
+const STORED_STAGE_NAME_LENGTH = 40;
 const PALETTE_KEYS = new Set(STAGE_COLOR_OPTIONS.map(({ key }) => key));
 const DEFAULT_OPEN_KEYS = new Set(['new', 'qualified', 'contacted', 'responded']);
 const FINAL_STAGES = DEFAULT_PIPELINE.slice(-2);
@@ -65,11 +67,22 @@ export function createCustomStage(stages = currentStages) {
   return { key: `custom-${globalThis.crypto.randomUUID()}`, label, color: FALLBACK_COLOR };
 }
 
-export function validatePipeline(input) {
+export function validateStageName(value, previousLabel, maxLength = MAX_STAGE_NAME_LENGTH) {
+  const nameError = () => new Error(`Informe um nome de 2 a ${maxLength} caracteres para cada etapa.`);
+  if (typeof value !== 'string' || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(value)) throw nameError();
+  const label = value.trim().replace(/\s+/g, ' ');
+  // Keep stored names usable when a color or the order changes.
+  if (label.length < 2 || label.length > (label === previousLabel ? STORED_STAGE_NAME_LENGTH : maxLength)) throw nameError();
+  return label;
+}
+
+export function validatePipeline(input, previousStages) {
   if (!Array.isArray(input) || input.length < DEFAULT_PIPELINE.length) throw invalidStructure();
   if (input.length > MAX_PIPELINE_STAGES) throw stageLimit();
   const finalStart = input.length - FINAL_STAGES.length;
   const keys = new Set(), names = new Set(), stages = [];
+  const previousNames = new Map(previousStages?.map(({ key, label }) => [key, label]));
+  const nameLimit = previousStages ? MAX_STAGE_NAME_LENGTH : STORED_STAGE_NAME_LENGTH;
   for (let index = 0; index < input.length; index++) {
     const stage = input[index];
     if (!stage || typeof stage !== 'object' || Array.isArray(stage) || Object.keys(stage).some((field) => field !== 'key' && field !== 'label' && field !== 'color') || (!DEFAULT_COLORS.has(stage.key) && !isCustomStage(stage.key)) || keys.has(stage.key)) throw invalidStructure();
@@ -77,9 +90,7 @@ export function validatePipeline(input) {
     if (finalStage ? stage.key !== finalStage.key : !isOpenStage(stage.key)) {
       throw new Error('As etapas Fechado e Perdido permanecem no fim e não podem mudar de posição.');
     }
-    if (typeof stage.label !== 'string' || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(stage.label)) throw new Error('Informe um nome de 2 a 40 caracteres para cada etapa.');
-    const label = stage.label.trim().replace(/\s+/g, ' ');
-    if (label.length < 2 || label.length > 40) throw new Error('Informe um nome de 2 a 40 caracteres para cada etapa.');
+    const label = validateStageName(stage.label, previousNames.get(stage.key), nameLimit);
     if (finalStage && label !== finalStage.label) throw new Error('As etapas Fechado e Perdido não podem ser renomeadas.');
     const normalized = normalize(label);
     if (names.has(normalized)) throw new Error('O nome de cada etapa deve ser único, mesmo sem acentos ou com letras maiúsculas.');
@@ -155,7 +166,7 @@ async function connectPipeline(uid, localStages, revision) {
 export async function savePipeline(stages, expected = getPipeline()) {
   if (!currentUser) throw new Error('Entre na sua conta para salvar o funil.');
   if (!pipelineSync) throw storageFailure();
-  const normalized = validatePipeline(stages);
+  const normalized = validatePipeline(stages, expected);
   const uid = currentUser;
   const revision = syncRevision;
   const { pipeline } = await pipelineSync.updateWorkspace(uid, ({ pipeline, leads }) => {

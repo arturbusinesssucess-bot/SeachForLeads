@@ -1,4 +1,4 @@
-import { getPipeline } from "./pipeline.js?v=workspace-sync";
+import { getPipeline } from "./pipeline.js?v=status-length";
 
 const limit = 10;
 const trialLoadingMs = 10000;
