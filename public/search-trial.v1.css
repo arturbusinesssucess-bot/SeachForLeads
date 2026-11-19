@@ -48,10 +48,21 @@
 .trial-result-count {
   padding: 7px 10px;
   border-radius: 8px;
-  background: var(--workspace-card-raised, #222);
-  color: var(--workspace-muted);
+  background: linear-gradient(115deg, #174c9c, #5e2e9b, #214eab, #582b94);
+  background-size: 220% 100%;
+  color: #fff;
   font-size: 12px;
   white-space: nowrap;
+  animation: trial-count-gradient 5s ease-in-out infinite alternate;
+}
+
+@keyframes trial-count-gradient {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trial-result-count { animation: none; }
 }
 .trial-results-tools,
 .trial-result-actions,
@@ -76,6 +87,20 @@
   font-size: 13px;
   cursor: pointer;
 }
+.trial-selection {
+  padding: 0 14px;
+  border: 1px solid #171717;
+  border-radius: 12px;
+  background: transparent;
+  color: #f5f5f5;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.trial-selection:hover:has(input:enabled) { border-color: #393939; }
+.trial-selection:active:has(input:enabled) { border-color: #646464; }
+.trial-selection:has(input:focus-visible) { outline: 2px solid #a8b8ff; outline-offset: 3px; }
+.trial-selection:has(input:disabled) { color: #898989; cursor: not-allowed; }
 .trial-result-choice { width: 44px; flex: 0 0 44px; }
 .trial-selection input,
 .trial-result-choice input { width: 16px; height: 16px; margin: 0; accent-color: #4b89ed; }
