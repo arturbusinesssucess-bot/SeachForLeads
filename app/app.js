@@ -18,7 +18,7 @@ import { initializeSearchTrial } from "./search-trial.js?v=board-drag";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
-import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=crm-status-search";
+import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=contact-ring-wave";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();

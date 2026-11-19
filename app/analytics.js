@@ -52,6 +52,40 @@ const percentage = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 function setText(selector, value) { const element = document.querySelector(selector); if (element) element.textContent = value; }
 function percent(value) { return value === null ? "—" : `${percentage.format(value)}%`; }
 
+function contactRingPath(rate) {
+  if (rate <= 0) return "";
+
+  const center = 55;
+  const outer = 48.5;
+  const inner = 39.5;
+  const thickness = outer - inner;
+  const fullTurn = 2 * Math.PI;
+  const angle = rate / 100 * fullTurn;
+  const point = (radius, at, tangent = 0) => {
+    const x = center + radius * Math.cos(at) - tangent * Math.sin(at);
+    const y = center + radius * Math.sin(at) + tangent * Math.cos(at);
+    return `${x.toFixed(3)} ${y.toFixed(3)}`;
+  };
+
+  if (rate >= 100) {
+    return [outer, inner].map((radius) => (
+      `M ${point(radius, 0)} A ${radius} ${radius} 0 0 1 ${point(radius, Math.PI)} A ${radius} ${radius} 0 0 1 ${point(radius, 0)} Z`
+    )).join(" ");
+  }
+
+  const large = angle > Math.PI ? 1 : 0;
+  const wave = Math.min(thickness, inner * Math.min(angle, fullTurn - angle) / 3);
+  const outerControl = outer - thickness / 3;
+  const innerControl = inner + thickness / 3;
+  return [
+    `M ${point(outer, 0)}`,
+    `A ${outer} ${outer} 0 ${large} 1 ${point(outer, angle)}`,
+    `C ${point(outerControl, angle, wave)} ${point(innerControl, angle, -wave)} ${point(inner, angle)}`,
+    `A ${inner} ${inner} 0 ${large} 0 ${point(inner, 0)}`,
+    `C ${point(innerControl, 0, -wave)} ${point(outerControl, 0, wave)} ${point(outer, 0)} Z`,
+  ].join(" ");
+}
+
 function stageDot(color) {
   const dot = document.createElement("span");
   dot.className = "stage-color-dot";
@@ -155,8 +189,7 @@ export function initializeAnalytics(tbody) {
     updateActivity(filtered);
     updateCharts();
     const ring = document.querySelector("#analytics-contact-ring");
-    const rate = summary.contactRate ?? 0;
-    ring.style.strokeDasharray = `${rate} ${100 - rate}`;
+    ring.setAttribute("d", contactRingPath(summary.contactRate ?? 0));
     document.querySelector("#analytics-contact-chart").setAttribute("aria-label", summary.total ? `${number.format(summary.contacted)} de ${number.format(summary.total)} leads em etapas de contato: ${percent(summary.contactRate)}.` : "Cobertura de contato. Ainda não há leads.");
     setText("#analytics-contact-rate", percent(summary.contactRate));
     setText("#analytics-contact-caption", summary.total ? `${number.format(summary.contacted)} em etapas de contato` : "Aguardando os primeiros leads");
