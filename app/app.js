@@ -14,7 +14,7 @@ import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=status-length"
 import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=lead-details";
+import { initializeSearchTrial } from "./search-trial.js?v=last-search";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=lead-details";
 import { initializeLeadDetails } from "./crm-lead-details.js";
 import { initializeCRMViews } from "./crm-views.js?v=status-length";
@@ -34,6 +34,9 @@ const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analy
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
   if (view !== "crm") document.querySelector("#crm-lead-drawer")?.close();
+  if (view !== "search" && searchScreen === "form" && searchFormReturn === "results") {
+    showSearchScreen("results", false);
+  }
   views.forEach((panel) => { panel.hidden = panel.dataset.view !== view; });
   viewLinks.forEach((link) => {
     if (link.dataset.viewLink === view) link.setAttribute("aria-current", "page");
@@ -51,13 +54,12 @@ document.querySelectorAll("[data-open-view]").forEach((button) => {
   button.addEventListener("click", () => showView(button.dataset.openView));
 });
 window.addEventListener("hashchange", () => showView(location.hash.slice(1), false));
-showView(location.hash.slice(1) || "home", false);
-
 const searchIntro = document.querySelector("#search-intro");
 const searchEditor = document.querySelector("#search-editor");
 const openSearchForm = document.querySelector("#open-search-form");
 const closeSearchForm = document.querySelector("#close-search-form");
 const searchScreens = {
+  restoring: document.querySelector("#trial-search-restoring"),
   intro: searchIntro,
   form: searchEditor,
   loading: document.querySelector("#trial-search-loading"),
@@ -69,7 +71,7 @@ const searchFocusTargets = {
   loading: document.querySelector("#trial-search-loading-title"),
   results: document.querySelector("#trial-results-title"),
 };
-let searchScreen = "intro";
+let searchScreen = "restoring";
 let searchFormReturn = "intro";
 let dimensionalFieldLoad = null;
 function ensureDimensionalField() {
@@ -87,7 +89,7 @@ function showSearchScreen(screen, restoreFocus = true) {
   if (screen === "form") ensureDimensionalField();
   if (!restoreFocus || searchIntro.closest("[data-view]").hidden) return;
   window.scrollTo({ top: 0, behavior: "instant" });
-  searchFocusTargets[screen].focus({ preventScroll: true });
+  searchFocusTargets[screen]?.focus({ preventScroll: true });
 }
 function openSearchEditor() {
   searchFormReturn = searchScreen;
@@ -96,6 +98,7 @@ function openSearchEditor() {
 openSearchForm.addEventListener("click", openSearchEditor);
 document.querySelector("#trial-new-search").addEventListener("click", openSearchEditor);
 closeSearchForm.addEventListener("click", () => showSearchScreen(searchFormReturn));
+showView(location.hash.slice(1) || "home", false);
 
 
 const installCard = document.querySelector("#pwa-install-card");

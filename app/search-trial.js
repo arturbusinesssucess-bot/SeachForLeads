@@ -4,6 +4,7 @@ import { getPipeline } from "./pipeline.js?v=status-length";
 const limit = 10;
 const trialLoadingMs = 10000;
 const cacheKey = (uid) => `sfl:search-trial:cache:v1:${uid}`;
+const lastSearchKey = (uid) => `sfl:search-trial:last-result:v1:${uid}`;
 const contactedStages = new Set(["contacted", "responded", "won"]);
 
 function readSaved(key, fallback = []) {
@@ -19,6 +20,18 @@ function readLeads(value) {
     .every((field) => typeof field === "string")).slice(0, limit);
 }
 
+function readLastSearch(uid) {
+  try {
+    const raw = localStorage.getItem(lastSearchKey(uid));
+    if (!raw || raw.length > 50000) return null;
+    const result = JSON.parse(raw);
+    if (!result || !Array.isArray(result.leads) || result.leads.length > limit || typeof result.scope !== "string"
+      || !result.scope.trim() || result.scope.length > 220 || !["trial", "live"].includes(result.mode)) return null;
+    const leads = readLeads(result.leads);
+    return leads.length === result.leads.length ? { leads, scope: result.scope, mode: result.mode } : null;
+  } catch { return null; }
+}
+
 function csvCell(value) {
   const text = String(value);
   const safe = /^\s*[=+@-]|^[\t\r\n]/u.test(text) ? `'${text}` : text;
@@ -29,6 +42,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
   const status = document.querySelector("#search-status");
   const notice = document.querySelector("#trial-search-notice");
   const loadingDescription = document.querySelector("#trial-search-loading-description");
+  const restoring = document.querySelector("#trial-search-restoring");
   const selectAll = document.querySelector("#trial-select-all");
   const saveSelected = document.querySelector("#trial-save-selected");
   const resultStatus = document.querySelector("#trial-results-status");
@@ -208,7 +222,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     }
   }
 
-  function renderResults(batch, scope, mode) {
+  function renderResults(batch, scope, mode, restoreFocus = true) {
     const items = document.createDocumentFragment();
     resultButtons = new Map();
     for (const lead of batch) {
@@ -229,7 +243,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     document.querySelector("#trial-result-count").textContent = batch.length === 1 ? "1 lead encontrado" : `${batch.length} leads encontrados`;
     resultStatus.textContent = batch.length ? "" : "Nenhuma empresa encontrada neste recorte.";
     syncButtons();
-    showSearchScreen("results");
+    showSearchScreen("results", restoreFocus);
   }
 
   selectAll.addEventListener("change", () => {
@@ -279,7 +293,11 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
         await new Promise((resolve) => window.setTimeout(resolve, remaining));
       }
       if (pendingSearch !== controller) return;
-      renderResults(readLeads(leads), scope, mode);
+      const batch = readLeads(leads);
+      try {
+        localStorage.setItem(lastSearchKey(uid), JSON.stringify({ leads: batch, scope, mode }));
+      } catch { /* The results remain available while this page is open. */ }
+      renderResults(batch, scope, mode);
     } catch {
       if (pendingSearch !== controller) return;
       status.textContent = "Não foi possível concluir a busca. Verifique sua conexão e tente novamente.";
@@ -375,7 +393,9 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
       saved = [];
       resultButtons = new Map();
       results.replaceChildren();
-      if (wasEnabled) showSearchScreen("intro", false);
+      const lastSearch = user ? readLastSearch(user.uid) : null;
+      restoring.textContent = "Carregando sua última busca…";
+      showSearchScreen(lastSearch ? "restoring" : "intro", false);
       resultStatus.textContent = "";
       crmStatus.textContent = user ? "Carregando leads…" : "";
       onCRMReady(false);
@@ -395,6 +415,8 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
           const denied = response.status === 401 || response.status === 403;
           status.textContent = denied ? "A busca de teste ainda não está liberada para esta conta." : "Não foi possível verificar a busca de teste.";
           crmStatus.textContent = denied ? "" : "Não foi possível carregar os leads. Recarregue a página para tentar novamente.";
+          if (denied) showSearchScreen("intro", false);
+          else if (lastSearch) restoring.textContent = "Não foi possível carregar sua última busca. Recarregue a página para tentar novamente.";
           onCRMReady(denied);
           return;
         }
@@ -402,6 +424,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
         uid = account;
         trialUser = user;
         trialMode = access.mode !== "live";
+        if (lastSearch) renderResults(lastSearch.leads, lastSearch.scope, lastSearch.mode, false);
         try { legacyLeads = readSaved(`sfl:search-trial:v1:${account}`); } catch { legacyLeads = []; }
         try { saved = readSaved(cacheKey(account), legacyLeads); } catch { saved = legacyLeads; }
         renderRows();
@@ -442,6 +465,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
       } catch {
         if (current === revision) {
           status.textContent = "Não foi possível abrir a busca de teste. Recarregue a página para tentar novamente.";
+          if (lastSearch && !uid) restoring.textContent = "Não foi possível carregar sua última busca. Recarregue a página para tentar novamente.";
           crmStatus.textContent = saved.length
             ? "Não foi possível sincronizar o CRM. Exibindo os leads salvos neste navegador."
             : "Não foi possível carregar os leads. Recarregue a página para tentar novamente.";
