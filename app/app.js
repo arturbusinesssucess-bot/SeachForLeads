@@ -14,7 +14,7 @@ import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline
 import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=search-restore";
+import { initializeSearchTrial } from "./search-trial.js?v=crm-toolbar-lead-cards";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=lead-details";
 import { initializeLeadDetails } from "./crm-lead-details.js";
 import { initializeCRMViews } from "./crm-views.js?v=crm-status-search";
@@ -220,6 +220,11 @@ const settingsWorkspace = initializeSettings({
     document.querySelector("#account-avatar").textContent = Array.from(name)[0]?.toLocaleUpperCase("pt-BR") || "S";
   },
 });
+document.querySelector("#crm-configure-pipeline").addEventListener("click", () => {
+  showView("settings");
+  settingsWorkspace?.open("pipeline");
+  document.querySelector("#settings-panel-pipeline").focus({ preventScroll: true });
+});
 const crmMetrics = document.querySelector("#crm-metrics");
 const crmEmpty = document.querySelector("#crm-empty");
 const crmNoResults = document.querySelector("#crm-no-results");
@@ -257,6 +262,7 @@ function renderCRM() {
   });
   const hasLeads = records.length > 0;
   crmWorkspace.hidden = !crmReady || !hasLeads;
+  crmSearch.hidden = crmWorkspace.hidden;
   crmMetrics.hidden = !crmReady;
   crmEmpty.hidden = !crmReady || hasLeads;
   crmNoResults.hidden = crmWorkspace.hidden || visible.length > 0;

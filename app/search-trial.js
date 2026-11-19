@@ -1,8 +1,10 @@
-import { readLeadContact } from "../shared/lead-contact.mjs";
+import { dialLeadPhone, leadMapURL, readLeadContact } from "../shared/lead-contact.mjs";
 import { getPipeline } from "./pipeline.js?v=status-length";
 
 const limit = 10;
 const trialLoadingMs = 10000;
+const ratingFormat = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const countFormat = new Intl.NumberFormat("pt-BR");
 const cacheKey = (uid) => `sfl:search-trial:cache:v1:${uid}`;
 const lastSearchKey = (uid) => `sfl:search-trial:last-result:v1:${uid}`;
 const contactedStages = new Set(["contacted", "responded", "won"]);
@@ -67,6 +69,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   const editStatus = document.querySelector("#trial-stage-status");
   const crmStatus = document.querySelector("#trial-crm-status");
   const exportButton = document.querySelector("#export-leads");
+  const exportHighlight = exportButton.querySelector(".crm-export-highlight");
   let uid = "";
   let trialUser;
   let trialMode = true;
@@ -95,7 +98,8 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       choice.disabled = button.disabled;
       if (stored || full) choice.checked = false;
       if (!choice.disabled) availableChoices.push(choice);
-      button.querySelector(".app-button-label").textContent = stored ? "Salvo no CRM" : full ? "Limite do teste" : "Salvar no CRM";
+      button.dataset.saved = String(stored);
+      button.querySelector(".app-button-label").textContent = stored ? "Salvo" : full ? "Limite do teste" : "Salvar";
       button.setAttribute("aria-label", stored ? "Lead salvo no CRM" : full ? "Limite de 10 leads salvos atingido" : label);
     }
     const selected = availableChoices.filter((choice) => choice.checked).length;
@@ -234,15 +238,40 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     }
   }
 
+  function setContactLink(link, href, unavailable) {
+    if (href) {
+      link.href = href;
+      return;
+    }
+    link.setAttribute("aria-disabled", "true");
+    link.setAttribute("aria-label", `${link.textContent}: ${unavailable}`);
+    link.title = unavailable;
+  }
+
   function renderResults(batch, scope, mode, restoreFocus = true) {
     const items = document.createDocumentFragment();
     resultButtons = new Map();
     for (const [index, lead] of batch.entries()) {
       const item = template.content.cloneNode(true);
       item.firstElementChild.style.setProperty("--lead-enter-delay", `${index * 30}ms`);
+      const contact = readLeadContact(lead);
+      const dial = dialLeadPhone(contact.phone);
       item.querySelector("h3").textContent = lead.company;
-      item.querySelector("p").textContent = lead.location;
-      const button = item.querySelector("button");
+      const category = item.querySelector("[data-result-category]");
+      category.textContent = lead.category;
+      category.hidden = !lead.category;
+      item.querySelector("[data-result-location]").textContent = lead.location;
+      const phone = item.querySelector("[data-result-phone]");
+      phone.textContent = contact.phone ?? "";
+      phone.hidden = !contact.phone;
+      const rating = item.querySelector("[data-result-rating]");
+      const score = contact.rating === undefined ? "" : `${ratingFormat.format(contact.rating)} / 5`;
+      const reviews = contact.reviewCount === undefined ? "" : `${countFormat.format(contact.reviewCount)} ${contact.reviewCount === 1 ? "avaliação" : "avaliações"}`;
+      rating.textContent = [score, reviews].filter(Boolean).join(" · ");
+      rating.parentElement.hidden = !rating.textContent;
+      setContactLink(item.querySelector("[data-result-whatsapp]"), dial ? `https://wa.me/${dial.slice(1)}` : null, "Telefone não informado");
+      setContactLink(item.querySelector("[data-result-maps]"), leadMapURL(lead, contact), "Localização no Maps indisponível");
+      const button = item.querySelector(".trial-result-save");
       const choice = item.querySelector('input[type="checkbox"]');
       const label = `Salvar ${lead.company} no CRM`;
       choice.setAttribute("aria-label", `Selecionar ${lead.company}`);
@@ -378,6 +407,11 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     link.download = saved.some((lead) => lead.id.startsWith("vps:")) ? "leads.csv" : "leads-de-teste.csv";
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const [animation] = exportHighlight.getAnimations();
+    if (animation) {
+      animation.currentTime = 0;
+      animation.play();
+    }
   });
 
   window.addEventListener("sfl:pipeline-changed", () => {

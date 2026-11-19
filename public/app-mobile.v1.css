@@ -64,7 +64,7 @@
   .product-app .crm-view .crm-empty { min-height: 280px; padding: 32px 20px; }
   .product-app .crm-view .crm-empty h2 { font-size: 24px; }
   .product-app .crm-view .crm-empty p { font-size: 14px; }
-  .product-app .crm-view .crm-tools { width: 100%; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; }
+  .product-app .crm-view .crm-tools { width: 100%; gap: 8px; }
   .product-app .crm-view .crm-search > input { font-size: 16px; }
   .product-app .crm-view .crm-search > .app-select .app-select-trigger { font-size: 14px; }
   .product-app .crm-view .crm-export { min-height: 48px; padding-inline: 12px; }
@@ -93,10 +93,4 @@
 }
 @media (max-width: 359px) {
   .product-app [data-view="home"] .home-panel { padding: 16px; }
-}
-
-@media (max-width: 520px) {
-  .product-app .crm-view .crm-tools { grid-template-columns: minmax(0, 1fr); }
-  .product-app .crm-view .crm-search-form { max-width: none; }
-  .product-app .crm-view .crm-export { justify-self: end; }
 }
