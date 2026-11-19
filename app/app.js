@@ -14,10 +14,10 @@ import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline
 import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=crm-toolbar-lead-cards";
+import { initializeSearchTrial } from "./search-trial.js?v=board-drag";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js";
-import { initializeCRMViews } from "./crm-views.js?v=crm-status-search";
+import { initializeCRMViews } from "./crm-views.js?v=board-drag";
 import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=crm-status-search";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
@@ -84,6 +84,7 @@ function ensureDimensionalField() {
 
 function showSearchScreen(screen, restoreFocus = true) {
   searchScreen = screen;
+  if (screen === "loading") searchFormReturn = "intro";
   for (const [key, panel] of Object.entries(searchScreens)) panel.hidden = key !== screen;
   openSearchForm.setAttribute("aria-expanded", String(screen === "form"));
   if (screen === "form") ensureDimensionalField();
@@ -229,7 +230,7 @@ const crmMetrics = document.querySelector("#crm-metrics");
 const crmEmpty = document.querySelector("#crm-empty");
 const crmNoResults = document.querySelector("#crm-no-results");
 const crmWorkspace = document.querySelector("#crm-workspace");
-const crmViews = initializeCRMViews({ openLead: searchTrial.openLead });
+const crmViews = initializeCRMViews({ openLead: searchTrial.openLead, moveLeadStage: searchTrial.moveLeadStage });
 const crmAnalytics = initializeAnalytics(crmRows);
 
 function syncCRMStageOptions(records) {

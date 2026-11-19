@@ -1,11 +1,14 @@
 import { getAnalyticsStages } from "./pipeline.js?v=status-length";
+import { initializeBoardDrag } from "./crm-board-drag.js";
 
 const modeKey = "sfl:crm:view";
 
-export function initializeCRMViews({ openLead }) {
+export function initializeCRMViews({ openLead, moveLeadStage }) {
   const host = document.querySelector("#crm-presentations");
   const list = document.querySelector("#crm-lead-list");
   const board = document.querySelector("#crm-lead-board");
+  const status = document.querySelector("#crm-board-status");
+  const moving = new Set();
   const template = document.querySelector("#crm-lead-card-template");
   const toggles = [...document.querySelectorAll("[data-crm-mode]")];
   let mode = "list";
@@ -15,6 +18,27 @@ export function initializeCRMViews({ openLead }) {
   try {
     if (sessionStorage.getItem(modeKey) === "board") mode = "board";
   } catch { /* Use the default view when browser storage is unavailable. */ }
+
+  const drag = initializeBoardDrag(board, async (button, column) => {
+    const id = button.dataset.crmLeadId;
+    if (!id || moving.has(id)) return;
+    moving.add(id);
+    button.setAttribute("aria-busy", "true");
+    status.textContent = "Movendo lead…";
+    try {
+      const updated = await moveLeadStage(id, column.dataset.crmDropStage, button.dataset.crmSourceStage);
+      if (updated) status.textContent = `Lead movido para ${column.dataset.crmStageLabel}.`;
+    } catch (error) {
+      status.textContent = error.message === "trial-stage-conflict"
+        ? "O lead mudou de etapa em outro dispositivo. Confira a etapa atual."
+        : error.message === "trial-stage-changed"
+          ? "Essa etapa mudou em outro dispositivo. Confira o funil atualizado."
+          : "Não foi possível mover o lead. Tente novamente.";
+    } finally {
+      moving.delete(id);
+      cardButtons.get(id)?.removeAttribute("aria-busy");
+    }
+  });
 
   function focusTarget(id) {
     if (host.closest("[data-view]").hidden) return null;
@@ -27,6 +51,8 @@ export function initializeCRMViews({ openLead }) {
     const id = record.row.dataset.leadId;
     button.disabled = !id;
     button.dataset.crmLeadId = id ?? "";
+    if (mode === "board") button.dataset.crmSourceStage = record.row.dataset.status ?? record.stage;
+    if (moving.has(id)) button.setAttribute("aria-busy", "true");
     item.querySelector("[data-crm-card-name]").textContent = record.name;
     item.querySelector("[data-crm-card-city]").textContent = record.city;
     const category = item.querySelector("[data-crm-card-category]");
@@ -41,6 +67,7 @@ export function initializeCRMViews({ openLead }) {
   }
 
   function render(next = records, stageFilter = selectedStage) {
+    drag.cancel();
     records = next;
     selectedStage = stageFilter;
     const focusedLead = document.activeElement?.dataset.crmLeadId;
@@ -61,12 +88,19 @@ export function initializeCRMViews({ openLead }) {
       const recordsByStage = new Map(stages.map(({ key }) => [key, []]));
       for (const record of records) (recordsByStage.get(record.stage) ?? recordsByStage.get("other")).push(record);
       for (const stage of stages) {
-        if (selectedStage !== "all" && stage.key !== selectedStage) continue;
         const leads = recordsByStage.get(stage.key);
         if (stage.key === "other" && !leads.length) continue;
         const column = document.createElement("section");
         column.className = "crm-board-column";
         column.dataset.crmColumn = stage.key;
+        if (stage.key !== "other") {
+          column.dataset.crmDropStage = stage.key;
+          column.dataset.crmStageLabel = stage.label;
+        }
+        if (selectedStage !== "all" && stage.key !== selectedStage) {
+          column.dataset.crmFilteredColumn = "";
+          column.hidden = true;
+        }
         const title = document.createElement("h2");
         const dot = document.createElement("span");
         dot.className = "stage-color-dot";
@@ -104,6 +138,7 @@ export function initializeCRMViews({ openLead }) {
   for (const toggle of toggles) {
     toggle.addEventListener("click", () => {
       mode = toggle.dataset.crmMode;
+      status.textContent = "";
       try { sessionStorage.setItem(modeKey, mode); } catch { /* Keep the current view in memory. */ }
       render();
     });

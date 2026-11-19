@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-disclosure" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
     <link rel="stylesheet" href="/public/search-trial.v1.css?v=results-header" />
-    <link rel="stylesheet" href="/public/crm-views.v1.css?v=toolbar" />
+    <link rel="stylesheet" href="/public/crm-views.v1.css?v=drag" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <header class="sidebar-mobile-bar"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
@@ -279,6 +279,7 @@
               <ul class="crm-lead-list" id="crm-lead-list" aria-label="Leads em lista"></ul>
               <div class="crm-lead-board" id="crm-lead-board" role="region" aria-label="Quadro de leads por etapa" tabindex="0" hidden></div>
             </div>
+            <p class="crm-board-status" id="crm-board-status" role="status"></p>
             <div role="status">
               <div class="crm-no-results" id="crm-no-results" hidden>
                 <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
@@ -492,6 +493,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=crm-stage-counts"></script>
+    <script type="module" src="app.js?v=board-drag"></script>
   </body>
 </html>

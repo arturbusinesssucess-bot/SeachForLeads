@@ -1,5 +1,5 @@
 import { dialLeadPhone, leadMapURL, readLeadContact } from "../shared/lead-contact.mjs";
-import { getPipeline } from "./pipeline.js?v=status-length";
+import { getDefaultPipeline, getPipeline } from "./pipeline.js?v=status-length";
 
 const limit = 10;
 const trialLoadingMs = 10000;
@@ -207,9 +207,23 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     return true;
   }
 
+  function moveLeadStage(id, stage, expectedStage) {
+    return updateSaved((leads, pipeline) => {
+      if (!(pipeline ?? getDefaultPipeline()).some(({ key }) => key === stage)) throw new Error("trial-stage-changed");
+      const index = leads.findIndex((lead) => lead.id === id);
+      if (index === -1) throw new Error("trial-lead-missing");
+      const lead = leads[index];
+      if (lead.stage === stage) return leads;
+      if (lead.stage !== expectedStage) throw new Error("trial-stage-conflict");
+      const updated = { ...lead, stage, contacted: lead.contacted === true || contactedStages.has(stage) };
+      return leads.with(index, updated);
+    });
+  }
+
   async function saveResults(batch) {
     if (!trialUser || !syncClient || savingResults || !batch.length) return;
     const session = revision;
+    const activeResults = resultButtons;
     savingResults = true;
     syncButtons();
     let added = 0;
@@ -222,12 +236,12 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
         const savedAt = new Date().toISOString();
         return added ? [...missing.map((lead) => ({ ...lead, savedAt })), ...leads] : leads;
       });
-      if (updated) {
+      if (updated && activeResults === resultButtons) {
         const label = added === 1 ? "Lead salvo no CRM." : added ? `${added} leads salvos no CRM.` : "Esses leads já estão no CRM.";
         resultStatus.textContent = `${label} ${saved.length} de ${limit} leads ${trialMode ? "do teste " : ""}salvos.`;
       }
     } catch (error) {
-      if (session === revision) resultStatus.textContent = error.message === "trial-limit"
+      if (session === revision && activeResults === resultButtons) resultStatus.textContent = error.message === "trial-limit"
         ? "A seleção ultrapassa o limite de 10 leads no CRM. Selecione menos empresas."
         : "Não foi possível sincronizar os leads. Verifique sua conexão e tente novamente.";
     } finally {
@@ -307,6 +321,13 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     if (pendingSearch) return;
     const input = criteria?.read();
     if (!input) return;
+    try {
+      localStorage.removeItem(lastSearchKey(uid));
+    } catch { /* The current tab still replaces its results. */ }
+    resultButtons = new Map();
+    results.replaceChildren();
+    resultStatus.textContent = "";
+    syncButtons();
     const scope = `${input.niche} · ${input.cityName ? `${input.cityName}, ${input.state}` : input.stateName}`;
     const controller = new AbortController();
     pendingSearch = controller;
@@ -356,12 +377,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     syncStageControls();
     editStatus.textContent = "";
     try {
-      const updated = await updateSaved((leads, pipeline) => {
-        if (pipeline && !pipeline.some(({ key }) => key === stage)) throw new Error("trial-stage-changed");
-        return leads.map((lead) => lead.id === id
-          ? { ...lead, stage, contacted: lead.contacted || contactedStages.has(stage) }
-          : lead);
-      });
+      const updated = await moveLeadStage(id, stage, confirmedStage);
       if (updated && editingId === id) {
         editStatus.textContent = "Etapa atualizada.";
       }
@@ -369,7 +385,9 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       if (session === revision && editingId === id) {
         editStatus.textContent = error.message === "trial-stage-changed"
           ? "Esta etapa mudou em outro dispositivo. Escolha uma opção do funil atual."
-          : "Não foi possível sincronizar a etapa. Verifique sua conexão e tente novamente.";
+          : error.message === "trial-stage-conflict"
+            ? "O lead mudou de etapa em outro dispositivo. Confira a nova etapa antes de salvar."
+            : "Não foi possível sincronizar a etapa. Verifique sua conexão e tente novamente.";
       }
     } finally {
       if (session === revision) {
@@ -495,6 +513,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
 
   return {
     openLead,
+    moveLeadStage,
     async setUser(user) {
       const current = ++revision;
       stopWatching?.();
