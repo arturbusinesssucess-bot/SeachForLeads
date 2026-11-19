@@ -13,7 +13,7 @@ function focusAdjacent(control, direction) {
 }
 
 function enhanceSelect(select) {
-  if (widgets.has(select) || select.multiple || select.size > 1) return;
+  if (widgets.has(select) || select.hasAttribute("data-native-select") || select.multiple || select.size > 1) return;
   const searchable = select.dataset.selectSearch === "true";
   const id = select.id || `app-select-${++nextId}`;
   select.id = id;

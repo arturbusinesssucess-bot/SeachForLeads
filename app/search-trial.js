@@ -33,7 +33,12 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
   const resultStatus = document.querySelector("#trial-results-status");
   const results = document.querySelector("#trial-result-list");
   const template = document.querySelector("#trial-result-template");
+  const drawer = document.querySelector("#crm-lead-drawer");
+  const drawerTitle = document.querySelector("#trial-stage-title");
+  const detailFields = new Map([...drawer.querySelectorAll("[data-lead-detail]")].map((field) => [field.dataset.leadDetail, field]));
+  const savedDate = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" });
   const editForm = document.querySelector("#trial-stage-form");
+  const editSave = editForm.querySelector('[type="submit"]');
   const editStage = document.querySelector("#trial-stage");
   const editStatus = document.querySelector("#trial-stage-status");
   const crmStatus = document.querySelector("#trial-crm-status");
@@ -49,7 +54,9 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
   let snapshotVersion = 0;
   let saved = [];
   let editingId = null;
-  let editButtons = new Map();
+  let returnFocus;
+  let confirmedStage = "";
+  let savingStage = false;
   let resultButtons = new Map();
   let revision = 0;
 
@@ -71,29 +78,54 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     selectAll.checked = Boolean(selected) && selected === availableChoices.length;
     selectAll.indeterminate = selected > 0 && !selectAll.checked;
     saveSelected.disabled = selected === 0;
-    for (const button of editButtons.values()) button.disabled = !syncClient;
+    syncStageControls();
     exportButton.disabled = saved.length === 0;
     exportButton.setAttribute("aria-disabled", String(exportButton.disabled));
   }
 
-  function closeEditor(restoreFocus = true) {
-    const button = editButtons.get(editingId);
-    editingId = null;
-    editForm.hidden = true;
-    editStatus.textContent = "";
-    if (restoreFocus) button?.focus();
+  function syncStageControls() {
+    editStage.disabled = !syncClient || savingStage;
+    editSave.disabled = editStage.disabled || !editStage.value || editStage.value === confirmedStage;
   }
 
-  function openEditor(lead) {
-    editingId = lead.id;
-    document.querySelector("#trial-stage-company").textContent = lead.company;
-    const stages = getPipeline();
-    editStage.replaceChildren(...stages.map((stage) => new Option(stage.label, stage.key)));
-    editStage.value = stages.some((stage) => stage.key === lead.stage) ? lead.stage : "new";
-    editStage.dispatchEvent(new Event("change", { bubbles: true }));
-    editForm.hidden = false;
+  function closeEditor(restoreFocus = true) {
+    const focusTarget = returnFocus;
+    returnFocus = undefined;
+    editingId = null;
     editStatus.textContent = "";
-    document.querySelector("#trial-stage-title").focus();
+    drawer.close();
+    if (restoreFocus) focusTarget?.()?.focus();
+  }
+
+  function renderLeadDetails(lead, preserveDraft = false) {
+    const draft = preserveDraft && editStage.value && editStage.value !== confirmedStage ? editStage.value : null;
+    confirmedStage = lead.stage;
+    drawerTitle.textContent = lead.company;
+    const timestamp = Date.parse(lead.savedAt);
+    const details = {
+      location: lead.location || "Não informada",
+      category: lead.category || "Não informada",
+      source: leadSource(lead),
+      savedAt: Number.isFinite(timestamp) ? savedDate.format(timestamp) : "Data não registrada",
+      contact: lead.contacted === true || contactedStages.has(lead.stage) ? "Contato iniciado" : "Aguardando contato",
+    };
+    for (const [key, value] of Object.entries(details)) detailFields.get(key).textContent = value;
+    const stages = getPipeline();
+    editStage.replaceChildren(new Option("Selecione uma etapa", ""), ...stages.map(({ label, key }) => new Option(label, key)));
+    const selected = draft && stages.some(({ key }) => key === draft) ? draft : confirmedStage;
+    editStage.value = stages.some(({ key }) => key === selected) ? selected : "";
+    syncStageControls();
+  }
+
+  function openLead(id, findReturnFocus) {
+    const lead = saved.find((item) => item.id === id);
+    if (!lead) return;
+    editingId = id;
+    returnFocus = findReturnFocus;
+    editStatus.textContent = "";
+    renderLeadDetails(lead);
+    if (!drawer.open) drawer.showModal();
+    drawerTitle.focus();
   }
 
   function leadSource(lead) { return lead.id.startsWith("vps:") ? "Busca" : "Busca de teste"; }
@@ -101,9 +133,9 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
   function renderRows() {
     const items = document.createDocumentFragment();
     const stageLabels = new Map(getPipeline().map((stage) => [stage.key, stage.label]));
-    editButtons = new Map();
     for (const lead of saved) {
       const row = document.createElement("tr");
+      row.dataset.leadId = lead.id;
       row.dataset.company = lead.company;
       row.dataset.city = lead.location;
       row.dataset.category = lead.category;
@@ -111,17 +143,14 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
       row.dataset.contacted = String(lead.contacted === true);
       if (typeof lead.savedAt === "string") row.dataset.savedAt = lead.savedAt;
       for (const value of [lead.company, lead.location, leadSource(lead), stageLabels.get(lead.stage) || "Outros"]) row.insertCell().textContent = value;
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "text-link trial-edit-stage";
-      button.textContent = "Alterar etapa";
-      button.setAttribute("aria-label", `Alterar etapa de ${lead.company}`);
-      button.addEventListener("click", () => openEditor(lead));
-      row.insertCell().append(button);
-      editButtons.set(lead.id, button);
       items.append(row);
     }
     rows.replaceChildren(items);
+    if (editingId) {
+      const lead = saved.find(({ id }) => id === editingId);
+      if (lead) renderLeadDetails(lead, true);
+      else closeEditor(false);
+    }
     syncButtons();
   }
 
@@ -270,7 +299,11 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
     event.preventDefault();
     const id = editingId;
     const stage = editStage.value;
-    if (!id || !getPipeline().some((item) => item.key === stage)) return;
+    if (!id || !syncClient || savingStage || stage === confirmedStage || !getPipeline().some((item) => item.key === stage)) return;
+    const session = revision;
+    savingStage = true;
+    syncStageControls();
+    editStatus.textContent = "";
     try {
       const updated = await updateSaved((leads, pipeline) => {
         if (pipeline && !pipeline.some(({ key }) => key === stage)) throw new Error("trial-stage-changed");
@@ -279,17 +312,39 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
           : lead);
       });
       if (updated && editingId === id) {
-        closeEditor();
-        crmStatus.textContent = "Etapa atualizada.";
+        editStatus.textContent = "Etapa atualizada.";
       }
     } catch (error) {
-      editStatus.textContent = error.message === "trial-stage-changed"
-        ? "Esta etapa mudou em outro dispositivo. Feche a edição e escolha uma opção do funil atual."
-        : "Não foi possível sincronizar a etapa. Verifique sua conexão e tente novamente.";
+      if (session === revision && editingId === id) {
+        editStatus.textContent = error.message === "trial-stage-changed"
+          ? "Esta etapa mudou em outro dispositivo. Escolha uma opção do funil atual."
+          : "Não foi possível sincronizar a etapa. Verifique sua conexão e tente novamente.";
+      }
+    } finally {
+      if (session === revision) {
+        savingStage = false;
+        syncStageControls();
+      }
     }
   });
 
+  editStage.addEventListener("change", () => {
+    editStatus.textContent = "";
+    syncStageControls();
+  });
   document.querySelector("#trial-stage-close").addEventListener("click", () => closeEditor());
+  drawer.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeEditor();
+  });
+  drawer.addEventListener("close", () => {
+    if (!drawer.open && editingId) closeEditor();
+  });
+  drawer.addEventListener("click", (event) => {
+    if (event.target !== drawer) return;
+    const { left, right, top, bottom } = drawer.getBoundingClientRect();
+    if (event.clientX < left || event.clientX > right || event.clientY < top || event.clientY > bottom) closeEditor();
+  });
   document.querySelector("#trial-open-crm").addEventListener("click", openCRM);
   exportButton.addEventListener("click", () => {
     if (!uid || !saved.length) return;
@@ -309,6 +364,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
   });
 
   return {
+    openLead,
     async setUser(user) {
       const current = ++revision;
       const wasEnabled = Boolean(uid);
@@ -319,6 +375,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM, showSearc
       pendingSearch?.abort();
       pendingSearch = undefined;
       savingResults = false;
+      savingStage = false;
       syncClient = undefined;
       legacyLeads = [];
       saved = [];

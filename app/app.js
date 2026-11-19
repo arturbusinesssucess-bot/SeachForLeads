@@ -14,9 +14,10 @@ import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=workspace-sync
 import { initializeAIWorkspace } from "./ai-workspace.js?v=niche-disclosure";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=search-flow";
-import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
-import { initializeAnalytics } from "./analytics.js?v=analytics-metrics";
+import { initializeSearchTrial } from "./search-trial.js?v=crm-views";
+import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-views";
+import { initializeCRMViews } from "./crm-views.js";
+import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=analytics-metrics";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
@@ -31,6 +32,7 @@ const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analy
 
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
+  if (view !== "crm") document.querySelector("#crm-lead-drawer")?.close();
   views.forEach((panel) => { panel.hidden = panel.dataset.view !== view; });
   viewLinks.forEach((link) => {
     if (link.dataset.viewLink === view) link.setAttribute("aria-current", "page");
@@ -214,38 +216,31 @@ const settingsWorkspace = initializeSettings({
     document.querySelector("#account-avatar").textContent = Array.from(name)[0]?.toLocaleUpperCase("pt-BR") || "S";
   },
 });
-const crmColumnLabels = [...document.querySelectorAll(".crm-table thead th")].map((header) => header.textContent.trim() || header.getAttribute("aria-label") || "");
 const crmMetrics = document.querySelector("#crm-metrics");
 const crmEmpty = document.querySelector("#crm-empty");
 const crmEmptyTitle = document.querySelector("#crm-empty-title");
 const crmEmptyDescription = document.querySelector("#crm-empty-description");
 const crmWorkspace = document.querySelector("#crm-workspace");
-const crmTableWrap = document.querySelector("#crm-table-wrap");
+const crmViews = initializeCRMViews({ openLead: searchTrial.openLead });
 const crmAnalytics = initializeAnalytics(crmRows);
 
 function renderCRM() {
   crmAnalytics?.refresh();
   const query = crmFilter.value.trim().toLocaleLowerCase("pt-BR");
   const stageFilter = document.querySelector(".crm-filter.is-active")?.dataset.filter;
-  const rows = [...crmRows.querySelectorAll("tr")];
-  const visibleRows = rows.filter((row) => {
-    row.setAttribute("role", "row");
-    for (let index = 0; index < row.cells.length; index++) {
-      const cell = row.cells[index];
-      cell.setAttribute("role", "cell");
-      cell.dataset.label = crmColumnLabels[index] || "";
-    }
-    const matchesText = !query || row.textContent.toLocaleLowerCase("pt-BR").includes(query);
-    const matchesStage = stageFilter !== "new" || resolveRowStage(row) === "new";
-    const matches = matchesText && matchesStage;
+  const records = readCRMRecords(crmRows);
+  const visible = records.filter(({ row, stage }) => {
+    const matchesText = !query || row.textContent.toLocaleLowerCase("pt-BR").includes(query)
+      || row.dataset.category?.toLocaleLowerCase("pt-BR").includes(query);
+    const matches = matchesText && (stageFilter !== "new" || stage === "new");
     row.hidden = !matches;
     return matches;
   });
-  if (crmWorkspace) crmWorkspace.hidden = !crmReady || rows.length === 0;
-  if (crmTableWrap) crmTableWrap.hidden = !crmReady || visibleRows.length === 0;
+  crmWorkspace.hidden = !crmReady || records.length === 0;
   crmMetrics.hidden = !crmReady;
-  crmEmpty.hidden = !crmReady || visibleRows.length > 0;
-  if (rows.length && !visibleRows.length) {
+  crmEmpty.hidden = !crmReady || visible.length > 0;
+  crmViews.render(crmReady ? visible : []);
+  if (records.length && !visible.length) {
     crmEmptyTitle.textContent = "Nenhum lead corresponde à busca";
     crmEmptyDescription.textContent = "Tente outro nome, cidade ou etapa do CRM.";
   } else {
