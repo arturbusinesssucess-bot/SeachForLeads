@@ -28,6 +28,14 @@
 .app-select-filter::-webkit-search-cancel-button { display: none; }
 .app-select-options { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #46536e transparent; }
 .app-select-option { display: flex; align-items: center; min-height: 44px; padding: 10px 12px; border-radius: 7px; cursor: pointer; overflow-wrap: anywhere; }
+.app-select-option-count {
+  flex: none;
+  margin-inline-start: auto;
+  padding-inline-start: 12px;
+  color: #a7b3c7;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
 .app-select-option:hover, .app-select-option[data-active="true"] { background: rgba(91,123,206,.17); }
 .app-select-option[aria-selected="true"] { background: rgba(112,115,235,.18); color: #d8deff; font-weight: 600; }
 .app-select-option[data-active="true"] { box-shadow: inset 0 0 0 1px rgba(139,159,255,.38); }

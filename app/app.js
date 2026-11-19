@@ -15,7 +15,7 @@ import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
 import { initializeSearchTrial } from "./search-trial.js?v=crm-toolbar-lead-cards";
-import { initializeAppSelects } from "../public/app-selects.v1.js?v=lead-details";
+import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js";
 import { initializeCRMViews } from "./crm-views.js?v=crm-status-search";
 import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=crm-status-search";
@@ -233,17 +233,25 @@ const crmViews = initializeCRMViews({ openLead: searchTrial.openLead });
 const crmAnalytics = initializeAnalytics(crmRows);
 
 function syncCRMStageOptions(records) {
-  const hasOtherStages = records.some(({ stage }) => stage === "other");
-  const stages = getAnalyticsStages().filter(({ key }) => key !== "other" || hasOtherStages);
-  const options = [{ key: "all", label: "Todos" }, ...stages];
+  const counts = new Map();
+  for (const { stage } of records) counts.set(stage, (counts.get(stage) ?? 0) + 1);
+
+  const stages = getAnalyticsStages()
+    .filter(({ key }) => key !== "other" || counts.has(key))
+    .map(({ key, label }) => ({ key, label, count: counts.get(key) ?? 0 }));
+  const options = [{ key: "all", label: "Todos", count: records.length }, ...stages];
   const current = [...crmStage.options];
 
-  if (current.length === options.length && options.every(({ key, label }, index) => (
-    current[index].value === key && current[index].text === label
+  if (current.length === options.length && options.every(({ key, label, count }, index) => (
+    current[index].value === key && current[index].text === label && current[index].dataset.selectCount === String(count)
   ))) return;
 
   const selection = crmStage.value;
-  crmStage.replaceChildren(...options.map(({ key, label }) => new Option(label, key)));
+  crmStage.replaceChildren(...options.map(({ key, label, count }) => {
+    const option = new Option(label, key);
+    option.dataset.selectCount = String(count);
+    return option;
+  }));
   crmStage.value = options.some(({ key }) => key === selection) ? selection : "all";
 }
 

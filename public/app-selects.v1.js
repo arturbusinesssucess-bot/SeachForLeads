@@ -147,6 +147,14 @@ function enhanceSelect(select) {
       element.setAttribute("role", "option");
       element.setAttribute("aria-selected", String(option.value === select.value));
       element.textContent = option.label;
+      if (option.count !== undefined) {
+        const count = document.createElement("span");
+        count.className = "app-select-option-count";
+        count.textContent = option.count;
+        count.setAttribute("aria-hidden", "true");
+        element.setAttribute("aria-label", `${option.label}, ${option.count} ${option.count === "1" ? "lead" : "leads"}`);
+        element.append(count);
+      }
       fragment.append(element);
     }
     list.replaceChildren(fragment);
@@ -159,7 +167,14 @@ function enhanceSelect(select) {
   }
 
   function sync() {
-    options = [...select.options].filter((option) => !option.disabled && !option.hidden && !(select.required && !option.value) && !option.closest('optgroup[disabled]')).map((option) => ({ value: option.value, label: option.textContent.trim(), search: normalize(option.textContent) }));
+    options = [...select.options]
+      .filter((option) => !option.disabled && !option.hidden && !(select.required && !option.value) && !option.closest("optgroup[disabled]"))
+      .map((option) => ({
+        value: option.value,
+        label: option.textContent.trim(),
+        search: normalize(option.textContent),
+        count: option.dataset.selectCount,
+      }));
     const selected = select.selectedOptions[0];
     valueLabel.textContent = selected?.textContent.trim() || "Selecione uma opção";
     control.title = valueLabel.textContent;
@@ -252,7 +267,7 @@ function enhanceSelect(select) {
     control.focus();
   }, eventOptions);
   select.form?.addEventListener("reset", () => { close(false); window.queueMicrotask(sync); }, eventOptions);
-  new MutationObserver(sync).observe(select, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["disabled", "required", "aria-busy", "aria-describedby", "label", "selected"] });
+  new MutationObserver(sync).observe(select, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["disabled", "required", "aria-busy", "aria-describedby", "label", "selected", "data-select-count"] });
   sync();
 }
 
