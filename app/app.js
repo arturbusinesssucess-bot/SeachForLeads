@@ -8,15 +8,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
-import { initializeSettings } from "./settings.js?v=pipeline-15";
-import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=pipeline-15";
+import { initializeSettings } from "./settings.js?v=workspace-sync";
+import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=workspace-sync";
 
 import { initializeAIWorkspace } from "./ai-workspace.js?v=niche-disclosure";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=activity-heatmap";
+import { initializeSearchTrial } from "./search-trial.js?v=workspace-sync";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
-import { initializeAnalytics } from "./analytics.js?v=heatmap-controls";
+import { initializeAnalytics } from "./analytics.js?v=workspace-sync";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();

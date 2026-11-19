@@ -39,11 +39,14 @@ const reservedOther = new Set(['other', 'outro', 'outros']);
 let currentUser = null;
 let currentStages = getDefaultPipeline();
 let rowStates = new WeakMap();
+let pipelineSync = null;
+let stopWatchingPipeline;
+let syncRevision = 0;
 
 function copy(stages) { return stages.map(({ key, label, color }) => ({ key, label, color })); }
 function invalidStructure() { return new Error('Mantenha as quatro etapas abertas padrão e os resultados Fechado e Perdido.'); }
 function stageLimit() { return new Error(`O funil pode ter até ${MAX_PIPELINE_STAGES} etapas, incluindo Fechado e Perdido.`); }
-function storageFailure() { return new Error('Não foi possível salvar neste dispositivo. Verifique as permissões de armazenamento e tente novamente.'); }
+function storageFailure() { return new Error('Não foi possível sincronizar o funil. Verifique sua conexão e tente novamente.'); }
 
 export function getDefaultPipeline() { return copy(DEFAULT_PIPELINE); }
 export function getPipeline() { return copy(currentStages); }
@@ -102,6 +105,10 @@ export function setPipelineUser(uid) {
   const nextUser = typeof uid === 'string' && uid.trim() && uid.length <= 128 && !/[\u0000-\u001f\u007f]/u.test(uid) ? uid : null;
   if (nextUser !== currentUser) rowStates = new WeakMap();
   currentUser = nextUser;
+  const revision = ++syncRevision;
+  stopWatchingPipeline?.();
+  stopWatchingPipeline = undefined;
+  pipelineSync = null;
   let loaded = getDefaultPipeline();
   if (currentUser && typeof window !== 'undefined') {
     try {
@@ -111,19 +118,59 @@ export function setPipelineUser(uid) {
   }
   currentStages = loaded;
   dispatchChange();
+  if (currentUser && typeof window !== 'undefined') connectPipeline(currentUser, loaded, revision);
   return getPipeline();
 }
 
-export function savePipeline(stages) {
-  if (!currentUser) throw new Error('Entre na sua conta para salvar o funil neste dispositivo.');
-  const normalized = validatePipeline(stages);
-  try {
-    if (typeof window === 'undefined' || typeof window.localStorage?.setItem !== 'function') throw storageFailure();
-    window.localStorage.setItem(STORAGE_PREFIX + currentUser, JSON.stringify(normalized));
-  } catch { throw storageFailure(); }
-  currentStages = normalized;
+function applyPipeline(stages) {
+  if (JSON.stringify(currentStages) === JSON.stringify(stages)) return;
+  currentStages = stages;
   dispatchChange();
-  return getPipeline();
+}
+
+async function connectPipeline(uid, localStages, revision) {
+  const failed = () => {
+    if (revision !== syncRevision) return;
+    pipelineSync = null;
+    window.dispatchEvent(new CustomEvent('sfl:pipeline-sync-error', { detail: { uid } }));
+  };
+  try {
+    const sync = await import('./workspace-sync.js');
+    if (revision !== syncRevision) return;
+    const defaults = getDefaultPipeline();
+    if (JSON.stringify(defaults) !== JSON.stringify(localStages)) {
+      await sync.updateWorkspace(uid, ({ pipeline }) => pipeline === undefined ? { pipeline: localStages } : null);
+    }
+    if (revision !== syncRevision) return;
+    stopWatchingPipeline = sync.watchWorkspace(uid, ({ pipeline }) => {
+      if (revision !== syncRevision) return;
+      try {
+        applyPipeline(pipeline === undefined ? defaults : validatePipeline(pipeline));
+        pipelineSync = sync;
+      } catch { failed(); }
+    }, failed);
+  } catch { failed(); }
+}
+
+export async function savePipeline(stages, expected = getPipeline()) {
+  if (!currentUser) throw new Error('Entre na sua conta para salvar o funil.');
+  if (!pipelineSync) throw storageFailure();
+  const normalized = validatePipeline(stages);
+  const uid = currentUser;
+  const revision = syncRevision;
+  const { pipeline } = await pipelineSync.updateWorkspace(uid, ({ pipeline, leads }) => {
+    const remote = pipeline === undefined ? getDefaultPipeline() : validatePipeline(pipeline);
+    if (JSON.stringify(remote) !== JSON.stringify(expected)) {
+      throw new Error('O funil mudou em outro dispositivo. Descarte o rascunho e revise a versão atual.');
+    }
+    const kept = new Set(normalized.map(({ key }) => key));
+    if (remote.some(({ key }) => !kept.has(key) && leads?.some((lead) => lead.stage === key))) {
+      throw new Error('Mova os leads antes de remover uma etapa em uso.');
+    }
+    return { pipeline: normalized };
+  });
+  if (revision === syncRevision && JSON.stringify(currentStages) === JSON.stringify(expected)) applyPipeline(pipeline);
+  return copy(pipeline);
 }
 
 export function resetPipeline() { return savePipeline(getDefaultPipeline()); }

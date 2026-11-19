@@ -1,4 +1,4 @@
-import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=pipeline-15";
+import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=workspace-sync";
 
 export let crmStages = getAnalyticsStages();
 export function classifyCRMStatus(value) { return classifyStage(value); }

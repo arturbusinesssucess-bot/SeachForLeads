@@ -1,0 +1,88 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // One private workspace per Firebase Auth UID. The pipeline and trial lead
+    // list share a document so concurrent edits can check both in a transaction.
+    match /sflWorkspaces/{uid} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == uid;
+      }
+
+      function shortText(value, limit) {
+        return value is string && value.size() > 0 && value.size() <= limit;
+      }
+
+      function stageKey(value) {
+        return value is string && (value in ['new', 'qualified', 'contacted', 'responded', 'won', 'lost']
+          || value.matches('^custom-[0-9a-f-]{36}$'));
+      }
+
+      function validStage(stage) {
+        return stage is map
+          && stage.keys().hasAll(['key', 'label', 'color'])
+          && stage.keys().hasOnly(['key', 'label', 'color'])
+          && stageKey(stage.key)
+          && shortText(stage.label, 40)
+          && stage.label.size() >= 2
+          && stage.color in ['blue', 'purple', 'cyan', 'amber', 'pink', 'green', 'red', 'slate'];
+      }
+
+      function validLead(lead) {
+        return lead is map
+          && lead.keys().hasAll(['id', 'company', 'location', 'category', 'stage'])
+          && lead.keys().hasOnly(['id', 'company', 'location', 'category', 'stage', 'contacted', 'savedAt'])
+          && shortText(lead.id, 350)
+          && shortText(lead.company, 160)
+          && shortText(lead.location, 100)
+          && shortText(lead.category, 100)
+          && stageKey(lead.stage)
+          && (!('contacted' in lead) || lead.contacted is bool)
+          && (!('savedAt' in lead) || shortText(lead.savedAt, 32));
+      }
+
+      function validPipeline(stages) {
+        return stages is list && stages.size() >= 6 && stages.size() <= 15
+        && (stages.size() <= 0 || validStage(stages[0]))
+        && (stages.size() <= 1 || validStage(stages[1]))
+        && (stages.size() <= 2 || validStage(stages[2]))
+        && (stages.size() <= 3 || validStage(stages[3]))
+        && (stages.size() <= 4 || validStage(stages[4]))
+        && (stages.size() <= 5 || validStage(stages[5]))
+        && (stages.size() <= 6 || validStage(stages[6]))
+        && (stages.size() <= 7 || validStage(stages[7]))
+        && (stages.size() <= 8 || validStage(stages[8]))
+        && (stages.size() <= 9 || validStage(stages[9]))
+        && (stages.size() <= 10 || validStage(stages[10]))
+        && (stages.size() <= 11 || validStage(stages[11]))
+        && (stages.size() <= 12 || validStage(stages[12]))
+        && (stages.size() <= 13 || validStage(stages[13]))
+        && (stages.size() <= 14 || validStage(stages[14]));
+      }
+
+      function validLeads(leads) {
+        return leads is list && leads.size() <= 10
+        && (leads.size() <= 0 || validLead(leads[0]))
+        && (leads.size() <= 1 || validLead(leads[1]))
+        && (leads.size() <= 2 || validLead(leads[2]))
+        && (leads.size() <= 3 || validLead(leads[3]))
+        && (leads.size() <= 4 || validLead(leads[4]))
+        && (leads.size() <= 5 || validLead(leads[5]))
+        && (leads.size() <= 6 || validLead(leads[6]))
+        && (leads.size() <= 7 || validLead(leads[7]))
+        && (leads.size() <= 8 || validLead(leads[8]))
+        && (leads.size() <= 9 || validLead(leads[9]));
+      }
+
+      function validWorkspace(data) {
+        return data.keys().hasOnly(['pipeline', 'leads'])
+          && data.keys().hasAny(['pipeline', 'leads'])
+          && (!('pipeline' in data) || validPipeline(data.pipeline))
+          && (!('leads' in data) || validLeads(data.leads));
+      }
+
+      allow get: if isOwner();
+      allow create, update: if isOwner() && validWorkspace(request.resource.data);
+    }
+  }
+}
+

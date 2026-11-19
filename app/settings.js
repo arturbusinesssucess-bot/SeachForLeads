@@ -1,5 +1,5 @@
 import { updateProfile, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-import { createCustomStage, getPipeline, getDefaultPipeline, isCustomStage, isOpenStage, MAX_PIPELINE_STAGES, savePipeline, STAGE_COLOR_OPTIONS, validatePipeline } from "./pipeline.js?v=pipeline-15";
+import { createCustomStage, getPipeline, getDefaultPipeline, isCustomStage, isOpenStage, MAX_PIPELINE_STAGES, savePipeline, STAGE_COLOR_OPTIONS, validatePipeline } from "./pipeline.js?v=workspace-sync";
 
 const SECTIONS = new Set(["general", "profile", "security", "account", "plans", "pipeline"]);
 const RIGHT_ARROW = "M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z";
@@ -467,7 +467,7 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     renderPipeline();
     pipelineStatus.textContent = "Etapas padrão preparadas. Salve o funil para aplicar.";
   });
-  pipelineSave.addEventListener("click", () => {
+  pipelineSave.addEventListener("click", async () => {
     if (!currentUser || pipelineBusy || !pipelineDirty()) return;
     const removedInUse = savedStages.find(({ key }) => !draftStages.some((stage) => stage.key === key) && isStageInUse(key));
     if (removedInUse) {
@@ -482,23 +482,33 @@ export function initializeSettings({ getAuthInstance = () => null, onProfileUpda
     let normalized;
     try { normalized = validatePipeline(draftStages); }
     catch (error) { pipelineStatus.textContent = error.message || "Revise os nomes e a ordem das etapas."; return; }
+    const revision = userRevision;
     pipelineBusy = true;
     refreshPipelineButtons();
     try {
-      savePipeline(normalized);
+      await savePipeline(normalized, savedStages);
+      if (revision !== userRevision) return;
       savedStages = copyStages(getPipeline());
       draftStages = copyStages(savedStages);
-      pipelineStatus.textContent = "Funil salvo neste dispositivo para sua conta.";
-    } catch {
-      pipelineStatus.textContent = "Não foi possível salvar o funil neste dispositivo. Verifique as permissões de armazenamento e tente novamente.";
-    } finally { pipelineBusy = false; renderPipeline(); }
+      pipelineStatus.textContent = "Funil sincronizado com sua conta.";
+    } catch (error) {
+      if (revision === userRevision) pipelineStatus.textContent = error.message || "Não foi possível sincronizar o funil. Tente novamente.";
+    } finally {
+      if (revision === userRevision) { pipelineBusy = false; renderPipeline(); }
+    }
   });
   window.addEventListener("sfl:pipeline-changed", (event) => {
     if (pipelineBusy || !currentUser || event.detail?.uid !== currentUser.uid) return;
     const dirty = pipelineDirty();
-    savedStages = copyStages(getPipeline());
-    if (dirty) { refreshPipelineButtons(); pipelineStatus.textContent = "O funil foi atualizado. Revise suas alterações antes de salvar."; }
-    else { draftStages = copyStages(savedStages); renderPipeline(); }
+    if (dirty) { pipelineStatus.textContent = "O funil mudou em outro dispositivo. Descarte o rascunho para carregar a versão atual."; }
+    else {
+      savedStages = copyStages(getPipeline());
+      draftStages = copyStages(savedStages);
+      renderPipeline();
+    }
+  });
+  window.addEventListener("sfl:pipeline-sync-error", (event) => {
+    if (event.detail?.uid === currentUser?.uid) pipelineStatus.textContent = "Não foi possível sincronizar o funil. Verifique sua conexão e recarregue a página.";
   });
 
   showSection("general");
