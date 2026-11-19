@@ -220,7 +220,13 @@ export function ActivityHeatmap({
   const bestMonth = layout.months[layout.bestMonth];
   const running = autoPlay && !reduced && !hovered && !focused && !stopped && !hidden && ready;
   const levelOf = (value: number) => value <= 0 ? 0 : Math.min(4, Math.ceil(value / maxValue * 4));
-  const levelColor = (level: number) => level === 0 ? undefined : `color-mix(in srgb, var(--heatmap-color) ${LEVEL_MIX[level]}%, transparent)`;
+  const levelBackground = (level: number) => {
+    if (level === 0) return undefined;
+    const intensity = LEVEL_MIX[level];
+    const light = "color-mix(in srgb, var(--heatmap-color) 78%, #dbeafe)";
+    const dark = "color-mix(in srgb, var(--heatmap-color) 64%, #25248e)";
+    return `linear-gradient(145deg, color-mix(in srgb, ${light} ${intensity}%, transparent), color-mix(in srgb, ${dark} ${intensity}%, transparent))`;
+  };
   const valueLabel = (value: number) => {
     const label = unit === "leads" && value === 1 ? "lead" : unit;
     return `${formatValue(value)}${label ? ` ${label}` : ""}`;
@@ -422,7 +428,7 @@ export function ActivityHeatmap({
                 disabled={!visible}
                 tabIndex={visible && cell.date === tabDate ? 0 : -1}
                 className="activity-cell"
-                style={{ width: layout.edge, height: layout.edge, transform: `translate(${at.x}px, ${at.y}px)`, opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none", backgroundColor: levelColor(level), transitionProperty: "transform, opacity", transitionDuration: reduced ? "0ms" : "620ms", transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)", transitionDelay: reduced ? "0ms" : `${index % 13 * 12}ms` }}
+                style={{ width: layout.edge, height: layout.edge, transform: `translate(${at.x}px, ${at.y}px)`, opacity: visible ? 1 : 0, pointerEvents: visible ? "auto" : "none", backgroundImage: levelBackground(level), transitionProperty: "transform, opacity", transitionDuration: reduced ? "0ms" : "620ms", transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)", transitionDelay: reduced ? "0ms" : `${index % 13 * 12}ms` }}
                 onClick={(event) => showTooltip(cell, event.currentTarget)}
                 onPointerEnter={(event) => { if (event.pointerType !== "touch") showTooltip(cell, event.currentTarget); }}
                 onPointerLeave={(event) => { if (event.pointerType !== "touch") setTooltip(null); }}
@@ -436,7 +442,7 @@ export function ActivityHeatmap({
 
         <div className="activity-footer">
           <span>{rangeLabel}</span>
-          {showLegend && <div data-legend className="activity-legend" aria-label="Intensidade da cor, da menor à maior atividade"><span>Menos</span>{LEVEL_MIX.map((_, level) => <span key={level} className="activity-swatch" style={{ backgroundColor: levelColor(level) }} />)}<span>Mais</span></div>}
+          {showLegend && <div data-legend className="activity-legend" aria-label="Intensidade da cor, da menor à maior atividade"><span>Menos</span>{LEVEL_MIX.map((_, level) => <span key={level} className="activity-swatch" style={{ backgroundImage: levelBackground(level) }} />)}<span>Mais</span></div>}
         </div>
       </div>
       {tooltip && <div ref={tipRef} id={tooltipId} role="tooltip" className="activity-tooltip" style={{ left: 8, top: 8 }}>
