@@ -1,5 +1,7 @@
 import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=workspace-sync";
 
+const unspecifiedCity = "Localização não informada";
+
 export let crmStages = getAnalyticsStages();
 export function classifyCRMStatus(value) { return classifyStage(value); }
 
@@ -9,7 +11,7 @@ export function readCRMRecords(tbody) {
     return {
       row,
       name: row.dataset.company || row.cells[0].textContent.trim(),
-      city: row.dataset.city || row.cells[1].textContent.trim() || "Localização não informada",
+      city: row.dataset.city || row.cells[1].textContent.trim() || unspecifiedCity,
       stage,
       savedAt: row.dataset.savedAt,
       contacted: row.dataset.contacted === "true" || !!row.dataset.contactedAt || ["contacted", "responded", "won"].includes(stage),
@@ -137,6 +139,10 @@ export function initializeAnalytics(tbody) {
     setText("#analytics-active", number.format(summary.active));
     setText("#analytics-contacted", number.format(summary.contacted));
     setText("#analytics-win-rate", percent(summary.winRate));
+    setText("#analytics-pending", number.format(summary.pending));
+    setText("#analytics-won", number.format(summary.counts.won));
+    setText("#analytics-lost", number.format(summary.counts.lost));
+    setText("#analytics-localities", number.format(summary.cities.filter(({ label }) => label !== unspecifiedCity).length));
     setText("#analytics-result-count", `${number.format(summary.total)} de ${number.format(records.length)} leads`);
     reset.hidden = stageFilter.value === "all" && !cityFilter.value;
     funnelStages = crmStages.filter((stage) => stage.key !== "other" || summary.counts.other).map((stage) => ({ id: stage.key, label: stage.label, color: stage.color, value: summary.counts[stage.key] }));
