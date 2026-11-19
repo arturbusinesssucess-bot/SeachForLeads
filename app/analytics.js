@@ -11,6 +11,7 @@ export function readCRMRecords(tbody) {
       name: row.dataset.company || row.cells[0].textContent.trim(),
       city: row.dataset.city || row.cells[1].textContent.trim() || "Localização não informada",
       stage,
+      savedAt: row.dataset.savedAt,
       contacted: row.dataset.contacted === "true" || !!row.dataset.contactedAt || ["contacted", "responded", "won"].includes(stage),
     };
   });
@@ -89,29 +90,44 @@ export function initializeAnalytics(tbody) {
   const stageBars = document.querySelector("#analytics-stage-bars");
   const funnelHost = document.querySelector("#analytics-funnel");
   const funnelNote = document.querySelector("#analytics-funnel-note");
+  const activityHost = document.querySelector("#analytics-activity");
+  const activityUndated = document.querySelector("#analytics-activity-undated");
   let funnelStages = [];
-  let drawFunnel;
-  let loadingFunnel;
+  let activity = [];
+  let charts;
+  let loadingCharts;
   let records = [];
   let citySignature = "";
   let stageSignature = "";
 
-  function updateFunnel() {
-    if (!funnelHost || view.hidden) return;
-    if (drawFunnel) {
-      drawFunnel(funnelHost, funnelStages);
-      funnelHost.hidden = false;
-      funnelNote.hidden = false;
-      stageBars.hidden = true;
-    } else if (!loadingFunnel) {
-      loadingFunnel = import("/public/analytics-funnel.v2.js")
-        .then(({ renderAnalyticsFunnel }) => {
-          drawFunnel = renderAnalyticsFunnel;
-          updateFunnel();
+  function updateCharts() {
+    if (view.hidden || (!funnelHost && !activityHost)) return;
+    if (charts) {
+      if (funnelHost) {
+        charts.renderAnalyticsFunnel(funnelHost, funnelStages);
+        funnelHost.hidden = false;
+        funnelNote.hidden = false;
+        stageBars.hidden = true;
+      }
+      if (activityHost) charts.renderAnalyticsActivity(activityHost, activity);
+    } else if (!loadingCharts) {
+      loadingCharts = import("/public/analytics-funnel.v2.js?v=activity-heatmap")
+        .then((module) => {
+          charts = module;
+          updateCharts();
         })
-        .catch(() => {})
-        .finally(() => { loadingFunnel = null; });
+        .catch(() => {
+          const status = activityHost?.querySelector('[role="status"]');
+          if (status) status.textContent = "Não foi possível carregar o mapa de calor.";
+        })
+        .finally(() => { loadingCharts = null; });
     }
+  }
+
+  function updateActivity(filtered) {
+    if (!activityHost) return;
+    activity = filtered.map(({ savedAt }) => Date.parse(savedAt)).filter(Number.isFinite);
+    activityUndated.hidden = activity.length === filtered.length;
   }
 
   function renderFiltered() {
@@ -130,7 +146,8 @@ export function initializeAnalytics(tbody) {
     if (funnelNote) funnelNote.textContent = summary.total
       ? "A porcentagem compara cada etapa à que tem mais leads no recorte."
       : "Prévia visual do funil. Nenhum lead neste recorte.";
-    updateFunnel();
+    updateActivity(filtered);
+    updateCharts();
     const ring = document.querySelector("#analytics-contact-ring");
     const rate = summary.contactRate ?? 0;
     ring.style.strokeDasharray = `${rate} ${100 - rate}`;
@@ -212,7 +229,7 @@ export function initializeAnalytics(tbody) {
     renderFiltered();
   }
 
-  new MutationObserver(updateFunnel).observe(view, { attributes: true, attributeFilter: ["hidden"] });
+  new MutationObserver(updateCharts).observe(view, { attributes: true, attributeFilter: ["hidden"] });
   window.addEventListener("sfl:pipeline-changed", refresh);
   stageFilter.addEventListener("change", renderFiltered);
   cityFilter.addEventListener("change", renderFiltered);

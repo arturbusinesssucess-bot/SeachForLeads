@@ -1,0 +1,263 @@
+.analytics-activity-card {
+  grid-column: 1 / -1;
+}
+
+.activity-heatmap {
+  --activity-ink: #ededf2;
+  --activity-muted: #b0b2bd;
+  --activity-cell-empty: #30323b;
+  --activity-focus: #a8b8ff;
+  min-width: 0;
+  margin-top: 22px;
+  color: var(--activity-ink);
+  font-size: 12px;
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.activity-content,
+.activity-stat {
+  min-width: 0;
+}
+
+.activity-heatmap p {
+  margin: 0;
+}
+
+.activity-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 20px;
+}
+
+.activity-muted,
+.activity-context-key,
+.activity-footer {
+  color: var(--activity-muted);
+}
+
+.activity-heatmap .activity-stat-value {
+  margin-top: 3px;
+  color: var(--activity-ink);
+  font-size: clamp(17px, 2.5vw, 24px);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.activity-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid #30323b;
+}
+
+.activity-views {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 12px;
+  background: #22232a;
+}
+
+.activity-heatmap :is(.activity-view-option, .activity-play) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--activity-muted);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color .18s ease, color .18s ease;
+}
+
+.activity-heatmap .activity-view-option {
+  padding: 0 10px;
+}
+
+.activity-heatmap .activity-play {
+  width: 44px;
+  padding: 0;
+}
+
+.activity-heatmap .activity-view-option[aria-checked="true"] {
+  background: #2a3c59;
+  color: #edf4ff;
+}
+
+@media (hover: hover) {
+  .activity-heatmap :is(.activity-view-option, .activity-play):hover {
+    background: #313743;
+    color: #fff;
+  }
+}
+
+.activity-heatmap :is(.activity-view-option, .activity-play, .activity-cell):focus-visible {
+  z-index: 1;
+  outline: 2px solid var(--activity-focus);
+  outline-offset: 2px;
+}
+
+.activity-view-icon {
+  flex: none;
+}
+
+.activity-context,
+.activity-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+.activity-context {
+  margin-top: 14px;
+}
+
+.activity-insight {
+  font-weight: 500;
+}
+
+.activity-scroll {
+  max-width: 100%;
+  margin-top: 2px;
+  overflow: auto hidden;
+  scrollbar-color: #48546b transparent;
+  scrollbar-width: thin;
+}
+
+.activity-plot {
+  position: relative;
+  min-width: 460px;
+}
+
+.activity-axis {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.activity-axis-line {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  border-top: 1px dashed #383a44;
+}
+
+.activity-weekday,
+.activity-month {
+  position: absolute;
+  color: var(--activity-muted);
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.activity-weekday {
+  inset: 0 auto 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 48px;
+}
+
+.activity-axis-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.activity-heatmap [data-peak="true"] {
+  color: var(--activity-ink);
+  font-weight: 600;
+}
+
+.activity-heatmap .activity-cell {
+  position: absolute;
+  inset: 0 auto auto 0;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: var(--activity-cell-empty);
+  cursor: crosshair;
+}
+
+@media (hover: hover) {
+  .activity-heatmap .activity-cell:hover {
+    z-index: 1;
+    outline: 1px solid #a8b8ff;
+  }
+}
+
+.activity-footer {
+  margin-top: 5px;
+}
+
+.activity-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.activity-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--activity-cell-empty);
+}
+
+.activity-tooltip {
+  position: fixed;
+  z-index: 50;
+  width: max-content;
+  max-width: calc(100vw - 16px);
+  padding: 8px 12px;
+  border: 1px solid #45506a;
+  border-radius: 8px;
+  background: #202635;
+  box-shadow: 0 6px 20px #0006;
+  pointer-events: none;
+}
+
+.activity-heatmap .activity-tooltip-value {
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.activity-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 660px) {
+  .activity-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activity-view-icon,
+  .activity-context-key {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-heatmap :is(.activity-view-option, .activity-play) {
+    transition: none;
+  }
+}

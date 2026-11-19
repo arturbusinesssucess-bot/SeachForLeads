@@ -14,9 +14,9 @@ import { setPipelineUser, resolveRowStage } from "./pipeline.js?v=pipeline-15";
 import { initializeAIWorkspace } from "./ai-workspace.js?v=niche-disclosure";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=crm-trial";
+import { initializeSearchTrial } from "./search-trial.js?v=activity-heatmap";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=mobile-20261117";
-import { initializeAnalytics } from "./analytics.js?v=funnel-empty-preview";
+import { initializeAnalytics } from "./analytics.js?v=activity-heatmap";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js";
 initializeSidebar();
@@ -221,7 +221,7 @@ function renderCRM() {
   }
 }
 crmFilter.addEventListener("input", renderCRM);
-new MutationObserver(renderCRM).observe(crmRows, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["data-status", "data-contacted", "data-contacted-at", "data-city", "data-company"] });
+new MutationObserver(renderCRM).observe(crmRows, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["data-status", "data-contacted", "data-contacted-at", "data-city", "data-company", "data-saved-at"] });
 renderCRM();
 
 

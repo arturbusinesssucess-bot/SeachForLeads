@@ -94,6 +94,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
       row.dataset.category = lead.category;
       row.dataset.status = lead.stage;
       row.dataset.contacted = String(lead.contacted === true);
+      if (typeof lead.savedAt === "string") row.dataset.savedAt = lead.savedAt;
       for (const value of [lead.company, lead.location, "Busca de teste", stageLabels.get(lead.stage) || "Outros"]) row.insertCell().textContent = value;
       const button = document.createElement("button");
       button.type = "button";
@@ -130,7 +131,7 @@ export function initializeSearchTrial({ form, criteria, rows, openCRM }) {
       const updated = await updateSaved((leads) => {
         if (leads.some((item) => item.id === lead.id)) return leads;
         if (leads.length >= limit) throw new Error("trial-limit");
-        return [lead, ...leads];
+        return [{ ...lead, savedAt: new Date().toISOString() }, ...leads];
       });
       if (updated) resultStatus.textContent = `Lead salvo no CRM. ${saved.length} de ${limit} leads do teste salvos.`;
     } catch (error) {

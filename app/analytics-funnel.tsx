@@ -2,6 +2,8 @@ import { createRoot, type Root } from "react-dom/client";
 import { MotionConfig } from "motion/react";
 import { FunnelChart, type FunnelStage } from "../components/ui/funnel-chart";
 
+export { renderAnalyticsActivity } from "./analytics-activity";
+
 const roots = new WeakMap<HTMLElement, Root>();
 const number = new Intl.NumberFormat("pt-BR");
 const percent = new Intl.NumberFormat("pt-BR", { style: "percent" });

@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="app.css?v=install-card" />
     <link rel="stylesheet" href="/public/app-selects.v1.css" data-app-select-styles />
     <link rel="stylesheet" href="/public/workspace-analytics.v1.css?v=funnel-tap-highlight" />
+    <link rel="stylesheet" href="/public/analytics-activity.v1.css" />
     <link rel="stylesheet" href="/public/app-buttons.v1.css" />
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
     <link rel="stylesheet" href="/public/app-mobile.v1.css?v=install-card" />
@@ -261,6 +262,11 @@
               <p class="analytics-chart-note" id="analytics-funnel-note" hidden>A porcentagem compara cada etapa à que tem mais leads no recorte.</p>
             </section>
             <section class="analytics-card"><header><h2>Cobertura de contato</h2><p>Leads que avançaram para uma etapa de contato.</p></header><div class="analytics-ring" id="analytics-contact-chart" role="img" aria-label="Cobertura de contato. Ainda não há leads."><svg viewBox="0 0 110 110" aria-hidden="true"><circle cx="55" cy="55" r="44" fill="none" stroke="#303030" stroke-width="9"/><circle id="analytics-contact-ring" cx="55" cy="55" r="44" pathLength="100" fill="none" stroke="#36b48b" stroke-width="9" stroke-dasharray="0 100"/></svg><strong id="analytics-contact-rate">—</strong></div><p class="analytics-contact-caption" id="analytics-contact-caption">Aguardando os primeiros leads</p><ul class="analytics-legend"><li><span class="stage-color-dot" data-stage-color="green" aria-hidden="true"></span>Etapas de contato<strong id="analytics-contact-yes">0</strong></li><li><span class="stage-color-dot" data-stage-color="blue" aria-hidden="true"></span>Demais etapas<strong id="analytics-not-contacted">0</strong></li></ul></section>
+            <section class="analytics-card analytics-activity-card" aria-labelledby="analytics-activity-title">
+              <header><h2 id="analytics-activity-title">Atividade no CRM</h2><p>Veja quantos leads foram salvos por dia nos últimos 365 dias, conforme os filtros selecionados.</p></header>
+              <div id="analytics-activity"><p class="analytics-chart-note" role="status">Carregando mapa de calor…</p></div>
+              <p class="analytics-chart-note" id="analytics-activity-undated" hidden>Leads salvos antes do registro de datas ficam fora deste gráfico.</p>
+            </section>
             <section class="analytics-card analytics-city-card"><header><h2>Onde estão seus leads</h2><p id="analytics-city-description">As localidades aparecerão conforme você salvar leads.</p></header><div class="analytics-bars" id="analytics-city-bars"></div><p class="analytics-chart-empty" id="analytics-city-empty">Ainda não há localidades para mostrar neste recorte.</p></section>
           </div>
         </section>
@@ -358,6 +364,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=crm-trial"></script>
+    <script type="module" src="app.js?v=activity-heatmap"></script>
   </body>
 </html>
