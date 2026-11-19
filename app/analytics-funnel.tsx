@@ -42,6 +42,7 @@ export function renderAnalyticsFunnel(container: HTMLElement, stages: FunnelStag
         previewWidths={preview ? getPreviewWidths(data.length) : undefined}
         grid={false}
         layers={3}
+        shapeScale={0.75}
         formatValue={(value) => number.format(value)}
         formatPercentage={(value) => preview ? "—" : percent.format(value / 100)}
         style={{ minWidth: data.length * 94 }}

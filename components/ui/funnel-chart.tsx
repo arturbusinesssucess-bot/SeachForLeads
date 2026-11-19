@@ -97,6 +97,7 @@ export interface FunnelStage {
 export interface FunnelChartProps {
   data: FunnelStage[];
   previewWidths?: number[];
+  shapeScale?: number;
   orientation?: "horizontal" | "vertical";
   color?: string;
   layers?: number;
@@ -686,6 +687,7 @@ function SegmentLabel({
 export function FunnelChart({
   data,
   previewWidths,
+  shapeScale = 1,
   orientation = "horizontal",
   color = "var(--chart-1)",
   layers = 3,
@@ -744,7 +746,7 @@ export function FunnelChart({
 
   const max = Math.max(1, ...data.map((stage) => stage.value));
   const n = data.length;
-  const norms = data.map((stage, index) => previewWidths?.[index] ?? stage.value / max);
+  const norms = data.map((stage, index) => (previewWidths?.[index] ?? stage.value / max) * shapeScale);
   const horiz = orientation === "horizontal";
   const { w: W, h: H } = sz;
 
