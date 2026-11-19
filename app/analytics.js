@@ -111,7 +111,7 @@ export function initializeAnalytics(tbody) {
       }
       if (activityHost) charts.renderAnalyticsActivity(activityHost, activity);
     } else if (!loadingCharts) {
-      loadingCharts = import("/public/analytics-funnel.v2.js?v=activity-heatmap")
+      loadingCharts = import("/public/analytics-funnel.v2.js?v=heatmap-controls")
         .then((module) => {
           charts = module;
           updateCharts();
