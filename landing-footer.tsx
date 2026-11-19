@@ -6,7 +6,7 @@ export function LandingFooter() {
   preset="glacier" seed={23} ridges={7} maxWidth="100%"
   name="SearchForLeads" brandHref="/#top"
   logo={<img src="/public/loupe-logo.svg" width="30" height="30" alt="" />}
-  tagline="Planejamento de expedições para equipes que vão mais longe — rotas, autorizações e previsão do tempo em um só lugar."
+  tagline="Busca de empresas, CRM de leads e indicadores para acompanhar sua prospecção B2B."
   columns={[
    {title:'Navegação',links:[{label:'Como funciona',href:'#como-funciona'},{label:'Recursos',href:'#recursos'},{label:'Dúvidas',href:'#duvidas'},{label:'Entrar',href:'/auth?mode=login'}]},
    {title:'Legal',links:[{label:'Política de Cookies',href:'/politica-de-cookies'},{label:'Termos de Uso',href:'/termos-de-uso'},{label:'Política de Privacidade',href:'/politica-de-privacidade'}]},

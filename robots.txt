@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://searchforleads.vercel.app/sitemap.xml
