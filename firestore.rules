@@ -26,13 +26,16 @@ service cloud.firestore {
           && lead.get('phone', '').matches('(?s)^.{0,30}$')
           && lead.get('website', '').matches('(?s)^.{0,300}$')
           && lead.get('mapsUrl', '').matches('(?s)^.{0,300}$')
+          && lead.get('whatsapp', '').matches('^([+][1-9][0-9]{7,14})?$')
+          && lead.get('instagram', '').matches('^(https://www[.]instagram[.]com/[a-zA-Z0-9_.]{1,30}/)?$')
           && lead.get('source', '').matches('(?s)^.{0,60}$')
           && lead.get('websiteChecked', false) is bool
           && rating is number && rating >= 0 && rating <= 5
           && reviews is int && reviews >= 0 && reviews <= 100000000;
       }
 
-      function validLead(lead, basicKeys, keys) {
+      function validLead(value, basicKeys, keys) {
+        let lead = value;
         let fields = lead.keys();
         return lead.id.matches('(?s)^.{1,350}$')
           && lead.company.matches('(?s)^.{1,160}$')
@@ -67,7 +70,7 @@ service cloud.firestore {
       function validLeads(leads, previous, count) {
         let basicKeys = ['id', 'company', 'location', 'category', 'stage', 'contacted', 'savedAt'];
         let keys = basicKeys.concat(['address', 'phone', 'website', 'mapsUrl', 'source',
-          'websiteChecked', 'rating', 'reviewCount']);
+          'websiteChecked', 'rating', 'reviewCount', 'whatsapp', 'instagram']);
         return (count <= 0 || leads[0] in previous || validLead(leads[0], basicKeys, keys))
           && (count <= 1 || leads[1] in previous || validLead(leads[1], basicKeys, keys))
           && (count <= 2 || leads[2] in previous || validLead(leads[2], basicKeys, keys))
