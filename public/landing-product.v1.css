@@ -9,15 +9,18 @@
 }
 
 @media (max-width: 900px) {
-  .topbar > .topnav { gap: clamp(12px, 2vw, 20px); }
+  .topbar > .topnav {
+    position: static;
+    gap: clamp(12px, 2vw, 20px);
+    transform: none;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 700px) {
   .topbar > .topnav {
-    position: static;
     display: flex;
     margin-inline-start: auto;
-    transform: none;
   }
 
   .topnav > a:not(.topnav-plans) { display: none; }
