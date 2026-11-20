@@ -33,23 +33,29 @@ const numbers = new Intl.NumberFormat("pt-BR");
 const priceFormat = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
 const included = ["CRM em lista e quadro", "Funil personalizável", "Analytics"];
 
-export default function PricingSection() {
+export default function PricingSection({ surface = "app" }: { surface?: "app" | "landing" }) {
   const [yearly, setYearly] = useState(false);
   const reduceMotion = useReducedMotion();
-  const reveal = (index: number) => ({
-    initial: reduceMotion ? false as const : { opacity: 0, y: -20, filter: "blur(10px)" },
-    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-    transition: { delay: index * 0.25, duration: 0.5 },
-  });
+  const onLanding = surface === "landing";
+  const Title = onLanding ? motion.h2 : motion.h1;
+  const reveal = (index: number) => {
+    if (reduceMotion) return { initial: false as const };
+    const initial = { opacity: 0, y: -20, filter: "blur(10px)" };
+    const visible = { opacity: 1, y: 0, filter: "blur(0px)" };
+    const transition = { delay: index * 0.25, duration: 0.5 };
+    return onLanding
+      ? { initial, whileInView: visible, transition, viewport: { once: true } }
+      : { initial, animate: visible, transition };
+  };
 
   return (
     <div className="plans-pricing">
       <header className="plans-pricing-heading">
-        <motion.h1 id="plans-title" {...reveal(0)}>
-          Plans that works best for your{" "}
-          <motion.span {...reveal(1)}>Business</motion.span>
-        </motion.h1>
-        <motion.p {...reveal(2)}>Explore which option is right for you.</motion.p>
+        <Title id="plans-title" {...reveal(0)}>
+          Escolha o plano certo para a sua{" "}
+          <motion.span {...reveal(1)}>prospecção</motion.span>
+        </Title>
+        <motion.p {...reveal(2)}>Compare quantas empresas você pode encontrar e quantos leads pode salvar no CRM.</motion.p>
       </header>
 
       <motion.div className="plans-period-wrap" {...reveal(3)}>
@@ -81,7 +87,7 @@ export default function PricingSection() {
               key={plan.name} aria-labelledby={`plan-${plan.name}`} {...reveal(4 + index)}>
               <header className="plans-card-heading">
                 <div className="plans-card-title">
-                  <h2 id={`plan-${plan.name}`}>{plan.name}</h2>
+                  {onLanding ? <h3 id={`plan-${plan.name}`}>{plan.name}</h3> : <h2 id={`plan-${plan.name}`}>{plan.name}</h2>}
                   {plan.featured && <span>Recomendado</span>}
                 </div>
                 <p>{plan.description}</p>
@@ -108,7 +114,7 @@ export default function PricingSection() {
                   <li><Database size={20} aria-hidden="true" /><span><strong>{numbers.format(plan.crm)}</strong> leads salvos no CRM</span></li>
                 </ul>
                 <div className="plans-card-includes">
-                  <h3>Recursos do plano</h3>
+                  {onLanding ? <h4>Recursos do plano</h4> : <h3>Recursos do plano</h3>}
                   <ul>
                     {included.map((item) => (
                       <li key={item}><span className="plans-include-icon"><CheckCheck size={15} aria-hidden="true" /></span>{item}</li>

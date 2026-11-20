@@ -1,3 +1,36 @@
+.landing-plans {
+  margin-block-start: clamp(56px, 7vw, 104px);
+  background: #fff;
+}
+
+.landing-plans > .plans-view {
+  width: min(100% - clamp(32px, 8vw, 112px), 1130px);
+  margin-inline: auto;
+}
+
+@media (max-width: 900px) {
+  .topbar > .topnav { gap: clamp(12px, 2vw, 20px); }
+}
+
+@media (max-width: 700px) {
+  .topbar > .topnav {
+    position: static;
+    display: flex;
+    margin-inline-start: auto;
+    transform: none;
+  }
+
+  .topnav > a:not(.topnav-plans) { display: none; }
+  .topnav > .topnav-plans {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding-inline: 8px;
+  }
+
+  .topnav > .topnav-plans::after { bottom: 6px; }
+}
+
 .landing-product {
   --product-rule: #252831;
   --product-accent: #a8bbff;

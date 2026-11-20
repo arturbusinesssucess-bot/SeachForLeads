@@ -29,7 +29,8 @@
   text-align: center;
 }
 
-.plans-pricing-heading h1 {
+.plans-pricing-heading > :is(h1, h2) {
+  max-width: 840px;
   margin: 0 auto 16px;
   color: #111827;
   font-size: clamp(31px, 5vw, 60px);
@@ -39,7 +40,7 @@
   text-wrap: balance;
 }
 
-.plans-pricing-heading h1 > span {
+.plans-pricing-heading > :is(h1, h2) > span {
   display: inline-block;
   padding: 1px 9px 3px;
   border: 1px dashed #3b82f6;
@@ -135,7 +136,7 @@
 }
 
 .plans-card-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; }
-.plans-card-title h2 { margin: 0; font-size: clamp(24px, 3cqw, 31px); font-weight: 650; letter-spacing: -.04em; }
+.plans-card-title :is(h2, h3) { margin: 0; font-size: clamp(24px, 3cqw, 31px); font-weight: 650; letter-spacing: -.04em; }
 
 .plans-card-title > span {
   padding: 4px 9px;
@@ -172,21 +173,35 @@
 
 .plans-card-period { color: #4b5563; font-size: 14px; white-space: nowrap; }
 
-.product-app .plans-card .plans-cta {
+:is(.product-app, .landing-plans) .plans-card .plans-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
   width: 100%;
   min-height: 48px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 12px;
+  appearance: none;
   background: linear-gradient(#374151, #111827);
   color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
   opacity: 1;
   box-shadow: 0 5px 10px #11182726;
 }
 
-.product-app .plans-card--featured .plans-cta {
+:is(.product-app, .landing-plans) .plans-card--featured .plans-cta {
   background: #2868db;
   box-shadow: 0 7px 16px #2868db42;
 }
 
-.product-app .plans-card .plans-cta:disabled { cursor: not-allowed; }
+.plans-cta > svg { flex: 0 0 18px; }
+:is(.product-app, .landing-plans) .plans-card .plans-cta:disabled { cursor: not-allowed; }
 
 .plans-card-body ul {
   display: grid;
@@ -205,7 +220,7 @@
 .plans-card-body .plans-card-quotas { margin: 21px 0 17px; }
 
 .plans-card-includes { padding-top: 15px; border-top: 1px solid #dbe2ed; }
-.plans-card-includes h3 { margin: 0 0 11px; font-size: 14px; }
+.plans-card-includes :is(h3, h4) { margin: 0 0 11px; font-size: 14px; }
 
 .plans-include-icon {
   display: grid;

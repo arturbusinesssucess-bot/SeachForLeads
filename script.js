@@ -1,6 +1,37 @@
 const entranceBlocks = document.querySelectorAll(".animar");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+const plans = document.querySelector("#landing-plans-pricing");
+if (plans) {
+  let loadingPlans;
+  const loadPlans = () => {
+    if (loadingPlans) return;
+    loadingPlans = import("./public/plans-pricing.v1.js?v=landing-plans")
+      .then(({ renderPlansPricing }) => {
+        renderPlansPricing(plans, "landing");
+        if (location.hash === "#duvidas") document.querySelector("#duvidas")?.scrollIntoView({ behavior: "instant" });
+      })
+      .catch(() => {
+        plans.querySelector("[role=status]").textContent = "Não foi possível carregar os planos. Atualize a página para tentar novamente.";
+      });
+  };
+  const openLinkedPlans = () => {
+    if (location.hash === "#planos" || location.hash === "#duvidas") loadPlans();
+  };
+  openLinkedPlans();
+  window.addEventListener("hashchange", openLinkedPlans);
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some(({ isIntersecting }) => isIntersecting)) return;
+      observer.disconnect();
+      loadPlans();
+    }, { rootMargin: "500px 0px" });
+    observer.observe(plans);
+  } else {
+    loadPlans();
+  }
+}
+
 if (entranceBlocks.length && "IntersectionObserver" in window && !reduceMotion) {
   document.documentElement.classList.add("motion-ready");
 

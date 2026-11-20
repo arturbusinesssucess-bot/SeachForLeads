@@ -57,7 +57,8 @@
         }, { once: true });
       }
     </script>
-    <link rel="stylesheet" href="/public/landing-product.v1.css?v=viewport-reveal" />
+    <link rel="stylesheet" href="/public/landing-product.v1.css?v=landing-plans" />
+    <link rel="stylesheet" href="/public/plans-pricing.v1.css?v=landing-plans" />
   </head>
   <body>
     <div class="site-shell">
@@ -69,6 +70,7 @@
         <nav class="topnav" aria-label="Seções da página">
           <a href="#como-funciona">Como funciona</a>
           <a href="#recursos">Recursos</a>
+          <a class="topnav-plans" href="#planos">Planos</a>
           <a href="#duvidas">Dúvidas</a>
         </nav>
         <div class="topbar-meta" id="auth-actions">
@@ -195,6 +197,12 @@
                 <img src="/public/product-analytics.webp" width="1368" height="826" alt="Painel de Analytics com indicadores do CRM, barras de distribuição por etapa e gráfico de cobertura de contato." loading="lazy" decoding="async" />
               </picture>
           </figure>
+        </section>
+
+        <section class="landing-plans" id="planos" aria-label="Planos">
+          <div class="plans-view" id="landing-plans-pricing">
+            <p class="plans-load-status" role="status">Carregando planos…</p>
+          </div>
         </section>
 
         <section class="faq-section" id="duvidas" aria-labelledby="faq-title">
@@ -376,7 +384,7 @@
       <button class="privacy-notice-dismiss" id="privacy-notice-dismiss" type="button">Entendi</button>
     </aside>
 
-    <script type="module" src="script.js?v=landing-photo-only"></script>
+    <script type="module" src="script.js?v=landing-plans"></script>
   </body>
 </html>
 
