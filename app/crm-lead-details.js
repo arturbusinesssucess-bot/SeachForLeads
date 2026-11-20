@@ -1,9 +1,15 @@
-import { dialLeadPhone, leadMapURL, readLeadContact } from "../shared/lead-contact.mjs";
+import { dialLeadPhone, readLeadContact } from "../shared/lead-contact.mjs?v=crm-lead-drawer";
+import { animateDisclosure } from "./ai-workspace.js?v=crm-lead-drawer";
 
 const savedDate = new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" });
 const ratingFormat = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const amountFormat = new Intl.NumberFormat("pt-BR");
 const contactStages = new Set(["contacted", "responded", "won"]);
+const signalPaths = {
+  check: "m4.5 12.75 6 6 9-13.5",
+  missing: "M18 6 6 18M6 6l12 12",
+  star: "m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z",
+};
 
 function element(tag, text) {
   const node = document.createElement(tag);
@@ -27,11 +33,34 @@ function addField(list, label, value, href) {
   list.append(row);
 }
 
+function signalItem([label, kind, visibleText]) {
+  const ns = "http://www.w3.org/2000/svg";
+  const icon = document.createElementNS(ns, "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+  const path = document.createElementNS(ns, "path");
+  path.setAttribute("d", signalPaths[kind]);
+  icon.append(path);
+  const item = document.createElement("li");
+  item.dataset.signalIcon = kind;
+  const text = element("span", visibleText ?? label);
+  if (visibleText !== undefined) {
+    const context = element("span", "Avaliação ");
+    context.className = "crm-signal-context";
+    text.prepend(context);
+  }
+  item.append(icon, text);
+  return item;
+}
+
 export function initializeLeadDetails({ analyze, getOffer }) {
   const actions = document.querySelector("#crm-contact-actions");
+  const contactLinks = actions.querySelectorAll("[data-lead-action]");
   const signals = document.querySelector("#crm-lead-signals");
   const companyFields = document.querySelector("#crm-company-fields");
   const panel = document.querySelector("#crm-lead-ai");
+  const setAnalysisOpen = animateDisclosure(panel);
   const form = document.querySelector("#crm-lead-ai-form");
   const offer = document.querySelector("#crm-lead-ai-offer");
   const submit = form.querySelector('[type="submit"]');
@@ -48,7 +77,7 @@ export function initializeLeadDetails({ analyze, getOffer }) {
     result.hidden = true;
     result.replaceChildren();
     status.textContent = "";
-    panel.open = false;
+    setAnalysisOpen(false, { immediate: true });
     submit.disabled = false;
   }
 
@@ -60,45 +89,47 @@ export function initializeLeadDetails({ analyze, getOffer }) {
     currentLead = lead;
     const contact = readLeadContact(lead);
     const dial = dialLeadPhone(contact.phone);
-    const map = leadMapURL(lead, contact);
     const urls = {
-      whatsapp: dial ? `https://wa.me/${dial.slice(1)}` : null,
+      whatsapp: contact.whatsapp ? `https://wa.me/${contact.whatsapp.slice(1)}` : null,
       call: dial ? `tel:${dial}` : null,
-      maps: map,
+      maps: contact.mapsUrl,
+      instagram: contact.instagram,
       website: contact.website,
     };
-    for (const link of actions.querySelectorAll("[data-lead-action]")) {
+    for (const link of contactLinks) {
       const href = urls[link.dataset.leadAction];
-      link.hidden = !href;
-      if (href) link.href = href;
-      else link.removeAttribute("href");
+      if (href) {
+        link.href = href;
+        link.removeAttribute("aria-disabled");
+      } else {
+        link.removeAttribute("href");
+        link.setAttribute("aria-disabled", "true");
+      }
     }
-    actions.hidden = !Object.values(urls).some(Boolean);
-    actions.querySelector("[data-lead-whatsapp-phone]").textContent = contact.phone ?? "";
-
-    evidence = [
-      [contact.website ? "Site próprio informado" : contact.websiteChecked ? "Site não encontrado na busca" : "Site não informado", Boolean(contact.website)],
-      [dial ? "Telefone informado" : "Telefone não informado", Boolean(dial)],
-    ];
-    if (contact.rating !== undefined) evidence.push([`Avaliação ${ratingFormat.format(contact.rating)} de 5`, true]);
+    const websiteLabel = contact.website ? "Site próprio informado"
+      : contact.websiteChecked ? "Site não encontrado na busca" : "Site não informado";
+    const rating = contact.rating === undefined ? undefined : ratingFormat.format(contact.rating);
     const reviewSource = contact.mapsUrl || /google maps/i.test(contact.source ?? "") ? " no Google" : "";
-    if (contact.reviewCount !== undefined) evidence.push([
-      `${amountFormat.format(contact.reviewCount)} ${contact.reviewCount === 1 ? "avaliação" : "avaliações"}${reviewSource}`,
-      contact.reviewCount > 0,
-    ]);
-    signals.replaceChildren(...evidence.map(([label, present]) => {
-      const item = element("li", label);
-      item.dataset.present = String(present);
-      return item;
-    }));
+    const reviews = contact.reviewCount === undefined ? "Avaliações no Google não informadas"
+      : `${amountFormat.format(contact.reviewCount)} ${contact.reviewCount === 1 ? "avaliação" : "avaliações"}${reviewSource}`;
+    evidence = [
+      [websiteLabel, contact.website ? "check" : "missing"],
+      [dial ? "Telefone informado" : "Telefone não informado", dial ? "check" : "missing"],
+      [rating === undefined ? "Avaliação não informada" : `Avaliação ${rating}`, "star", rating],
+      [reviews, "star"],
+      [contact.instagram ? "Instagram informado" : "Instagram não informado", contact.instagram ? "check" : "missing"],
+      [contact.address ? "Endereço comercial informado" : "Endereço comercial não informado", contact.address ? "check" : "missing"],
+    ];
+    signals.replaceChildren(...evidence.map(signalItem));
 
     companyFields.replaceChildren();
     const timestamp = Date.parse(lead.savedAt);
     addField(companyFields, "Categoria", lead.category || "Não informada");
     addField(companyFields, "Cidade/Estado", lead.location || "Não informada");
-    addField(companyFields, "Endereço", contact.address ?? "Não informado", contact.address && map);
+    addField(companyFields, "Endereço", contact.address ?? "Não informado", contact.address && urls.maps);
     addField(companyFields, "Telefone", contact.phone ?? "Não informado", urls.call);
     addField(companyFields, "Site", contact.website ? new URL(contact.website).hostname : "Não informado", contact.website);
+    addField(companyFields, "Instagram", contact.instagram ? "Abrir perfil" : "Não informado", urls.instagram);
     addField(companyFields, "Fonte do lead", contact.source ?? (lead.id.startsWith("vps:") ? "Busca" : "Busca de teste"));
     addField(companyFields, "Salvo no CRM", Number.isFinite(timestamp) ? savedDate.format(timestamp) : "Data não registrada");
     addField(companyFields, "Contato", lead.contacted === true || contactStages.has(lead.stage) ? "Contato iniciado" : "Aguardando contato");

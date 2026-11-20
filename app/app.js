@@ -11,13 +11,13 @@ import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 import { initializeSettings } from "./settings.js?v=status-length";
 import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline.js?v=status-length";
 
-import { initializeAIWorkspace } from "./ai-workspace.js?v=lead-details";
+import { initializeAIWorkspace } from "./ai-workspace.js?v=crm-lead-drawer";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
 import { initializeSearchTrial } from "./search-trial.js?v=home-onboarding";
 import { initializeHomeOnboarding } from "./home-onboarding.js";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
-import { initializeLeadDetails } from "./crm-lead-details.js";
+import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
 import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=funnel-label-spacing";
 
@@ -35,6 +35,20 @@ const onboarding = initializeHomeOnboarding((view) => {
   showView(view);
   if (view === "search" && searchScreen === "intro") openSearchEditor();
 });
+let loadingPlans;
+
+function showPlansPricing() {
+  if (loadingPlans) return;
+  const host = document.querySelector("#plans-pricing-root");
+  const status = host.querySelector("[role=status]");
+  status.textContent = "Carregando planos…";
+  loadingPlans = import("../public/plans-pricing.v1.js")
+    .then(({ renderPlansPricing }) => renderPlansPricing(host))
+    .catch(() => {
+      loadingPlans = undefined;
+      status.textContent = "Não foi possível carregar os planos. Abra esta aba novamente para tentar.";
+    });
+}
 
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
@@ -48,6 +62,7 @@ function showView(name, updateUrl = true) {
     else link.removeAttribute("aria-current");
   });
   if (view === "analytics") onboarding.complete("analytics");
+  if (view === "plans") showPlansPricing();
   if (updateUrl && location.hash !== `#${view}`) history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }

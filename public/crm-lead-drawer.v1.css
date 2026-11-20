@@ -1,0 +1,98 @@
+.crm-lead-drawer .crm-contact-link {
+  border-color: #31343d;
+  background: #20232a;
+}
+
+.crm-lead-drawer .crm-contact-link[href]:hover { background: #2a3040; }
+.crm-lead-drawer .crm-contact-link[aria-disabled="true"] {
+  border-color: #262830;
+  background: #17191e;
+  color: #8e939f;
+  cursor: not-allowed;
+}
+
+.crm-lead-drawer .crm-contact-link > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+.crm-lead-drawer .crm-lead-signals li {
+  align-items: flex-start;
+  line-height: 1.45;
+}
+
+.crm-lead-drawer .crm-lead-signals li::before { content: none; }
+
+.crm-lead-signals li > svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  margin-top: 2px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.crm-lead-signals [data-signal-icon="check"] > svg { color: #85dfb2; }
+.crm-lead-signals [data-signal-icon="missing"] > svg { color: #ed989e; }
+.crm-lead-signals [data-signal-icon="star"] > svg { color: #fff; fill: currentColor; stroke: none; }
+.crm-signal-context {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.crm-lead-drawer .crm-lead-ai {
+  padding: 0;
+  border-radius: 12px;
+  background: #1c1f27;
+  box-shadow: inset 0 0 0 1px #343944;
+}
+
+.crm-lead-drawer .crm-lead-ai[data-panel-motion] { overflow: hidden; overflow: clip; }
+
+.crm-lead-drawer .crm-lead-ai > summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 12px;
+  border-radius: inherit;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.crm-lead-ai > summary::-webkit-details-marker { display: none; }
+.crm-lead-drawer .crm-lead-ai > summary:focus-visible { outline-offset: -3px; }
+.crm-lead-ai > summary > svg:not(.crm-lead-ai-chevron) {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  color: #a8c5ff;
+}
+
+.crm-lead-ai-chevron {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin-inline-start: auto;
+  color: #b4bdce;
+  transition: transform .2s ease;
+}
+
+.crm-lead-ai[open]:not([data-panel-motion="closing"]) > summary .crm-lead-ai-chevron { transform: rotate(180deg); }
+.crm-lead-ai-body { padding: 0 12px 4px; }
+
+@media (hover: hover) {
+  .crm-lead-drawer .crm-lead-ai > summary:hover { background: #292e3b; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crm-lead-ai-chevron { transition: none; }
+}

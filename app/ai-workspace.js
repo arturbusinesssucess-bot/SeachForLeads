@@ -27,7 +27,7 @@ function messageFor(status) {
   return "A análise por IA está temporariamente indisponível. Tente novamente mais tarde.";
 }
 
-function animateDisclosure(panel, prepareOpen) {
+export function animateDisclosure(panel, prepareOpen) {
   const summary = panel?.querySelector("summary");
   if (!summary || typeof panel.animate !== "function") {
     return (open) => { if (panel) panel.open = open; };
@@ -35,16 +35,22 @@ function animateDisclosure(panel, prepareOpen) {
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let animation = null;
+  let settleTimer;
   let targetOpen = panel.open;
 
   function settle(open) {
     panel.open = open;
     delete panel.dataset.panelMotion;
+    window.clearTimeout(settleTimer);
     animation?.cancel();
     animation = null;
   }
 
-  function setOpen(open) {
+  function setOpen(open, { immediate = false } = {}) {
+    if (immediate) {
+      settle(open);
+      return;
+    }
     if (open === (animation ? targetOpen : panel.open)) return;
     if (reducedMotion.matches) {
       settle(open);
@@ -53,6 +59,7 @@ function animateDisclosure(panel, prepareOpen) {
 
     const startHeight = panel.getBoundingClientRect().height;
     animation?.cancel();
+    window.clearTimeout(settleTimer);
     targetOpen = open;
     panel.open = true;
     if (open) prepareOpen?.();
@@ -63,15 +70,18 @@ function animateDisclosure(panel, prepareOpen) {
     }
 
     panel.dataset.panelMotion = open ? "opening" : "closing";
+    const duration = open ? 240 : 200;
     const transition = panel.animate({ height: [`${startHeight}px`, `${endHeight}px`] }, {
-      duration: open ? 240 : 200,
+      duration,
       easing: "cubic-bezier(.22, .72, .3, 1)",
       fill: "both",
     });
     animation = transition;
-    transition.onfinish = () => {
+    const finish = () => {
       if (animation === transition) settle(open);
     };
+    transition.onfinish = finish;
+    settleTimer = window.setTimeout(finish, duration + 100);
   }
 
   summary.addEventListener("click", (event) => {

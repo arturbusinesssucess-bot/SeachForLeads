@@ -3,8 +3,11 @@ import { build } from "esbuild";
 
 await build({
   absWorkingDir: fileURLToPath(new URL("../", import.meta.url)),
-  entryPoints: ["app/analytics-funnel.tsx"],
-  outfile: "public/analytics-funnel.v2.js",
+  entryPoints: {
+    "analytics-funnel.v2": "app/analytics-funnel.tsx",
+    "plans-pricing.v1": "app/plans-pricing.tsx",
+  },
+  outdir: "public",
   format: "esm",
   bundle: true,
   minify: true,

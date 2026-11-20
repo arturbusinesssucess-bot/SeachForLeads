@@ -51,12 +51,16 @@ async function fetchVPSResults(criteria, env, fetchSearch) {
       throw new Error('invalid-search-result');
     }
     const id = `vps:${lead.id.trim()}`;
+    const contact = readLeadContact(lead);
+    // Keep search results compatible with the active workspace rules.
+    delete contact.whatsapp;
+    delete contact.instagram;
     results.set(id, {
       id,
       company: lead.company.trim(),
       location: lead.location.trim(),
       category: validText(lead.category, 100) ? lead.category.trim() : criteria.niche,
-      ...readLeadContact(lead),
+      ...contact,
       stage: 'new',
       contacted: false,
     });
