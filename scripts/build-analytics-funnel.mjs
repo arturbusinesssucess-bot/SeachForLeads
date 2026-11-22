@@ -6,6 +6,7 @@ await build({
   entryPoints: {
     "analytics-funnel.v2": "app/analytics-funnel.tsx",
     "plans-pricing.v1": "app/plans-pricing.tsx",
+    "app-sidebar.v1": "app/sidebar.ts",
   },
   outdir: "public",
   format: "esm",

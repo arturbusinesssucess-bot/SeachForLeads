@@ -13,6 +13,7 @@ export function initializeSidebar() {
   const mobile = window.matchMedia("(max-width: 767px)");
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   let open = false;
+  let desktopExpanded = true;
   let previousOverflow = "";
   let locked = false;
   const controls: Array<ReturnType<typeof animate>> = [];
@@ -55,11 +56,12 @@ export function initializeSidebar() {
       sidebar!.style.visibility = "visible";
       toggle!.setAttribute("aria-expanded", String(next));
       toggle!.setAttribute("aria-label", next ? "Recolher menu" : "Expandir menu");
-      controls.push(animate(sidebar!, { width: next ? 300 : 72 }, { duration, ease: [.22, 1, .36, 1] }));
+      desktopExpanded = next;
+      window.localStorage.setItem("searchforleads-sidebar-expanded", String(next));
+      controls.push(animate(sidebar!, { width: next ? 288 : 72 }, { duration, ease: [.22, 1, .36, 1] }));
     }
     for (const label of labels) controls.push(animate(label, { opacity: next ? 1 : 0, x: next ? 0 : -6 }, { duration: duration ? .18 : 0, ease: "easeOut" }));
   }
-  function keyboardFocusInside() { return !!sidebar!.querySelector(":focus-visible"); }
   function resetLayout() {
     const hadSidebarFocus = sidebar!.contains(document.activeElement);
     stop();
@@ -71,19 +73,16 @@ export function initializeSidebar() {
     sidebar!.style.transform = "";
     sidebar!.style.opacity = "";
     trigger!.setAttribute("aria-expanded", "false");
-    setOpen(false, false, true);
+    if (!mobile.matches) {
+      desktopExpanded = window.localStorage.getItem("searchforleads-sidebar-expanded") !== "false";
+    }
+    setOpen(mobile.matches ? false : desktopExpanded, false, true);
     if (mobile.matches && hadSidebarFocus) trigger!.focus({ preventScroll: true });
   }
   trigger.addEventListener("click", () => setOpen(true));
   closeButton.addEventListener("click", () => setOpen(false, true));
   backdrop.addEventListener("click", () => setOpen(false, true));
   toggle.addEventListener("click", () => setOpen(!open));
-  sidebar.addEventListener("pointerenter", event => { if (!mobile.matches && event.pointerType !== "touch") setOpen(true); });
-  sidebar.addEventListener("pointerleave", () => { if (!mobile.matches && !keyboardFocusInside()) setOpen(false); });
-  sidebar.addEventListener("focusin", event => { if (!mobile.matches && (event.target as HTMLElement).matches(":focus-visible")) setOpen(true); });
-  sidebar.addEventListener("focusout", () => {
-    window.requestAnimationFrame(() => { if (!mobile.matches && !sidebar!.contains(document.activeElement) && !sidebar!.matches(":hover")) setOpen(false); });
-  });
   sidebar.addEventListener("click", event => {
     if (mobile.matches && (event.target as HTMLElement).closest("[data-view-link]")) setOpen(false, true);
   });
