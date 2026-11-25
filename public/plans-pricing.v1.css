@@ -14,15 +14,6 @@
   margin-inline: auto;
 }
 
-.plans-pricing::before {
-  position: absolute;
-  z-index: -1;
-  inset: 0 0 12%;
-  background: radial-gradient(ellipse at 50% 38%, #206ce869 0%, transparent 71%);
-  pointer-events: none;
-  content: "";
-}
-
 .plans-pricing-heading {
   max-width: 840px;
   margin: 0 auto 24px;
@@ -109,11 +100,25 @@
 }
 
 .plans-cards {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   width: min(100%, 455px);
   margin: 24px auto 0;
+}
+
+.plans-cards::before {
+  position: absolute;
+  z-index: -1;
+  top: -24px;
+  left: 50%;
+  width: min(90%, 800px);
+  height: clamp(240px, 38cqw, 412px);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse closest-side, rgb(65 118 219 / 30%), rgb(65 118 219 / 16%) 45%, rgb(65 118 219 / 5%) 72%, transparent 100%);
+  pointer-events: none;
+  content: "";
 }
 
 @container (min-width: 730px) {
