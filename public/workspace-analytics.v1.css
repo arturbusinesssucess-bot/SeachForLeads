@@ -138,6 +138,22 @@
   border-radius: 5px;
 }
 .analytics-funnel-scroll:focus-visible { outline: 2px solid #a8b8ff; outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) and (forced-colors: none) {
+  .analytics-funnel-scroll { --funnel-scroll-thumb: transparent; }
+  .analytics-funnel-scroll:is(:hover, :focus-visible) { --funnel-scroll-thumb: #707078; }
+  .analytics-funnel-scroll::-webkit-scrollbar { height: 6px; background: transparent; }
+  .analytics-funnel-scroll::-webkit-scrollbar-button { display: none; }
+  .analytics-funnel-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--funnel-scroll-thumb);
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    .analytics-funnel-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: var(--funnel-scroll-thumb) transparent;
+    }
+  }
+}
 .analytics-funnel-plot {
   position: relative;
   width: 100%;
