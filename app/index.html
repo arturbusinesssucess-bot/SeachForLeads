@@ -15,14 +15,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css?v=action-arrow-20261116" />
-    <link rel="stylesheet" href="app.css?v=sidebar-full-20261122" />
+    <link rel="stylesheet" href="app.css?v=sidebar-inset" />
     <link rel="stylesheet" href="/public/app-selects.v1.css?v=crm-stage-counts" data-app-select-styles />
     <link rel="stylesheet" href="/public/workspace-analytics.v1.css?v=crm-status-search" />
     <link rel="stylesheet" href="/public/analytics-activity.v1.css?v=heatmap-controls" />
     <link rel="stylesheet" href="/public/app-buttons.v1.css" />
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
     <link rel="stylesheet" href="/public/home-onboarding.v1.css" />
-    <link rel="stylesheet" href="/public/app-mobile.v1.css?v=crm-toolbar" />
+    <link rel="stylesheet" href="/public/app-mobile.v1.css?v=sidebar-inset" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-disclosure" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
     <link rel="stylesheet" href="/public/search-trial.v1.css?v=step-feedback" />
@@ -31,23 +31,31 @@
     <link rel="stylesheet" href="/public/plans-pricing.v1.css?v=landing-plans" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
-    <header class="sidebar-mobile-bar"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
-          <img src="/public/loupe-logo.svg" alt="" />
-          <span class="app-brand-word"><span class="app-brand-search">Search</span><span class="app-brand-for">For</span>Leads</span>
-        </a><button id="sidebar-menu-button" class="sidebar-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="app-sidebar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></header>
+    <header class="sidebar-mobile-bar">
+      <a class="app-brand" href="../" aria-label="SearchForLeads, início">
+        <img src="/public/loupe-logo.svg" alt="" />
+        <span class="app-brand-word"><span class="app-brand-search">Search</span><span class="app-brand-for">For</span>Leads</span>
+      </a>
+      <button id="sidebar-menu-button" class="sidebar-icon-button sidebar-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="app-sidebar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </header>
     <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true" hidden></div>
     <div class="app-frame">
       <aside class="app-sidebar" id="app-sidebar" aria-label="Menu principal" data-expanded="true">
-        <div class="sidebar-brand-row"><a class="app-brand" href="../" aria-label="SearchForLeads, início">
-          <img src="/public/loupe-logo.svg" alt="" />
-          <span class="app-brand-word sidebar-label"><span class="app-brand-search">Search</span><span class="app-brand-for">For</span>Leads</span>
-        </a><button id="sidebar-close" class="sidebar-close" type="button" aria-label="Fechar menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button><button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-label="Recolher menu" aria-expanded="true" aria-controls="app-sidebar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16m4-11 3 3-3 3"/></svg><span class="sidebar-label">Recolher menu</span></button></div>
-        <div class="sidebar-workspace sidebar-label" aria-label="Espaço de trabalho ativo">
-          <span class="sidebar-workspace-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H10l2 2h5.5A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><path d="M4 9h16"/></svg></span>
-          <span><strong>Seu espaço</strong><small>Prospecção ativa</small></span>
-        </div>
+        <header class="sidebar-brand-row">
+          <a class="app-brand" href="../" aria-label="SearchForLeads, início">
+            <img src="/public/loupe-logo.svg" alt="" />
+            <span class="app-brand-word"><span class="app-brand-search">Search</span><span class="app-brand-for">For</span>Leads</span>
+          </a>
+          <button id="sidebar-toggle" class="sidebar-icon-button sidebar-toggle" type="button" aria-label="Recolher menu" title="Recolher menu" aria-expanded="true" aria-controls="app-sidebar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg>
+          </button>
+          <button id="sidebar-close" class="sidebar-icon-button sidebar-close" type="button" aria-label="Fechar menu">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          </button>
+        </header>
         <nav class="app-nav" aria-label="Navegação do app">
-          <p class="sidebar-group-label sidebar-label">PROSPECÇÃO</p>
           <a href="#home" data-view-link="home" aria-label="Home" title="Home" aria-current="page">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
             <span class="sidebar-label">Home</span>
@@ -61,12 +69,10 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="stroke-width:1.5" aria-hidden="true" focusable="false"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
             <span class="sidebar-label">Busca</span>
           </a>
-          <p class="sidebar-group-label sidebar-label">GESTÃO</p>
           <a href="#analytics" data-view-link="analytics" aria-label="Analytics" title="Analytics">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-column-increasing preview-icon" style="stroke-width:2" aria-hidden="true" focusable="false"><path d="M13 17V9"/><path d="M18 17V5"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M8 17v-3"/></svg>
             <span class="sidebar-label">Analytics</span>
           </a>
-          <p class="sidebar-group-label sidebar-label">CONTA</p>
           <a href="#plans" data-view-link="plans" aria-label="Planos" title="Planos">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" style="stroke-width:1.5" aria-hidden="true" focusable="false">
               <path stroke-linecap="round" stroke-linejoin="round" d="m9 7.5 3 4.5m0 0 3-4.5M12 12v5.25M15 12H9m6 3H9m12-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
@@ -79,9 +85,21 @@
             </svg>
             <span class="sidebar-label">Indique e ganhe</span>
           </a>
+          <a href="#settings" data-view-link="settings" aria-label="Configurações" title="Configurações">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span class="sidebar-label">Configurações</span>
+          </a>
         </nav>
-        <div class="sidebar-bottom"><div class="account-row"><div class="account-avatar" id="account-avatar">S</div>
-            <div class="account-copy sidebar-label"><strong id="account-name">Sua conta</strong><span id="account-email">Carregando…</span></div><a class="account-settings" href="#settings" data-view-link="settings" aria-label="Configurações" title="Configurações"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg></a></div><button id="sign-out" class="sign-out" type="button" aria-label="Sair da conta" title="Sair"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-9h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-8"/></svg><span class="sidebar-label">Sair da conta</span></button></div>
+        <footer class="sidebar-bottom account-row">
+          <span class="account-avatar" id="account-avatar" aria-hidden="true">S</span>
+          <div class="account-copy">
+            <strong id="account-name">Sua conta</strong>
+            <span id="account-email">Carregando…</span>
+          </div>
+          <button id="sign-out" class="sidebar-icon-button sign-out" type="button" aria-label="Sair da conta" title="Sair da conta">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-9h8a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-8"/></svg>
+          </button>
+        </footer>
       </aside>
 
       <main class="app-main">
@@ -554,6 +572,6 @@
       </main>
     </div>
 
-    <script type="module" src="app.js?v=sidebar-full-20261122"></script>
+    <script type="module" src="app.js?v=sidebar-inset"></script>
   </body>
 </html>

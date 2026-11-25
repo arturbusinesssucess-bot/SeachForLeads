@@ -21,7 +21,7 @@ import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
 import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=funnel-label-spacing";
 
-import { initializeSidebar } from "../public/app-sidebar.v1.js?v=sidebar-full-20261122";
+import { initializeSidebar } from "../public/app-sidebar.v1.js?v=sidebar-inset";
 initializeSidebar();
 initializeAppSelects();
 

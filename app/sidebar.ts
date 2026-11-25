@@ -1,4 +1,4 @@
-import { animate } from "motion";
+const SIDEBAR_PREFERENCE = "searchforleads-sidebar-expanded";
 
 export function initializeSidebar() {
   const sidebar = document.querySelector<HTMLElement>("#app-sidebar");
@@ -9,93 +9,94 @@ export function initializeSidebar() {
   const main = document.querySelector<HTMLElement>(".app-main");
   const mobileBar = document.querySelector<HTMLElement>(".sidebar-mobile-bar");
   if (!sidebar || !trigger || !closeButton || !toggle || !backdrop || !main || !mobileBar) return;
-  const labels = Array.from(sidebar.querySelectorAll<HTMLElement>(".sidebar-label"));
-  const mobile = window.matchMedia("(max-width: 767px)");
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let open = false;
-  let desktopExpanded = true;
-  let previousOverflow = "";
-  let locked = false;
-  const controls: Array<ReturnType<typeof animate>> = [];
 
-  function stop() { controls.splice(0).forEach(control => control.stop()); }
-  function lock(active: boolean) {
-    main!.inert = active;
-    mobileBar!.inert = active;
-    if (active && !locked) { previousOverflow = document.body.style.overflow; document.body.style.overflow = "hidden"; }
-    if (!active && locked) document.body.style.overflow = previousOverflow;
-    locked = active;
+  const mobile = window.matchMedia("(max-width: 767px)");
+  let desktopExpanded = true;
+  let mobileOpen = false;
+
+  try {
+    desktopExpanded = localStorage.getItem(SIDEBAR_PREFERENCE) !== "false";
+  } catch {
+    // The menu remains usable when browser storage is disabled.
   }
-  function setOpen(next: boolean, restore = false, immediate = false) {
-    stop();
-    open = next;
-    sidebar!.dataset.expanded = String(next);
-    const duration = reduced.matches || immediate ? 0 : .28;
-    if (mobile.matches) {
-      trigger!.setAttribute("aria-expanded", String(next));
-      toggle!.setAttribute("aria-expanded", "false");
-      backdrop!.hidden = !next;
-      sidebar!.inert = !next;
-      lock(next);
-      if (next) {
-        sidebar!.style.visibility = "visible";
-        sidebar!.setAttribute("role", "dialog");
-        sidebar!.setAttribute("aria-modal", "true");
-      } else {
-        sidebar!.removeAttribute("role");
-        sidebar!.removeAttribute("aria-modal");
-      }
-      controls.push(animate(sidebar!, { x: next ? "0%" : "-100%", opacity: next ? 1 : 0 }, {
-        duration, ease: [.22, 1, .36, 1],
-        onComplete: () => { if (!open && mobile.matches) sidebar!.style.visibility = "hidden"; }
-      }));
-      if (next) closeButton!.focus({ preventScroll: true });
-      else if (restore) trigger!.focus({ preventScroll: true });
+
+  const renderDesktop = () => {
+    const label = desktopExpanded ? "Recolher menu" : "Expandir menu";
+    sidebar.dataset.expanded = String(desktopExpanded);
+    toggle.setAttribute("aria-expanded", String(desktopExpanded));
+    toggle.setAttribute("aria-label", label);
+    toggle.title = label;
+  };
+
+  const setMobileOpen = (next: boolean, restoreFocus = false) => {
+    mobileOpen = mobile.matches && next;
+    sidebar.dataset.mobileOpen = String(mobileOpen);
+    sidebar.inert = mobile.matches && !mobileOpen;
+    trigger.setAttribute("aria-expanded", String(mobileOpen));
+    backdrop.hidden = !mobileOpen;
+    main.inert = mobileOpen;
+    mobileBar.inert = mobileOpen;
+
+    if (mobileOpen) {
+      sidebar.setAttribute("role", "dialog");
+      sidebar.setAttribute("aria-modal", "true");
+      closeButton.focus({ preventScroll: true });
     } else {
-      sidebar!.inert = false;
-      sidebar!.style.visibility = "visible";
-      toggle!.setAttribute("aria-expanded", String(next));
-      toggle!.setAttribute("aria-label", next ? "Recolher menu" : "Expandir menu");
-      desktopExpanded = next;
-      window.localStorage.setItem("searchforleads-sidebar-expanded", String(next));
-      controls.push(animate(sidebar!, { width: next ? 288 : 72 }, { duration, ease: [.22, 1, .36, 1] }));
+      sidebar.removeAttribute("role");
+      sidebar.removeAttribute("aria-modal");
+      if (restoreFocus) trigger.focus({ preventScroll: true });
     }
-    for (const label of labels) controls.push(animate(label, { opacity: next ? 1 : 0, x: next ? 0 : -6 }, { duration: duration ? .18 : 0, ease: "easeOut" }));
-  }
-  function resetLayout() {
-    const hadSidebarFocus = sidebar!.contains(document.activeElement);
-    stop();
-    lock(false);
-    backdrop!.hidden = true;
-    sidebar!.removeAttribute("role");
-    sidebar!.removeAttribute("aria-modal");
-    sidebar!.style.width = "";
-    sidebar!.style.transform = "";
-    sidebar!.style.opacity = "";
-    trigger!.setAttribute("aria-expanded", "false");
-    if (!mobile.matches) {
-      desktopExpanded = window.localStorage.getItem("searchforleads-sidebar-expanded") !== "false";
+  };
+
+  toggle.addEventListener("click", () => {
+    desktopExpanded = !desktopExpanded;
+    renderDesktop();
+    try {
+      localStorage.setItem(SIDEBAR_PREFERENCE, String(desktopExpanded));
+    } catch {
+      // Keep the preference for the current page.
     }
-    setOpen(mobile.matches ? false : desktopExpanded, false, true);
-    if (mobile.matches && hadSidebarFocus) trigger!.focus({ preventScroll: true });
-  }
-  trigger.addEventListener("click", () => setOpen(true));
-  closeButton.addEventListener("click", () => setOpen(false, true));
-  backdrop.addEventListener("click", () => setOpen(false, true));
-  toggle.addEventListener("click", () => setOpen(!open));
+  });
+
+  trigger.addEventListener("click", () => setMobileOpen(true));
+  closeButton.addEventListener("click", () => setMobileOpen(false, true));
+  backdrop.addEventListener("click", () => setMobileOpen(false, true));
   sidebar.addEventListener("click", event => {
-    if (mobile.matches && (event.target as HTMLElement).closest("[data-view-link]")) setOpen(false, true);
+    if (mobileOpen && event.target instanceof Element && event.target.closest("[data-view-link]")) {
+      setMobileOpen(false, true);
+    }
   });
+
   document.addEventListener("keydown", event => {
-    if (!open) return;
-    if (event.key === "Escape") { event.preventDefault(); setOpen(false, mobile.matches); return; }
-    if (!mobile.matches || event.key !== "Tab") return;
-    const focusable = Array.from(sidebar!.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),[tabindex="0"]')).filter(node => node.getClientRects().length > 0);
-    const first = focusable[0], last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    if (!mobileOpen || event.defaultPrevented) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setMobileOpen(false, true);
+    }
+    if (event.key !== "Tab") return;
+
+    const items = Array.from(sidebar.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"))
+      .filter(item => item.getClientRects().length > 0);
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
   });
-  mobile.addEventListener("change", resetLayout);
-  reduced.addEventListener("change", () => setOpen(open, false, true));
-  resetLayout();
+
+  mobile.addEventListener("change", () => {
+    const fromSidebar = sidebar.contains(document.activeElement);
+    const wasOpen = mobileOpen;
+    setMobileOpen(false, mobile.matches && fromSidebar);
+    if (!mobile.matches && (wasOpen || mobileBar.contains(document.activeElement))) {
+      toggle.focus({ preventScroll: true });
+    }
+  });
+
+  renderDesktop();
+  setMobileOpen(false);
 }
