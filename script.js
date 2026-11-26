@@ -6,7 +6,7 @@ if (plans) {
   let loadingPlans;
   const loadPlans = () => {
     if (loadingPlans) return;
-    loadingPlans = import("./public/plans-pricing.v1.js?v=annual-rounded")
+    loadingPlans = import("./public/plans-pricing.v1.js?v=trial-14")
       .then(({ renderPlansPricing }) => {
         renderPlansPricing(plans, "landing");
         if (location.hash === "#duvidas") document.querySelector("#duvidas")?.scrollIntoView({ behavior: "instant" });

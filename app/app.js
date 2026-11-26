@@ -67,7 +67,7 @@ function showPlansPricing() {
   const host = document.querySelector("#plans-pricing-root");
   const status = host.querySelector("[role=status]");
   status.textContent = "Carregando planos…";
-  loadingPlans = import("../public/plans-pricing.v1.js?v=annual-rounded")
+  loadingPlans = import("../public/plans-pricing.v1.js?v=trial-14")
     .then(({ renderPlansPricing }) => renderPlansPricing(host))
     .catch(() => {
       loadingPlans = undefined;

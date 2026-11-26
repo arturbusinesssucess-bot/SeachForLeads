@@ -108,7 +108,7 @@ export default function PricingSection({ surface = "app" }: { surface?: "app" | 
                     stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="m4.5 12.75 6 6 9-13.5" />
                   </svg>
-                  <span className="app-button-label">{plan.featured ? "Testar por 30 dias" : `Assinar ${plan.name}`}</span>
+                  <span className="app-button-label">{plan.featured ? "Testar por 14 dias" : `Assinar ${plan.name}`}</span>
                 </button>
                 <ul className="plans-card-quotas">
                   <li><Briefcase size={20} aria-hidden="true" /><span><strong>{numbers.format(plan.companies)}</strong> empresas novas por mês</span></li>
