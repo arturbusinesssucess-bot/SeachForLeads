@@ -1,5 +1,24 @@
+#mobile-tab-bar { display: none; }
+
 @media (max-width: 767px) {
-  .product-app { --app-mobile-header: calc(64px + env(safe-area-inset-top, 0px)); }
+  .product-app {
+    --app-mobile-header: calc(64px + env(safe-area-inset-top, 0px));
+    --mobile-tabs-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    --mobile-tabs-clearance: calc(64px + var(--mobile-tabs-bottom) + 12px);
+  }
+  #mobile-tab-bar:not(:empty) {
+    position: fixed;
+    z-index: 25;
+    right: max(12px, env(safe-area-inset-right));
+    bottom: var(--mobile-tabs-bottom);
+    left: max(12px, env(safe-area-inset-left));
+    display: grid;
+    max-width: 450px;
+    margin-inline: auto;
+  }
+  .product-app:has(> #mobile-tab-bar:not(:empty)) .sidebar-menu-button { display: none; }
+  .product-app.sidebar-ui:has(> #mobile-tab-bar:not(:empty)) .app-main { padding-bottom: var(--mobile-tabs-clearance); }
+  .product-app:has(.app-sidebar[data-mobile-open="true"], dialog[open], :is(input, textarea):read-write:focus) #mobile-tab-bar { display: none; }
   .product-app.sidebar-ui .app-main { padding: 0 max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); min-height: calc(100svh - var(--app-mobile-header)); }
   .product-app .app-view { padding: 24px 0; scroll-margin-top: var(--app-mobile-header); }
   .product-app .sidebar-mobile-bar { height: var(--app-mobile-header); padding: env(safe-area-inset-top) max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); }

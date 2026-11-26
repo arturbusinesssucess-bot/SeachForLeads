@@ -7,6 +7,7 @@ await build({
     "analytics-funnel.v2": "app/analytics-funnel.tsx",
     "plans-pricing.v1": "app/plans-pricing.tsx",
     "app-sidebar.v1": "app/sidebar.ts",
+    "mobile-navigation.v1": "app/mobile-navigation.tsx",
   },
   outdir: "public",
   format: "esm",

@@ -8,6 +8,7 @@ export function initializeSidebar() {
   const backdrop = document.querySelector<HTMLElement>("#sidebar-backdrop");
   const main = document.querySelector<HTMLElement>(".app-main");
   const mobileBar = document.querySelector<HTMLElement>(".sidebar-mobile-bar");
+  const tabBar = document.querySelector<HTMLElement>("#mobile-tab-bar");
   if (!sidebar || !trigger || !closeButton || !toggle || !backdrop || !main || !mobileBar) return;
 
   const mobile = window.matchMedia("(max-width: 767px)");
@@ -29,10 +30,13 @@ export function initializeSidebar() {
   };
 
   const setMobileOpen = (next: boolean, restoreFocus = false) => {
+    const moreButton = tabBar?.querySelector<HTMLButtonElement>('button[aria-controls="app-sidebar"]');
     mobileOpen = mobile.matches && next;
     sidebar.dataset.mobileOpen = String(mobileOpen);
     sidebar.inert = mobile.matches && !mobileOpen;
     trigger.setAttribute("aria-expanded", String(mobileOpen));
+    moreButton?.setAttribute("aria-expanded", String(mobileOpen));
+    if (tabBar) tabBar.inert = mobileOpen;
     backdrop.hidden = !mobileOpen;
     main.inert = mobileOpen;
     mobileBar.inert = mobileOpen;
@@ -44,7 +48,7 @@ export function initializeSidebar() {
     } else {
       sidebar.removeAttribute("role");
       sidebar.removeAttribute("aria-modal");
-      if (restoreFocus) trigger.focus({ preventScroll: true });
+      if (restoreFocus) (moreButton ?? trigger).focus({ preventScroll: true });
     }
   };
 
@@ -92,11 +96,12 @@ export function initializeSidebar() {
     const fromSidebar = sidebar.contains(document.activeElement);
     const wasOpen = mobileOpen;
     setMobileOpen(false, mobile.matches && fromSidebar);
-    if (!mobile.matches && (wasOpen || mobileBar.contains(document.activeElement))) {
+    if (!mobile.matches && (wasOpen || mobileBar.contains(document.activeElement) || tabBar?.contains(document.activeElement))) {
       toggle.focus({ preventScroll: true });
     }
   });
 
   renderDesktop();
   setMobileOpen(false);
+  return { openMobileMenu: () => setMobileOpen(true) };
 }

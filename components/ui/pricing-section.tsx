@@ -69,7 +69,7 @@ export default function PricingSection({ surface = "app" }: { surface?: "app" | 
                       transition={{ type: "spring", stiffness: 500, damping: 30 }} />)}
                 <span className="plans-period-label">
                   {annual ? "Anual" : "Mensal"}
-                  {annual && <span className="plans-savings">{annualDiscount}% OFF</span>}
+                  {annual && <span className="plans-savings">≈{annualDiscount}% OFF</span>}
                 </span>
               </button>
             ))}
@@ -79,9 +79,10 @@ export default function PricingSection({ surface = "app" }: { surface?: "app" | 
 
       <div className="plans-cards">
         {plans.map((plan, index) => {
-          const cents = yearly ? Math.round(plan.monthly * 12 * (100 - annualDiscount) / 100) : plan.monthly;
+          const cents = yearly ? Math.round(plan.monthly * 12 * (100 - annualDiscount) / 10000) * 100 : plan.monthly;
           const price = cents / 100;
-          const priceText = `R$ ${price.toLocaleString("pt-BR", priceFormat)}`;
+          const displayFormat = yearly ? { minimumFractionDigits: 0, maximumFractionDigits: 0 } : priceFormat;
+          const priceText = `R$ ${price.toLocaleString("pt-BR", displayFormat)}`;
           return (
             <motion.article className={`plans-card${plan.featured ? " plans-card--featured" : ""}`}
               key={plan.name} aria-labelledby={`plan-${plan.name}`} {...reveal(4 + index)}>
@@ -93,7 +94,7 @@ export default function PricingSection({ surface = "app" }: { surface?: "app" | 
                 <p>{plan.description}</p>
                 <div className="plans-card-price">
                   <span className="plans-card-amount" aria-hidden="true">
-                    R$ <NumberFlow value={price} locales="pt-BR" format={priceFormat} animated={!reduceMotion} />
+                    R$ <NumberFlow value={price} locales="pt-BR" format={displayFormat} animated={!reduceMotion} />
                   </span>
                   <span className="plans-sr-only">{priceText}</span>
                   <span className="plans-card-period">/{yearly ? "ano" : "mês"}</span>

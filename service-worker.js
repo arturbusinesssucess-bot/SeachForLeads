@@ -1,10 +1,10 @@
-const CACHE_NAME = "sfl-pwa-v6";
+const CACHE_NAME = "sfl-pwa-v7";
 const APP_SHELL = [
   "/app/",
   "/app/app.css?v=sidebar-inset",
-  "/app/app.js?v=sidebar-inset",
-  "/public/app-sidebar.v1.js?v=sidebar-inset",
-  "/public/app-mobile.v1.css?v=sidebar-inset",
+  "/app/app.js?v=mobile-glass",
+  "/public/app-sidebar.v1.js?v=mobile-glass",
+  "/public/app-mobile.v1.css?v=mobile-glass",
   "/styles.css",
   "/firebase-config.js",
   "/manifest.webmanifest",

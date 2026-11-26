@@ -21,8 +21,8 @@ import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
 import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=funnel-label-spacing";
 
-import { initializeSidebar } from "../public/app-sidebar.v1.js?v=sidebar-inset";
-initializeSidebar();
+import { initializeSidebar } from "../public/app-sidebar.v1.js?v=mobile-glass";
+const sidebar = initializeSidebar();
 initializeAppSelects();
 
 const authView = document.body;
@@ -31,6 +31,31 @@ const viewLinks = [...document.querySelectorAll("[data-view-link]")];
 const searchForm = document.querySelector("#lead-search-form");
 const searchCriteria = initializeSearchCriteria(searchForm);
 const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics", plans: "Planos", referrals: "Indique e ganhe", settings: "Configurações" };
+const mobileViewport = window.matchMedia("(max-width: 767px)");
+const tabBarHost = document.querySelector("#mobile-tab-bar");
+let activeView = "home";
+let mobileNavigation;
+
+async function syncMobileNavigation() {
+  if (!mobileViewport.matches) {
+    mobileNavigation?.unmount();
+    mobileNavigation = undefined;
+    return;
+  }
+  if (!sidebar || !tabBarHost || mobileNavigation) return;
+  try {
+    const { mountMobileNavigation } = await import("../public/mobile-navigation.v1.js?v=mobile-glass");
+    if (!mobileViewport.matches || mobileNavigation) return;
+    mobileNavigation = mountMobileNavigation(tabBarHost, showView, sidebar.openMobileMenu);
+    mobileNavigation.setView(activeView);
+  } catch (error) {
+    console.warn("Não foi possível carregar a barra de navegação móvel.", error);
+  }
+}
+
+mobileViewport.addEventListener("change", syncMobileNavigation);
+syncMobileNavigation();
+
 const onboarding = initializeHomeOnboarding((view) => {
   showView(view);
   if (view === "search" && searchScreen === "intro") openSearchEditor();
@@ -42,7 +67,7 @@ function showPlansPricing() {
   const host = document.querySelector("#plans-pricing-root");
   const status = host.querySelector("[role=status]");
   status.textContent = "Carregando planos…";
-  loadingPlans = import("../public/plans-pricing.v1.js?v=landing-plans")
+  loadingPlans = import("../public/plans-pricing.v1.js?v=annual-rounded")
     .then(({ renderPlansPricing }) => renderPlansPricing(host))
     .catch(() => {
       loadingPlans = undefined;
@@ -52,6 +77,8 @@ function showPlansPricing() {
 
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
+  activeView = view;
+  mobileNavigation?.setView(view);
   if (view !== "crm") document.querySelector("#crm-lead-drawer")?.close();
   if (view !== "search" && searchScreen === "form" && searchFormReturn === "results") {
     showSearchScreen("results", false);
