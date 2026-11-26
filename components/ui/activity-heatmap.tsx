@@ -37,7 +37,7 @@ type Cell = { date: string; value: number; day: number; week: number; month: str
 type Month = { key: string; label: string; cells: Cell[]; firstWeek: number };
 type Tip = { cell: Cell; left: number; top: number; right: number; bottom: number };
 const VIEWS: ActivityHeatmapView[] = ["calendar", "weekdays", "months"];
-const VIEW_NAMES = { calendar: "Calendar", weekdays: "Weekdays", months: "Months" };
+const VIEW_NAMES = { calendar: "Calendário", weekdays: "Semana", months: "Meses" };
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const LEVEL_MIX = [0, 28, 48, 72, 100];
 const THEME_PRIMARY = "var(--color-primary, currentColor)";
@@ -100,12 +100,11 @@ function strongestFirst(a: Cell, b: Cell) {
   return b.value - a.value || a.date.localeCompare(b.date);
 }
 
-function arrange(cells: Cell[], width: number, maxCell: number) {
+function arrange(cells: Cell[], width: number, maxCell: number, view: ActivityHeatmapView = "calendar") {
   const usable = Math.max(7, width - LEFT - 8);
   const totalWeeks = (cells.at(-1)?.week ?? 0) + 1;
-  const capacity = Math.max(1, Math.floor((usable + 1) / 7));
-  const firstWeek = Math.max(0, totalWeeks - capacity);
-  const shown = cells.filter((cell) => cell.week >= firstWeek);
+  const firstWeek = 0;
+  const shown = cells;
   const weeks = Math.max(1, totalWeeks - firstWeek);
   const weekdays = Array.from({ length: 7 }, () => [] as Cell[]);
   const months: Month[] = [];
@@ -126,7 +125,8 @@ function arrange(cells: Cell[], width: number, maxCell: number) {
   const monthRanks = new Map(months.flatMap((month, column) => month.cells.map((cell, rank) => [cell.date, { rank, column }] as const)));
   const maxMonth = Math.max(1, ...months.map((month) => month.cells.length));
   const maxWeekday = Math.max(1, ...weekdays.map((group) => group.length));
-  const edge = Math.max(6, Math.min(maxCell, 16, usable / weeks - 1, (BASELINE - 24) / maxMonth - 0.5));
+  const horizontalSpace = view === "calendar" ? usable / weeks - 1 : view === "weekdays" ? usable / maxWeekday - 1 : usable / Math.max(1, months.length) - 2;
+  const edge = Math.max(6, Math.min(maxCell, 16, horizontalSpace, (BASELINE - 24) / maxMonth - 0.5));
   const weekdayStep = Math.min(edge + 2, (usable - edge) / Math.max(1, maxWeekday - 1));
   const monthStep = Math.min(edge + 1, (BASELINE - 24) / maxMonth);
   const calendarStep = usable / weeks;
@@ -210,7 +210,8 @@ export function ActivityHeatmap({
   const endKey = endDate instanceof Date ? (Number.isNaN(endDate.getTime()) ? null : toKey(endDate)) : endDate ?? today;
   const cells = React.useMemo(() => buildDays(data, days, endKey), [data, days, endKey]);
   const maxCell = Number.isFinite(cellSize) ? Math.max(6, cellSize) : 10;
-  const layout = React.useMemo(() => cells.length ? arrange(cells, width || 660, maxCell) : EMPTY_LAYOUT, [cells, width, maxCell]);
+  const layout = React.useMemo(() => cells.length ? arrange(cells, width || 660, maxCell, currentView) : EMPTY_LAYOUT, [cells, width, maxCell, currentView]);
+  const plotMinWidth = currentView === "calendar" ? Math.max(460, ((cells.at(-1)?.week ?? 0) + 1) * (maxCell + 3) + LEFT + 8) : currentView === "months" ? 460 : 0;
   const ready = width > 0 && !!endKey;
   const truncated = layout.shown.length < cells.length;
   const visibleCells = currentView === "calendar" ? layout.shown : layout.shown.filter((cell) => cell.value > 0);
@@ -393,8 +394,9 @@ export function ActivityHeatmap({
           {truncated ? `Exibindo as últimas ${layout.weeks} semanas (${layout.shown.length} de ${cells.length} dias).` : `${rangeLabel}. Cada quadrado representa um dia.`} Use as setas do teclado para explorar as datas.
         </p>
 
-        <div ref={scrollRef} className="activity-scroll">
-          <div ref={plotRef} role="group" aria-label={`Atividade no CRM · ${VIEW_NAMES[currentView]}`} aria-describedby={descriptionId} aria-busy={!ready} data-plot className="activity-plot" style={{ height: PLOT_HEIGHT, visibility: ready ? "visible" : "hidden" }}>
+        <p className="activity-scroll-hint">Deslize para os lados para ver todo o período.</p>
+        <div ref={scrollRef} className="activity-scroll" tabIndex={0} role="region" aria-label="Mapa de atividade, role para explorar as datas">
+          <div ref={plotRef} role="group" aria-label={`Atividade no CRM · ${VIEW_NAMES[currentView]}`} aria-describedby={descriptionId} aria-busy={!ready} data-plot className="activity-plot" style={{ height: PLOT_HEIGHT, minWidth: plotMinWidth, visibility: ready ? "visible" : "hidden" }}>
             <div aria-hidden="true" className="activity-axis">
               {WEEKDAYS.map((day, index) => <div key={day} style={{ position: "absolute", left: 0, right: 0, top: 52 + index * 24, height: layout.edge, opacity: currentView === "months" ? 0 : 1, transition: reduced ? "none" : "opacity 180ms" }}>
                 <div className="activity-axis-line" style={{ left: LEFT }} />

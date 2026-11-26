@@ -1,4 +1,4 @@
-import { getAnalyticsStages } from "./pipeline.js?v=status-length";
+import { getAnalyticsStages } from "./pipeline.js?v=mobile-sync-20261126";
 import { initializeBoardDrag } from "./crm-board-drag.js";
 
 const modeKey = "sfl:crm:view";

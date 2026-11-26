@@ -42,7 +42,6 @@
 .product-app .crm-view .crm-table th, .product-app .crm-view .crm-table td { border-color: #2c2c2c; }
 .product-app .app-main:has(> .grid-background-view:not([hidden])) {
   --analytics-grid-size: 88px;
-  --analytics-grid-lines: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px);
   position: relative;
   isolation: isolate;
 }
@@ -54,19 +53,17 @@
   border-radius: inherit;
   content: "";
   pointer-events: none;
-  -webkit-mask-image: var(--analytics-grid-lines);
-  mask-image: var(--analytics-grid-lines);
-  -webkit-mask-size: var(--analytics-grid-size) var(--analytics-grid-size);
-  mask-size: var(--analytics-grid-size) var(--analytics-grid-size);
+  background-size: var(--analytics-grid-size) var(--analytics-grid-size);
+  background-position: top left;
   animation: analytics-grid-colors 12s ease-in-out infinite alternate;
 }
 .product-app .app-main:has(> .grid-background-view:not([hidden]))::before {
-  background: linear-gradient(125deg, #548fff, #253b75 46%, #995bff 84%, #567bea);
+  background-image: linear-gradient(#548fff 1px, transparent 1px), linear-gradient(90deg, #995bff 1px, transparent 1px);
   opacity: .24;
   animation-direction: alternate-reverse;
 }
 .product-app .app-main:has(> .grid-background-view:not([hidden]))::after {
-  background: linear-gradient(125deg, #9b69ff, #3a3678 38%, #538dff 79%, #875dff);
+  background-image: linear-gradient(#9b69ff 1px, transparent 1px), linear-gradient(90deg, #538dff 1px, transparent 1px);
   opacity: .04;
 }
 @keyframes analytics-grid-colors { from { opacity: .04; } to { opacity: .24; } }
@@ -121,7 +118,7 @@
 .analytics-chart-empty { margin: 28px 0 8px; color: #aaaab2; font-size: 13px; line-height: 1.7; }
 .analytics-reset:focus-visible { outline: 2px solid #8b9fff; outline-offset: 3px; border-radius: 6px; }
 @media (max-width: 1100px) { .product-app [data-view="home"] .stat-grid, .metrics-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .analytics-charts { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 760px) { .analytics-charts { grid-template-columns: minmax(0,1fr); } .analytics-card { padding: 22px; } .analytics-city-card .analytics-bars { grid-template-columns: minmax(0,1fr); } .crm-metrics { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; } .crm-metrics .metric-card { padding: 18px 14px; min-height: 140px; } }
+@media (max-width: 767px) { .analytics-charts { grid-template-columns: minmax(0,1fr); } .analytics-card { padding: 22px; } .analytics-city-card .analytics-bars { grid-template-columns: minmax(0,1fr); } .crm-metrics { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; } .crm-metrics .metric-card { padding: 18px 14px; min-height: 140px; } }
 @media (max-width: 600px) { .product-app [data-view="home"] .stat-grid, .metrics-grid { gap: 10px; } .product-app [data-view="home"] .stat-card, .metric-card { min-height: 148px; padding: 20px 16px; } .product-app [data-view="home"] .stat-card > strong, .metric-card > strong { font-size: 36px; } .product-app [data-view="home"] .home-panel { padding: 20px; } .crm-metrics { grid-template-columns: minmax(0,1fr); } .crm-metrics .metric-card { min-height: 128px; } .analytics-toolbar { gap: 14px; } .analytics-filter { flex: 1 1 100%; width: 100%; } .analytics-result-count { flex: 1 1 100%; margin-left: 0; } .recent-lead-item { gap: 12px; } .recent-lead-stage { max-width: 100px; text-align: right; } }
 
 .analytics-funnel-scroll {

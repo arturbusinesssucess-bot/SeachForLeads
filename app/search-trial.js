@@ -1,5 +1,5 @@
 import { dialLeadPhone, leadMapURL, readLeadContact } from "../shared/lead-contact.mjs";
-import { getDefaultPipeline, getPipeline } from "./pipeline.js?v=status-length";
+import { getDefaultPipeline, getPipeline } from "./pipeline.js?v=mobile-sync-20261126";
 
 const limit = 10;
 const trialLoadingMs = 10000;
@@ -227,9 +227,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   }
 
   function receiveLeads(next) {
-    const ids = new Set(next.map(({ id }) => id));
-    const archived = legacyLeads.filter((lead) => !ids.has(lead.id)).length;
-    crmStatus.textContent = archived ? "O CRM atingiu 10 leads. Os leads excedentes continuam salvos neste navegador." : "";
+    crmStatus.textContent = "";
     try {
       localStorage.setItem(cacheKey(uid), JSON.stringify(next));
     } catch { /* CRM stays usable when browser storage is unavailable. */ }
@@ -550,7 +548,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
         : "Não foi possível sincronizar o CRM. Recarregue a página para tentar novamente.";
     };
     try {
-      const sync = await import("./workspace-sync.js");
+      const sync = await import("./workspace-sync.js?v=mobile-sync-20261126");
       if (current !== revision) return;
       const backup = legacyLeads;
       if (backup.length) {
@@ -559,7 +557,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
           const known = new Set(existing.map(({ id }) => id));
           const missing = backup.filter(({ id }) => !known.has(id)).slice(0, limit - existing.length);
           return missing.length ? { leads: [...existing, ...missing] } : null;
-        });
+        }).catch(() => { /* An old local backup must not block the live CRM subscription. */ });
       }
       if (current !== revision) return;
       stopWatching = sync.watchWorkspace(account, ({ leads }) => {

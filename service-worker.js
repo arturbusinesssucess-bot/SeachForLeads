@@ -1,10 +1,10 @@
-const CACHE_NAME = "sfl-pwa-v8";
+const CACHE_NAME = "sfl-pwa-v9";
 const APP_SHELL = [
   "/app/",
   "/app/app.css?v=sidebar-inset",
-  "/app/app.js?v=trial-14",
+  "/app/app.js?v=mobile-sync-20261126",
   "/public/app-sidebar.v1.js?v=mobile-glass",
-  "/public/app-mobile.v1.css?v=mobile-glass",
+  "/public/app-mobile.v1.css?v=mobile-sync-20261126",
   "/styles.css",
   "/firebase-config.js",
   "/manifest.webmanifest",
@@ -40,7 +40,7 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate" && isAppRequest) {
     event.respondWith((async () => {
       try {
-        const response = await fetch(request);
+        const response = await fetch(request, { cache: "no-cache" });
         if (response.ok) {
           const cache = await caches.open(CACHE_NAME);
           await cache.put(request, response.clone());
@@ -57,11 +57,13 @@ self.addEventListener("fetch", (event) => {
   if (!isAppRequest && !isFirebaseModule) return;
   if (isAppRequest && !["script", "style", "image", "font"].includes(request.destination) && !isManifest) return;
 
-  if (isManifest || (isAppRequest && request.destination === "style")) {
+  // Mutable app modules must refresh together with HTML and CSS on every device.
+  // Versioned Firebase CDN modules and static images can remain cache-first.
+  if (isManifest || (isAppRequest && ["script", "style"].includes(request.destination))) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       try {
-        const response = await fetch(request);
+        const response = await fetch(request, { cache: "no-cache" });
         if (response.ok) await cache.put(request, response.clone());
         return response;
       } catch {

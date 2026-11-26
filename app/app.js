@@ -1,6 +1,6 @@
 if ("serviceWorker" in navigator && window.isSecureContext) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/service-worker.js", { scope: "/app/" }).catch(() => {});
+    navigator.serviceWorker.register("/service-worker.js", { scope: "/app/", updateViaCache: "none" }).catch(() => {});
   }, { once: true });
 }
 
@@ -9,17 +9,17 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
 import { initializeSettings } from "./settings.js?v=status-length";
-import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline.js?v=status-length";
+import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline.js?v=mobile-sync-20261126";
 
 import { initializeAIWorkspace } from "./ai-workspace.js?v=crm-lead-drawer";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=home-onboarding";
+import { initializeSearchTrial } from "./search-trial.js?v=mobile-sync-20261126";
 import { initializeHomeOnboarding } from "./home-onboarding.js";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
-import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=funnel-label-spacing";
+import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=mobile-sync-20261126";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js?v=mobile-glass";
 const sidebar = initializeSidebar();

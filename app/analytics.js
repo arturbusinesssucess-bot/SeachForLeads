@@ -1,4 +1,4 @@
-import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=status-length";
+import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=mobile-sync-20261126";
 
 const unspecifiedCity = "Localização não informada";
 
@@ -147,7 +147,7 @@ export function initializeAnalytics(tbody) {
       }
       if (activityHost) charts.renderAnalyticsActivity(activityHost, activity);
     } else if (!loadingCharts) {
-      loadingCharts = import("/public/analytics-funnel.v2.js?v=label-spacing")
+      loadingCharts = import("/public/analytics-funnel.v2.js?v=mobile-sync-20261126")
         .then((module) => {
           charts = module;
           updateCharts();
