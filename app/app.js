@@ -19,7 +19,7 @@ import { initializeHomeOnboarding } from "./home-onboarding.js";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
-import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=funnel-label-spacing";
+import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=chart-entrance";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js?v=mobile-glass";
 const sidebar = initializeSidebar();
