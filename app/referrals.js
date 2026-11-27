@@ -11,22 +11,21 @@ export async function mountReferrals(host, user) {
   if (!host.isConnected || host.dataset.referralUser !== user.uid) return;
   const url = `https://searchforleads.vercel.app/?ref=${code}`;
   host.innerHTML = `
-    <header class="referral-heading"><span class="referral-eyebrow">Cresça com a gente</span><h1 id="referrals-title">Boas conexões.<br><span>Mais dias para prospectar.</span></h1><p>Convide novos clientes para o SearchForLeads e ganhe 30 dias grátis quando a primeira assinatura deles for confirmada.</p></header>
-    <aside class="referral-notice"><strong>Programa em preparação</strong><p>Seu link e QR Code já podem ser personalizados. O registro de novos clientes, a confirmação de pagamentos e o resgate de bônus ainda não estão ativos.</p></aside>
+    <header class="referral-heading"><h1 id="referrals-title">Boas conexões.<br><span>Mais dias para prospectar.</span></h1><p>Convide novos clientes para o SearchForLeads e ganhe 30 dias grátis quando a primeira assinatura deles for confirmada.</p></header>
+    <aside class="referral-notice"><strong>Programa em preparação</strong><p>Seu link e QR Code já estão disponíveis. O registro de novos clientes, a confirmação de pagamentos e o resgate de bônus ainda não estão ativos.</p></aside>
     <div class="referral-layout">
       <section class="referral-card referral-share" aria-labelledby="referral-share-title"><span class="referral-eyebrow">Seu convite</span><h2 id="referral-share-title">Uma conexão que vale 30 dias</h2><p>Compartilhe com quem ainda não tem uma conta no SearchForLeads.</p>
         <label for="referral-link">Seu link pessoal</label><div class="referral-link-row"><input id="referral-link" readonly type="url" spellcheck="false"><button type="button" class="app-button app-button--primary" id="referral-copy"><span class="app-button-label">Copiar link</span></button></div><p class="referral-hint">O convite abre nossa página inicial. A recompensa depende da ativação do programa.</p>
         <ol class="referral-steps"><li><span>01</span><div><h3>Convide alguém novo</h3><p>Seu amigo usa o link para conhecer o app e criar uma conta.</p></div></li><li><span>02</span><div><h3>Ele testa e depois assina</h3><p>Após os 14 dias de teste, o primeiro pagamento precisa ser confirmado.</p></div></li><li><span>03</span><div><h3>Você recebe 30 dias</h3><p>O bônus fica disponível para resgate na sua conta.</p></div></li></ol>
       </section>
-      <section class="referral-card referral-qr" aria-labelledby="referral-qr-title"><h2 id="referral-qr-title">Seu convite em QR Code</h2><p>Personalize, baixe e compartilhe.</p><div class="referral-qr-preview"><canvas id="referral-qr-canvas" role="img" aria-label="QR Code do seu link pessoal"></canvas><strong>Conheça o SearchForLeads</strong></div>
-        <fieldset class="referral-colors"><legend>Cor do QR Code</legend><label><input type="radio" name="referral-color" value="#1859bf" checked><span style="--swatch:#1859bf">Azul</span></label><label><input type="radio" name="referral-color" value="#5531a5"><span style="--swatch:#5531a5">Roxo</span></label><label><input type="radio" name="referral-color" value="#172033"><span style="--swatch:#172033">Grafite</span></label></fieldset>
+      <section class="referral-card referral-qr" aria-labelledby="referral-qr-title"><h2 id="referral-qr-title">Seu convite em QR Code</h2><p>Baixe e compartilhe seu convite.</p><div class="referral-qr-preview"><canvas id="referral-qr-canvas" role="img" aria-label="QR Code do seu link pessoal"></canvas><strong>Conheça o SearchForLeads</strong></div>
         <button class="referral-secondary" id="referral-download" type="button" disabled>Baixar QR Code em PNG</button><p class="referral-hint">Imagem com fundo branco para facilitar a leitura.</p>
       </section>
     </div>
     <p class="referral-feedback" id="referral-feedback" role="status" aria-live="polite"></p>
-    <section class="referral-balance referral-card" aria-labelledby="referral-balance-title"><div><span class="referral-eyebrow">Suas recompensas</span><h2 id="referral-balance-title">Dias extras para ir mais longe</h2><p>Quando o programa estiver ativo, suas indicações e bônus aparecerão aqui.</p></div><div class="referral-balance-value"><strong>—</strong><span>dias disponíveis</span></div><button class="app-button app-button--primary" type="button" disabled aria-describedby="referral-redemption-help"><span class="app-button-label">Resgatar dias grátis</span></button></section>
+    <section class="referral-balance referral-card" aria-labelledby="referral-balance-title"><div><span class="referral-eyebrow">Suas recompensas</span><h2 id="referral-balance-title">Dias extras para ir mais longe</h2><p>Quando o programa estiver ativo, suas indicações e bônus aparecerão aqui.</p></div><div class="referral-balance-value"><strong>—</strong><span>dias disponíveis</span></div><button class="app-button app-button--primary" type="button" disabled><span class="app-button-label">Resgatar dias grátis</span></button></section>
     <div class="referral-summary"><article><span>Novos clientes</span><strong>—</strong><small>Aguardando ativação</small></article><article><span>Pagamentos confirmados</span><strong>—</strong><small>Aguardando ativação</small></article><article><span>Dias resgatados</span><strong>—</strong><small>Aguardando ativação</small></article></div>
-    <section class="referral-card referral-rules" aria-labelledby="referral-rules-title"><h2 id="referral-rules-title">Tudo claro antes de convidar</h2><details open><summary>Quem pode gerar uma recompensa?</summary><p>Somente novos clientes que chegarem pelo seu link, concluírem os 14 dias de teste e tiverem o primeiro pagamento confirmado. Contas já existentes, autoindicações e pagamentos duplicados não geram bônus.</p></details><details><summary>O que acontece ao resgatar?</summary><p id="referral-redemption-help">O resgate ficará disponível com a integração de cobrança. Ele deverá cancelar a renovação da assinatura paga e ativar seus 30 dias grátis após a confirmação do cancelamento.</p></details><details><summary>E quando os dias grátis acabarem?</summary><p>O app avisará que você precisa assinar para continuar. Sem pagamento, o acesso ficará suspenso e seus dados serão preservados.</p></details></section>`;
+    `;
   host.querySelector('#referral-link').value = url;
   const giftIcon = document.querySelector('[data-view-link="referrals"] svg');
   for (const button of host.querySelectorAll('.app-button')) {
@@ -41,20 +40,18 @@ export async function mountReferrals(host, user) {
     const current = ++revision;
     download.disabled = true;
     try {
-      const color = host.querySelector('[name="referral-color"]:checked').value;
       const scratch = document.createElement('canvas');
-      await QRCode.toCanvas(scratch, url, { width: 768, margin: 4, errorCorrectionLevel: 'H', color: { dark: color, light: '#ffffff' } });
+      await QRCode.toCanvas(scratch, url, { width: 768, margin: 4, errorCorrectionLevel: 'H', color: { dark: '#000000', light: '#ffffff' } });
       if (current !== revision || !canvas.isConnected) return;
       canvas.width = scratch.width; canvas.height = scratch.height;
       canvas.getContext('2d').drawImage(scratch, 0, 0);
       download.disabled = false;
-    } catch { feedback.textContent = 'Não foi possível gerar o QR Code. Tente selecionar uma cor novamente.'; }
+    } catch { feedback.textContent = 'Não foi possível gerar o QR Code. Recarregue a página para tentar novamente.'; }
   }
   host.querySelector('#referral-copy').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(url); feedback.textContent = 'Link copiado. O programa de recompensas ainda está em preparação.'; }
     catch { input.focus(); input.select(); feedback.textContent = 'Selecione e copie o link acima.'; }
   });
-  host.querySelectorAll('[name="referral-color"]').forEach((radio) => radio.addEventListener('change', renderQR));
   download.addEventListener('click', () => {
     const link = document.createElement('a'); link.download = 'searchforleads-convite.png'; link.href = canvas.toDataURL('image/png'); link.click();
     feedback.textContent = 'QR Code baixado.';

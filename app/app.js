@@ -70,7 +70,7 @@ function showReferrals() {
   if (!referralUser || referralsLoading || host.dataset.referralUser === referralUser.uid) return;
   const user = referralUser;
   host.dataset.referralUser = user.uid;
-  referralsLoading = import('../public/app-referrals.v1.js?v=referrals-preview')
+  referralsLoading = import('../public/app-referrals.v1.js?v=referrals-black-qr')
     .then(({ mountReferrals }) => mountReferrals(host, user))
     .catch(() => {
       delete host.dataset.referralUser;
