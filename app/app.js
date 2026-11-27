@@ -46,7 +46,7 @@ async function syncMobileNavigation() {
   }
   if (!sidebar || !tabBarHost || mobileNavigation) return;
   try {
-    const { mountMobileNavigation } = await import("../public/mobile-navigation.v1.js?v=mobile-glass");
+    const { mountMobileNavigation } = await import("../public/mobile-navigation.v1.js?v=mobile-nav-20261127");
     if (!mobileViewport.matches || mobileNavigation) return;
     mobileNavigation = mountMobileNavigation(tabBarHost, showView, sidebar.openMobileMenu);
     mobileNavigation.setView(activeView);
