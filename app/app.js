@@ -46,9 +46,9 @@ async function syncMobileNavigation() {
   }
   if (!sidebar || !tabBarHost || mobileNavigation) return;
   try {
-    const { mountMobileNavigation } = await import("../public/mobile-navigation.v1.js?v=mobile-nav-20261127");
+    const { mountMobileNavigation } = await import("../public/mobile-navigation.v1.js?v=mobile-more-20261127");
     if (!mobileViewport.matches || mobileNavigation) return;
-    mobileNavigation = mountMobileNavigation(tabBarHost, showView, sidebar.openMobileMenu);
+    mobileNavigation = mountMobileNavigation(tabBarHost, showView, signOutAccount);
     mobileNavigation.setView(activeView);
   } catch (error) {
     console.warn("Não foi possível carregar a barra de navegação móvel.", error);
@@ -342,11 +342,15 @@ new MutationObserver(renderCRM).observe(crmRows, { childList: true, subtree: tru
 renderCRM();
 
 
-document.querySelector("#sign-out").addEventListener("click", async () => {
+async function signOutAccount() {
   if (!auth) return;
+  await signOut(auth);
+  window.location.replace("/");
+}
+
+document.querySelector("#sign-out").addEventListener("click", async () => {
   try {
-    await signOut(auth);
-    window.location.replace("/");
+    await signOutAccount();
   } catch {
     const accountEmail = document.querySelector("#account-email");
     accountEmail.textContent = "Não foi possível sair. Tente novamente.";
