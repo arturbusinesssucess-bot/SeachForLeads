@@ -33,7 +33,7 @@ export function LiquidGlassTabBar({ items, value, onChange, className = "" }: Li
   const blue = useRef<HTMLDivElement>(null);
   const frame = useRef<number | null>(null);
   const settleTimer = useRef<number | undefined>(undefined);
-  const gesture = useRef<{ id: number; downX: number; downTime: number; center: number; dragged: boolean } | null>(null);
+  const gesture = useRef<{ id: number; downX: number; downY: number; downTime: number; center: number; dragged: boolean } | null>(null);
   const ignorePointerClick = useRef(false);
   const quickTap = useRef(false);
   const spring = useRef({
@@ -48,9 +48,9 @@ export function LiquidGlassTabBar({ items, value, onChange, className = "" }: Li
     const lift = Math.min(1.18, Math.max(0, p.lift));
     const opticalLift = Math.min(1, lift);
     const speed = Math.min(1, Math.abs(p.vx) / 1150) * opticalLift;
-    const width = (p.slot + 24 * lift) * (1 + speed * 0.28);
+    const width = (p.slot + 10 * lift) * (1 + speed * 0.1);
     const restHeight = p.height - 8;
-    const height = Math.max(restHeight, (restHeight + 26 * lift) * (1 - speed * 0.14));
+    const height = Math.max(restHeight, (restHeight + 8 * lift) * (1 - speed * 0.06));
     const left = p.x - width / 2;
     const top = (p.height - height) / 2;
     const right = left + width;
@@ -65,7 +65,7 @@ export function LiquidGlassTabBar({ items, value, onChange, className = "" }: Li
     style.setProperty("--rest-opacity", String(Math.max(0, 1 - opticalLift * 1.9)));
     style.setProperty("--shell-opacity", String(Math.min(1, opticalLift * 1.25)));
 
-    const zoom = 1 + 0.16 * opticalLift;
+    const zoom = 1 + 0.06 * opticalLift;
     blue.current.style.width = `${p.width}px`;
     blue.current.style.height = `${p.height}px`;
     blue.current.style.transform = `translate3d(${width / 2 - p.x * zoom}px, ${height / 2 - p.height / 2 * zoom}px, 0) scale(${zoom})`;
@@ -141,6 +141,12 @@ export function LiquidGlassTabBar({ items, value, onChange, className = "" }: Li
       p.width = width;
       p.height = height;
       p.slot = (width - padding * 2) / items.length;
+      if (resized && gesture.current) {
+        gesture.current = null;
+        ignorePointerClick.current = true;
+        p.targetLift = p.lift = 0;
+        p.vLift = 0;
+      }
       if (gesture.current) return;
       p.targetX = tabCenter(activeIndex, p.slot);
       if (resized) {
@@ -185,7 +191,7 @@ export function LiquidGlassTabBar({ items, value, onChange, className = "" }: Li
     const center = tabCenter(nearestIndex(localX), p.slot);
     button.setPointerCapture(event.pointerId);
     ignorePointerClick.current = false;
-    gesture.current = { id: event.pointerId, downX: event.clientX, downTime: performance.now(), center, dragged: false };
+    gesture.current = { id: event.pointerId, downX: event.clientX, downY: event.clientY, downTime: performance.now(), center, dragged: false };
     window.clearTimeout(settleTimer.current);
     p.targetX = center;
     p.targetLift = 1;
@@ -196,7 +202,14 @@ export function LiquidGlassTabBar({ items, value, onChange, className = "" }: Li
     const current = gesture.current;
     if (!current || current.id !== event.pointerId) return;
     const delta = event.clientX - current.downX;
-    if (!current.dragged && Math.abs(delta) <= 3) return;
+    const vertical = event.clientY - current.downY;
+    if (!current.dragged) {
+      if (Math.abs(vertical) > 10 && Math.abs(vertical) >= Math.abs(delta)) {
+        pointerCancel(event);
+        return;
+      }
+      if (Math.abs(delta) <= 12 || Math.abs(delta) <= Math.abs(vertical) * 1.35) return;
+    }
     current.dragged = true;
     const p = spring.current;
     p.targetX = rubberBandClamp(current.center + delta, tabCenter(0, p.slot), tabCenter(items.length - 1, p.slot));
@@ -207,13 +220,15 @@ export function LiquidGlassTabBar({ items, value, onChange, className = "" }: Li
     const current = gesture.current;
     if (!current || current.id !== event.pointerId) return;
     pointerMove(event);
+    if (gesture.current !== current) return;
     gesture.current = null;
     quickTap.current = performance.now() - current.downTime < 240;
     const p = spring.current;
     p.targetLift = 0;
     if (current.dragged) {
       ignorePointerClick.current = true;
-      activate(nearestIndex(p.targetX + p.vx * 0.03), false);
+      const releaseX = event.clientX - event.currentTarget.getBoundingClientRect().left;
+      activate(nearestIndex(releaseX), false);
     } else {
       animate();
     }

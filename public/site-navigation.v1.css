@@ -1,0 +1,88 @@
+.site-shell .topbar > .topbar-meta { flex: 0 0 auto; }
+.site-shell .topbar .login-link {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 88px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #343842;
+  border-radius: 11px;
+  background: #1a1d24;
+  color: #f5f6fa;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.site-shell .topbar .login-link > span { flex: none; }
+.site-shell .topbar .login-link > svg,
+.auth-page .auth-page-submit > svg {
+  display: block;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+.site-shell .topbar :is(.login-link, .brand, .topnav > a):focus-visible {
+  outline: 2px solid #a8b8ff;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+.auth-page .auth-page-submit { white-space: nowrap; }
+.auth-page .auth-page-submit > [data-auth-submit-label] { flex: 0 0 auto; }
+@media (hover: hover) {
+  .site-shell .topbar .login-link:hover { background: #242935; color: #fff; border-color: #535e77; }
+}
+@media (max-width: 767px) {
+  .site-shell .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    width: calc(100% - 24px);
+    margin-top: max(12px, env(safe-area-inset-top, 0px));
+    padding: 8px 12px 6px;
+    border-radius: 18px;
+  }
+  .site-shell .topbar > .brand { grid-column: 1; grid-row: 1; min-width: 0; min-height: 44px; gap: 7px; }
+  .site-shell .topbar .brand-logo { flex: 0 0 27px; width: 27px; height: 27px; }
+  .site-shell .topbar .brand-name { font-size: 15px; white-space: nowrap; }
+  .site-shell .topbar > .topbar-meta { grid-column: 2; grid-row: 1; }
+  .site-shell .topbar .login-link { min-width: 82px; padding-inline: 11px; }
+  .site-shell .topbar > .topnav {
+    position: static;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr .8fr .9fr;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    margin: 0;
+    padding-top: 4px;
+    border-top: 1px solid #ffffff12;
+    transform: none;
+  }
+  .site-shell .topbar > .topnav > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 44px;
+    padding: 4px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    line-height: 1.3;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .site-shell .topbar > .topnav > a::after { bottom: 4px; right: 8px; left: 8px; }
+  .site-shell .topbar > .topnav > a:active { background: #ffffff0a; }
+}
