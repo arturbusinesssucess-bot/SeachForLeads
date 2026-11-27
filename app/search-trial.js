@@ -1,5 +1,5 @@
 import { dialLeadPhone, leadMapURL, readLeadContact } from "../shared/lead-contact.mjs";
-import { getDefaultPipeline, getPipeline } from "./pipeline.js?v=status-length";
+import { getDefaultPipeline, getPipeline } from "./pipeline.js?v=mobile-sync-20261126";
 
 const limit = 10;
 const trialLoadingMs = 10000;
@@ -70,7 +70,7 @@ async function waitForTrialStep(startedAt, offset, signal) {
   signal.throwIfAborted();
 }
 
-export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, leadDetails, onCRMReady, onProgress = () => {} }) {
+export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, leadDetails, onCRMReady, onProgress = () => {}, onAccess = () => {}, onUsageCRM = () => {}, onSearchResult = () => {} }) {
   const status = document.querySelector("#search-status");
   const searchSubmit = form.querySelector('button[type="submit"]');
   const notice = document.querySelector("#trial-search-notice");
@@ -227,9 +227,8 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   }
 
   function receiveLeads(next) {
-    const ids = new Set(next.map(({ id }) => id));
-    const archived = legacyLeads.filter((lead) => !ids.has(lead.id)).length;
-    crmStatus.textContent = archived ? "O CRM atingiu 10 leads. Os leads excedentes continuam salvos neste navegador." : "";
+    crmStatus.textContent = "";
+    onUsageCRM(next, { confirmed: true });
     try {
       localStorage.setItem(cacheKey(uid), JSON.stringify(next));
     } catch { /* CRM stays usable when browser storage is unavailable. */ }
@@ -316,6 +315,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   }
 
   function renderResults(batch, scope, mode, restoreFocus = true) {
+    onSearchResult({ count: batch.length, scope });
     const items = document.createDocumentFragment();
     resultButtons = new Map();
     for (const [index, lead] of batch.entries()) {
@@ -537,6 +537,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     accessStatus.textContent = message;
     accessStatus.hidden = !message;
     notice.hidden = !trialUser || !trialMode;
+    onAccess({ available: Boolean(trialUser), mode: trialMode ? "trial" : "live" });
     syncButtons();
   }
 
@@ -544,13 +545,14 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     const unavailable = () => {
       if (current !== revision) return;
       syncClient = undefined;
+      onUsageCRM(saved, { confirmed: false });
       syncButtons();
       crmStatus.textContent = saved.length
         ? "Não foi possível sincronizar o CRM. Exibindo os leads salvos neste navegador."
         : "Não foi possível sincronizar o CRM. Recarregue a página para tentar novamente.";
     };
     try {
-      const sync = await import("./workspace-sync.js");
+      const sync = await import("./workspace-sync.js?v=mobile-sync-20261126");
       if (current !== revision) return;
       const backup = legacyLeads;
       if (backup.length) {
@@ -559,7 +561,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
           const known = new Set(existing.map(({ id }) => id));
           const missing = backup.filter(({ id }) => !known.has(id)).slice(0, limit - existing.length);
           return missing.length ? { leads: [...existing, ...missing] } : null;
-        });
+        }).catch(() => { /* An old local backup must not block the live CRM subscription. */ });
       }
       if (current !== revision) return;
       stopWatching = sync.watchWorkspace(account, ({ leads }) => {
@@ -582,6 +584,8 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       stopWatching?.();
       stopWatching = undefined;
       uid = user?.uid ?? "";
+      onAccess(null);
+      onSearchResult(null);
       trialUser = undefined;
       pendingSearch?.abort();
       pendingSearch = undefined;
@@ -609,6 +613,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       const account = user.uid;
       try { legacyLeads = readSaved(`sfl:search-trial:v1:${account}`); } catch { legacyLeads = []; }
       try { saved = readSaved(cacheKey(account), legacyLeads); } catch { saved = legacyLeads; }
+      onUsageCRM(saved, { confirmed: false });
       crmStatus.textContent = saved.length ? "" : "Carregando leads…";
       renderRows();
       onCRMReady(saved.length > 0);

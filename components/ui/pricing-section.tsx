@@ -50,13 +50,13 @@ export default function PricingSection({ surface = "app" }: { surface?: "app" | 
 
   return (
     <div className="plans-pricing">
-      <header className="plans-pricing-heading">
+      {onLanding ? <header className="plans-pricing-heading">
         <Title id="plans-title" {...reveal(0)}>
           Escolha o plano certo para a sua{" "}
           <motion.span {...reveal(1)}>prospecção</motion.span>
         </Title>
         <motion.p {...reveal(2)}>Compare quantas empresas você pode encontrar e quantos leads pode salvar no CRM.</motion.p>
-      </header>
+      </header> : <h1 id="plans-title" className="plans-sr-only">Planos</h1>}
 
       <motion.div className="plans-period-wrap" {...reveal(3)}>
         <LayoutGroup id="plans-period">

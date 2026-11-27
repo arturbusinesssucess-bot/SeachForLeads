@@ -1,6 +1,6 @@
 if ("serviceWorker" in navigator && window.isSecureContext) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/service-worker.js", { scope: "/app/" }).catch(() => {});
+    navigator.serviceWorker.register("/service-worker.js", { scope: "/app/", updateViaCache: "none" }).catch(() => {});
   }, { once: true });
 }
 
@@ -8,22 +8,24 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
-import { initializeSettings } from "./settings.js?v=status-length";
-import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline.js?v=status-length";
+import { initializeSettings } from "./settings.js?v=usage-20261127";
+import { initializeUsage } from "./usage.js?v=usage-20261127";
+import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline.js?v=mobile-sync-20261126";
 
-import { initializeAIWorkspace } from "./ai-workspace.js?v=crm-lead-drawer";
+import { initializeAIWorkspace } from "./ai-workspace.js?v=usage-20261127";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=home-onboarding";
+import { initializeSearchTrial } from "./search-trial.js?v=usage-20261127";
 import { initializeHomeOnboarding } from "./home-onboarding.js";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
-import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=funnel-label-spacing";
+import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=usage-20261127";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js?v=mobile-glass";
 const sidebar = initializeSidebar();
 initializeAppSelects();
+const usageWorkspace = initializeUsage();
 
 const authView = document.body;
 const views = [...document.querySelectorAll("[data-view]")];
@@ -67,7 +69,7 @@ function showPlansPricing() {
   const host = document.querySelector("#plans-pricing-root");
   const status = host.querySelector("[role=status]");
   status.textContent = "Carregando planos…";
-  loadingPlans = import("../public/plans-pricing.v1.js?v=trial-14")
+  loadingPlans = import("../public/plans-pricing.v1.js?v=usage-20261127")
     .then(({ renderPlansPricing }) => renderPlansPricing(host))
     .catch(() => {
       loadingPlans = undefined;
@@ -253,13 +255,16 @@ const searchTrial = initializeSearchTrial({
   showSearchScreen,
   leadDetails,
   onProgress: onboarding.complete,
+  onAccess: usageWorkspace.setAccess,
+  onUsageCRM: usageWorkspace.setCRM,
+  onSearchResult: usageWorkspace.setSearch,
   onCRMReady(ready) {
     if (crmReady === ready) return;
     crmReady = ready;
     renderCRM();
   },
 });
-const aiWorkspace = initializeAIWorkspace({ crmRows });
+const aiWorkspace = initializeAIWorkspace({ crmRows, onAvailability: usageWorkspace.setAI });
 const settingsWorkspace = initializeSettings({
   getAuthInstance: () => auth,
   isStageInUse: (key) => [...crmRows.rows].some((row) => resolveRowStage(row) === key),
@@ -352,6 +357,7 @@ let auth = null;
 if (isFirebaseConfigured) {
   auth = getAuth(initializeApp(firebaseConfig));
   onAuthStateChanged(auth, (user) => {
+    usageWorkspace.setUser(user);
     onboarding.setUser(user?.uid);
     if (!user) {
       setPipelineUser(null);

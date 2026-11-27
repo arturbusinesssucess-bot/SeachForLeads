@@ -132,6 +132,7 @@
 }
 
 .crm-lead-card {
+  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -147,26 +148,48 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: border-color .18s ease, background-color .18s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-.crm-lead-card:hover {
-  border-color: #486a9c;
-  background: #20232a;
+.crm-lead-card::before {
+  position: absolute;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: linear-gradient(110deg, #4388ff, #9667ff, #5ab5ff, #8b5cf6, #4388ff);
+  background-size: 230% 100%;
+  content: "";
+  pointer-events: none;
+  opacity: 0;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: crm-drop-gradient 2s linear infinite alternate paused;
+}
+
+.crm-lead-card:is(:focus-visible, :active)::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .crm-lead-card:hover::before { opacity: 1; animation-play-state: running; }
 }
 
 .crm-lead-card:disabled { cursor: default; }
 
 .crm-view-toggle button:focus-visible,
 .crm-configure:focus-visible,
-.crm-lead-card:focus-visible,
 .crm-lead-board:focus-visible {
   outline: 2px solid #a8b8ff;
   outline-offset: 2px;
 }
 
+.crm-lead-card:focus-visible { outline: none; }
+
 .crm-lead-overview {
+  flex: 1;
   display: grid;
   gap: 4px;
   min-width: 0;
@@ -185,6 +208,7 @@
 }
 
 .crm-lead-stage {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -299,10 +323,10 @@
   inset: 0 auto auto 0;
   z-index: 1100;
   pointer-events: none;
-  border-color: #6c9ceb;
   box-shadow: 0 12px 26px #0008;
   transition: none;
 }
+.crm-drag-preview::before { opacity: 1; animation-play-state: running; }
 
 .crm-board-status { margin: 6px 0 0; color: var(--workspace-muted, #aaaab2); font-size: 13px; }
 .crm-board-status:empty { display: none; }
@@ -484,10 +508,20 @@
 .crm-lead-stage-form > .app-button { justify-self: start; }
 .crm-lead-stage-form > [role="status"] { margin: 0; color: var(--workspace-muted, #aaaab2); font-size: 13px; }
 
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .crm-lead-list:not([hidden]) { grid-template-columns: minmax(0, 1fr); }
-  .crm-lead-card { min-height: 84px; }
+  .crm-lead-card { min-height: 92px; padding: 16px; }
+  .crm-lead-stage { max-width: 45%; }
+  .crm-lead-stage > :last-child { white-space: normal; overflow-wrap: anywhere; }
+  .crm-lead-board:not([hidden]) { grid-auto-columns: min(82vw, 300px); scroll-snap-type: x proximity; }
+  .crm-board-column { scroll-snap-align: start; }
   .crm-lead-drawer { border-left: 0; }
+}
+
+@media (max-width: 380px) {
+  .crm-lead-list .crm-lead-card { flex-wrap: wrap; }
+  .crm-lead-list .crm-lead-overview { flex-basis: 100%; }
+  .crm-lead-list .crm-lead-stage { max-width: 100%; }
 }
 
 @media (max-width: 767px) {
@@ -498,7 +532,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .crm-export-highlight { animation-name: crm-export-click-reduced; }
-  .crm-board-column[data-crm-drop-active]::after { animation: none; }
+  .crm-board-column[data-crm-drop-active]::after,
+  .crm-lead-card::before { animation: none; }
   .crm-lead-card { transition: none; }
   .crm-lead-drawer[open] { animation: none; }
+}
+
+@media (forced-colors: active) {
+  .crm-lead-card::before { display: none; }
+  .crm-lead-card:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
 }

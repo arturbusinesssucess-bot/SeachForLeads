@@ -46,6 +46,7 @@
 
 .activity-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -55,7 +56,8 @@
 }
 
 .activity-views {
-  display: inline-flex;
+  display: flex;
+  flex: 1;
   min-width: 0;
   gap: 4px;
   padding: 4px;
@@ -76,6 +78,9 @@
 }
 
 .activity-heatmap .activity-view-option {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
   gap: 6px;
   padding: 6px 10px;
   border-radius: 6px;
@@ -85,8 +90,8 @@
 
 .activity-heatmap .activity-play {
   flex: none;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border-radius: 50%;
   color: var(--activity-muted);
@@ -154,12 +159,20 @@
   overflow: auto hidden;
   scrollbar-color: #48546b transparent;
   scrollbar-width: thin;
+  overscroll-behavior-inline: contain;
+  scroll-padding-inline-start: 58px;
 }
+
+.activity-scroll:focus-visible { outline: 2px solid var(--activity-focus); outline-offset: 3px; }
 
 .activity-plot {
   position: relative;
   min-width: 460px;
 }
+
+.activity-heatmap[data-layout="weekdays"] .activity-plot { min-width: 0; }
+
+.activity-scroll-hint { display: none; }
 
 .activity-axis {
   position: absolute;
@@ -272,6 +285,18 @@
   .activity-context-key {
     display: none;
   }
+}
+
+@media (max-width: 767px) {
+  .activity-heatmap .activity-view-option { padding-inline: 7px; }
+  .activity-heatmap .activity-view-icon { display: none; }
+  .activity-toolbar { gap: 8px; }
+  .activity-views { flex-basis: calc(100% - 52px); }
+  .activity-scroll-hint { display: block; margin-top: 12px !important; color: var(--activity-muted); }
+  .activity-heatmap[data-layout="weekdays"] .activity-scroll-hint { display: none; }
+  .activity-weekday { position: sticky; left: 0; background: var(--workspace-card, #191919); box-shadow: 6px 0 0 var(--workspace-card, #191919); }
+  .activity-axis { z-index: 1; }
+  .activity-footer { gap: 12px; margin-top: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

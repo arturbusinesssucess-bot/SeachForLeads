@@ -136,6 +136,7 @@ export function setPipelineUser(uid) {
 function applyPipeline(stages) {
   if (JSON.stringify(currentStages) === JSON.stringify(stages)) return;
   currentStages = stages;
+  try { window.localStorage.setItem(STORAGE_PREFIX + currentUser, JSON.stringify(stages)); } catch {}
   dispatchChange();
 }
 
@@ -146,11 +147,12 @@ async function connectPipeline(uid, localStages, revision) {
     window.dispatchEvent(new CustomEvent('sfl:pipeline-sync-error', { detail: { uid } }));
   };
   try {
-    const sync = await import('./workspace-sync.js');
+    const sync = await import('./workspace-sync.js?v=mobile-sync-20261126');
     if (revision !== syncRevision) return;
     const defaults = getDefaultPipeline();
     if (JSON.stringify(defaults) !== JSON.stringify(localStages)) {
-      await sync.updateWorkspace(uid, ({ pipeline }) => pipeline === undefined ? { pipeline: localStages } : null);
+      await sync.updateWorkspace(uid, ({ pipeline }) => pipeline === undefined ? { pipeline: localStages } : null)
+        .catch(() => { /* Keep listening even when a legacy migration cannot be written. */ });
     }
     if (revision !== syncRevision) return;
     stopWatchingPipeline = sync.watchWorkspace(uid, ({ pipeline }) => {
