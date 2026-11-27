@@ -8,6 +8,7 @@ await build({
     "plans-pricing.v1": "app/plans-pricing.tsx",
     "app-sidebar.v1": "app/sidebar.ts",
     "mobile-navigation.v1": "app/mobile-navigation.tsx",
+    "app-referrals.v1": "app/referrals.js",
   },
   outdir: "public",
   format: "esm",

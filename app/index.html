@@ -30,7 +30,8 @@
     <link rel="stylesheet" href="/public/crm-views.v1.css?v=mobile-sync-20261126" />
     <link rel="stylesheet" href="/public/crm-lead-drawer.v1.css" />
     <link rel="stylesheet" href="/public/plans-pricing.v1.css?v=pricing-mist" />
-    <link rel="stylesheet" href="/public/app-usage.v1.css?v=usage-20261127" />
+    <link rel="stylesheet" href="/public/app-usage.v1.css?v=usage-cards-referrals" />
+    <link rel="stylesheet" href="/public/app-referrals.v1.css?v=referrals-preview" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <header class="sidebar-mobile-bar">
@@ -478,8 +479,8 @@
           <div data-usage-panel></div>
         </section>
 
-        <section class="app-view" data-view="referrals" aria-labelledby="referrals-title" hidden>
-          <header class="analytics-page-heading"><h1 id="referrals-title">Indique e ganhe</h1></header>
+        <section class="app-view referrals-view" data-view="referrals" aria-label="Indique e ganhe" hidden>
+          <div id="referrals-root"><p role="status">Carregando seus convites…</p></div>
         </section>
 
         <section class="app-view settings-view" data-view="settings" aria-labelledby="settings-title" hidden>
@@ -575,6 +576,6 @@
     </div>
     <div id="mobile-tab-bar"></div>
 
-    <script type="module" src="app.js?v=chart-entrance"></script>
+    <script type="module" src="app.js?v=usage-cards-referrals"></script>
   </body>
 </html>

@@ -9,7 +9,7 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
 import { initializeSettings } from "./settings.js?v=usage-20261127";
-import { initializeUsage } from "./usage.js?v=usage-20261127";
+import { initializeUsage } from "./usage.js?v=usage-cards-referrals";
 import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline.js?v=mobile-sync-20261126";
 
 import { initializeAIWorkspace } from "./ai-workspace.js?v=usage-20261127";
@@ -63,6 +63,21 @@ const onboarding = initializeHomeOnboarding((view) => {
   if (view === "search" && searchScreen === "intro") openSearchEditor();
 });
 let loadingPlans;
+let referralUser;
+let referralsLoading;
+function showReferrals() {
+  const host = document.querySelector('#referrals-root');
+  if (!referralUser || referralsLoading || host.dataset.referralUser === referralUser.uid) return;
+  const user = referralUser;
+  host.dataset.referralUser = user.uid;
+  referralsLoading = import('../public/app-referrals.v1.js?v=referrals-preview')
+    .then(({ mountReferrals }) => mountReferrals(host, user))
+    .catch(() => {
+      delete host.dataset.referralUser;
+      host.textContent = 'Não foi possível carregar seus convites. Abra esta aba novamente para tentar.';
+    })
+    .finally(() => { referralsLoading = null; });
+}
 
 function showPlansPricing() {
   if (loadingPlans) return;
@@ -92,6 +107,7 @@ function showView(name, updateUrl = true) {
   });
   if (view === "analytics") onboarding.complete("analytics");
   if (view === "plans") showPlansPricing();
+  if (view === "referrals") showReferrals();
   if (updateUrl && location.hash !== `#${view}`) history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -357,6 +373,12 @@ let auth = null;
 if (isFirebaseConfigured) {
   auth = getAuth(initializeApp(firebaseConfig));
   onAuthStateChanged(auth, (user) => {
+    referralUser = user;
+    if (!user) {
+      const host = document.querySelector('#referrals-root');
+      delete host.dataset.referralUser;
+      host.replaceChildren();
+    } else if (activeView === 'referrals') showReferrals();
     usageWorkspace.setUser(user);
     onboarding.setUser(user?.uid);
     if (!user) {
