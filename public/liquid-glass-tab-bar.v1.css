@@ -2,8 +2,8 @@
   position: relative;
   isolation: isolate;
   width: 100%;
-  max-width: 450px;
-  height: 64px;
+  max-width: 480px;
+  height: var(--mobile-tabs-height, 72px);
   margin-inline: auto;
   border-radius: 999px;
   touch-action: pan-y pinch-zoom;
@@ -36,8 +36,9 @@
   pointer-events: none;
 }
 
-.liquid-glass-track {
-  background: linear-gradient(180deg, rgb(255 255 255 / 70%), rgb(255 255 255 / 57%) 55%, rgb(255 255 255 / 64%));
+.liquid-glass-track,
+.mobile-more-panel {
+  background: linear-gradient(180deg, rgb(248 250 255 / 88%), rgb(238 243 252 / 80%) 55%, rgb(247 250 255 / 86%));
   -webkit-backdrop-filter: blur(24px) saturate(1.85);
   backdrop-filter: blur(24px) saturate(1.85);
   box-shadow: 0 14px 36px -10px rgb(0 0 0 / 28%), 0 2px 8px rgb(0 0 0 / 10%),
@@ -61,7 +62,7 @@
 }
 
 .liquid-glass-track::before { opacity: .5; }
-.liquid-glass-base { color: #11131a; pointer-events: none; }
+.liquid-glass-base { color: #343b48; pointer-events: none; }
 
 .liquid-glass-item,
 .liquid-glass-icon {
@@ -70,14 +71,14 @@
   justify-content: center;
 }
 
-.liquid-glass-item { min-width: 0; flex-direction: column; gap: 3px; }
-.liquid-glass-icon svg { display: block; width: 22px; height: 22px; }
-.liquid-glass-icon svg:not([fill]) { fill: none; }
-.liquid-glass-icon svg:not([stroke]) { stroke: currentColor; }
-.liquid-glass-icon svg:not([stroke-width]) { stroke-width: 1.7; }
-.liquid-glass-icon svg:not([stroke-linecap]) { stroke-linecap: round; }
-.liquid-glass-icon svg:not([stroke-linejoin]) { stroke-linejoin: round; }
-.liquid-glass-label { font-size: 11px; line-height: 12px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+.liquid-glass-item { min-width: 0; flex-direction: column; gap: 5px; }
+:is(.liquid-glass-icon, .mobile-more-icon) svg { display: block; width: 24px; height: 24px; }
+:is(.liquid-glass-icon, .mobile-more-icon) svg:not([fill]) { fill: none; }
+:is(.liquid-glass-icon, .mobile-more-icon) svg:not([stroke]) { stroke: currentColor; }
+:is(.liquid-glass-icon, .mobile-more-icon) svg:not([stroke-width]) { stroke-width: 1.7; }
+:is(.liquid-glass-icon, .mobile-more-icon) svg:not([stroke-linecap]) { stroke-linecap: round; }
+:is(.liquid-glass-icon, .mobile-more-icon) svg:not([stroke-linejoin]) { stroke-linejoin: round; }
+.liquid-glass-label { font-size: 11px; line-height: 14px; font-weight: 600; letter-spacing: 0; white-space: nowrap; }
 
 .liquid-glass-lens,
 .liquid-glass-blue {
@@ -88,12 +89,14 @@
 }
 
 .liquid-glass-lens { overflow: hidden; opacity: 0; }
-.liquid-glass-rest {
-  background: rgb(0 0 0 / 6.8%);
-  box-shadow: inset 0 1px 1px rgb(255 255 255 / 55%);
-  opacity: var(--rest-opacity, 1);
+.liquid-glass-rest,
+.mobile-more-link[aria-current="page"] {
+  background: linear-gradient(145deg, rgb(78 137 235 / 20%), rgb(140 102 226 / 13%));
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 75%), inset 0 0 0 1px rgb(74 111 177 / 12%);
 }
-.liquid-glass-blue { transform-origin: 0 0; color: #003579; }
+.liquid-glass-rest { opacity: var(--rest-opacity, 1); }
+.liquid-glass-blue { transform-origin: 0 0; color: #154b9a; }
+.liquid-glass-blue .liquid-glass-label { font-weight: 700; }
 .liquid-glass-shell {
   opacity: var(--shell-opacity, 0);
   -webkit-backdrop-filter: saturate(1.75) contrast(1.05) brightness(1.04);
@@ -112,20 +115,90 @@
 .liquid-glass-actions button {
   min-width: 0;
   min-height: 44px;
-  margin: 3px 0;
+  margin: 4px 0;
   padding: 0;
   border: 0;
   border-radius: 999px;
   appearance: none;
   background: transparent;
-  cursor: grab;
+  cursor: pointer;
   touch-action: pan-y pinch-zoom;
 }
-.liquid-glass-actions button:active { cursor: grabbing; }
 .product-app .liquid-glass-actions button:focus-visible { outline: 2px solid #004593; outline-offset: -3px; }
 
+.mobile-more-panel {
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(100% + 10px);
+  box-sizing: border-box;
+  width: min(100%, 360px);
+  max-height: calc(100dvh - var(--mobile-tabs-clearance) - env(safe-area-inset-top, 0px) - 8px);
+  margin-inline: auto;
+  padding: 9px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 24px;
+}
+.mobile-more-panel:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+.mobile-more-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 15px;
+  background-color: transparent;
+  color: #343b48;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: start;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.mobile-more-icon { flex: none; }
+.mobile-more-icon svg { width: 20px; height: 20px; }
+.mobile-more-link[aria-current="page"] { color: #154b9a; }
+.mobile-more-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 4px 10px 6px;
+  color: #732027;
+  font-size: .8125rem;
+  line-height: 1.4;
+}
+.product-app .mobile-more-link:focus-visible { outline: 2px solid #004593; outline-offset: -2px; }
+.mobile-more-link:active { background-color: rgb(50 88 152 / 15%); }
+@media (hover: hover) {
+  .mobile-more-link:hover { background-color: rgb(50 88 152 / 9%); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-more-panel:not([hidden]) {
+    transform-origin: bottom center;
+    animation: mobile-more-open 160ms ease-out;
+  }
+  @keyframes mobile-more-open {
+    from { opacity: 0; transform: translateY(5px) scale(.985); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .liquid-glass-track, .mobile-more-panel { background: #edf2fa; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
 @media (forced-colors: active) {
-  .liquid-glass-track { border: 1px solid CanvasText; background: Canvas; }
+  .liquid-glass-track, .mobile-more-panel { border: 1px solid CanvasText; background: Canvas; }
+  .mobile-more-link[aria-current="page"] { outline: 2px solid Highlight; outline-offset: -4px; }
   .liquid-glass-track::before, .liquid-glass-lens { display: none; }
   .liquid-glass-base { color: CanvasText; clip-path: none !important; }
   .liquid-glass-actions button { forced-color-adjust: none; }

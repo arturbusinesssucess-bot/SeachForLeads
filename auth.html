@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css?v=auth-brand-20261115" />
+    <link rel="stylesheet" href="/public/site-navigation.v1.css?v=mobile-nav-20261127" />
   </head>
   <body class="auth-page">
     <main class="auth-screen">
@@ -64,7 +65,7 @@
               <input id="auth-confirm" type="password" autocomplete="new-password" placeholder="Repita sua senha" minlength="6" />
             </div>
             <p class="auth-message" id="auth-message" role="alert" aria-live="polite"></p>
-            <button class="qualify-button auth-page-submit" type="submit" id="auth-submit"><span>Entrar</span></button>
+            <button class="qualify-button auth-page-submit" type="submit" id="auth-submit"><span data-auth-submit-label>Entrar</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></button>
           </form>
           <div class="auth-divider"><span>ou entre com</span></div>
           <button class="auth-google-button" id="auth-google" type="button">
@@ -77,6 +78,6 @@
     </main>
 
     <script type="module" src="auth-glass-fold.js"></script>
-    <script type="module" src="auth.js"></script>
+    <script type="module" src="auth.js?v=mobile-nav-20261127"></script>
   </body>
 </html>

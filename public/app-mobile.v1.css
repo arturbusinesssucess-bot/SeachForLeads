@@ -3,8 +3,9 @@
 @media (max-width: 767px) {
   .product-app {
     --app-mobile-header: calc(64px + env(safe-area-inset-top, 0px));
+    --mobile-tabs-height: 72px;
     --mobile-tabs-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    --mobile-tabs-clearance: calc(64px + var(--mobile-tabs-bottom) + 12px);
+    --mobile-tabs-clearance: calc(var(--mobile-tabs-height) + var(--mobile-tabs-bottom) + 16px);
   }
   #mobile-tab-bar:not(:empty) {
     position: fixed;
@@ -13,7 +14,7 @@
     bottom: var(--mobile-tabs-bottom);
     left: max(12px, env(safe-area-inset-left));
     display: grid;
-    max-width: 450px;
+    max-width: 480px;
     margin-inline: auto;
   }
   .product-app:has(> #mobile-tab-bar:not(:empty)) .sidebar-menu-button { display: none; }

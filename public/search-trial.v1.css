@@ -262,6 +262,7 @@
 }
 
 #trial-result-list > li {
+  position: relative;
   display: grid;
   grid-template-rows: 1fr auto;
   min-width: 0;
@@ -275,15 +276,48 @@
   transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 
-#trial-result-list > li:focus-within,
-#trial-result-list > li:has(input:checked) { border-color: #4b89ed; }
+#trial-result-list > li::before {
+  position: absolute;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: linear-gradient(110deg, #4388ff 0%, #9667ff 30%, #5ab5ff 54%, #8b5cf6 76%, #4388ff 100%);
+  background-size: 240% 100%;
+  content: "";
+  pointer-events: none;
+  opacity: 0;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  transition: opacity 180ms ease;
+  animation: trial-border-gradient 3s linear infinite paused;
+}
 
-@media (hover: hover) {
-  #trial-result-list > li:hover {
-    transform: translateY(-2px);
-    border-color: #4b89ed;
-    box-shadow: 0 6px 18px #0a173f66;
+#trial-result-list > li:has(:focus-visible)::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #trial-result-list > li:hover::before {
+    opacity: 1;
+    animation-play-state: running;
   }
+}
+
+@keyframes trial-border-gradient {
+  from { background-position: 0% 50%; }
+  to { background-position: 200% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #trial-result-list > li::before { animation: none; transition: none; }
+}
+
+@media (forced-colors: active) {
+  #trial-result-list > li::before { display: none; }
+  #trial-result-list > li:hover { border-color: Highlight; }
 }
 
 @keyframes trial-lead-enter {

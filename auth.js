@@ -16,6 +16,7 @@ const form = document.querySelector("#auth-form");
 const title = document.querySelector("#auth-title");
 const copy = document.querySelector("#auth-copy");
 const submit = document.querySelector("#auth-submit");
+const submitLabel = submit.querySelector("[data-auth-submit-label]");
 const message = document.querySelector("#auth-message");
 const passwordInput = document.querySelector("#auth-password");
 const passwordToggle = document.querySelector("#auth-password-toggle");
@@ -50,7 +51,7 @@ function setMode(nextMode) {
   passwordInput.autocomplete = signup ? "new-password" : "current-password";
   title.textContent = signup ? "Crie seu acesso ao radar." : "Volte para o radar.";
   copy.textContent = signup ? "Comece seus 14 dias grátis e desbloqueie a análise completa." : "Entre para continuar sua busca de leads.";
-  submit.textContent = signup ? "Criar conta" : "Entrar";
+  submitLabel.textContent = signup ? "Criar conta" : "Entrar";
   modeCaption.textContent = signup ? "Já tem uma conta?" : "Ainda não tem conta?";
   modeToggle.textContent = signup ? "Entrar" : "Comece grátis";
   setMessage("");
