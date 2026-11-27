@@ -1,3 +1,4 @@
+import { contactRingPath } from "./contact-ring.mjs";
 import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=mobile-sync-20261126";
 
 const unspecifiedCity = "Localização não informada";
@@ -52,39 +53,6 @@ const percentage = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 function setText(selector, value) { const element = document.querySelector(selector); if (element) element.textContent = value; }
 function percent(value) { return value === null ? "—" : `${percentage.format(value)}%`; }
 
-function contactRingPath(rate) {
-  if (rate <= 0) return "";
-
-  const center = 55;
-  const outer = 48.5;
-  const inner = 39.5;
-  const thickness = outer - inner;
-  const fullTurn = 2 * Math.PI;
-  const angle = rate / 100 * fullTurn;
-  const point = (radius, at, tangent = 0) => {
-    const x = center + radius * Math.cos(at) - tangent * Math.sin(at);
-    const y = center + radius * Math.sin(at) + tangent * Math.cos(at);
-    return `${x.toFixed(3)} ${y.toFixed(3)}`;
-  };
-
-  if (rate >= 100) {
-    return [outer, inner].map((radius) => (
-      `M ${point(radius, 0)} A ${radius} ${radius} 0 0 1 ${point(radius, Math.PI)} A ${radius} ${radius} 0 0 1 ${point(radius, 0)} Z`
-    )).join(" ");
-  }
-
-  const large = angle > Math.PI ? 1 : 0;
-  const wave = Math.min(thickness, inner * Math.min(angle, fullTurn - angle) / 3);
-  const outerControl = outer - thickness / 3;
-  const innerControl = inner + thickness / 3;
-  return [
-    `M ${point(outer, 0)}`,
-    `A ${outer} ${outer} 0 ${large} 1 ${point(outer, angle)}`,
-    `C ${point(outerControl, angle, wave)} ${point(innerControl, angle, -wave)} ${point(inner, angle)}`,
-    `A ${inner} ${inner} 0 ${large} 0 ${point(inner, 0)}`,
-    `C ${point(innerControl, 0, -wave)} ${point(outerControl, 0, wave)} ${point(outer, 0)} Z`,
-  ].join(" ");
-}
 
 function stageDot(color) {
   const dot = document.createElement("span");

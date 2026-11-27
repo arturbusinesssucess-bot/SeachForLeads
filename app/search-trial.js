@@ -70,7 +70,7 @@ async function waitForTrialStep(startedAt, offset, signal) {
   signal.throwIfAborted();
 }
 
-export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, leadDetails, onCRMReady, onProgress = () => {} }) {
+export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, leadDetails, onCRMReady, onProgress = () => {}, onAccess = () => {}, onUsageCRM = () => {}, onSearchResult = () => {} }) {
   const status = document.querySelector("#search-status");
   const searchSubmit = form.querySelector('button[type="submit"]');
   const notice = document.querySelector("#trial-search-notice");
@@ -228,6 +228,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
 
   function receiveLeads(next) {
     crmStatus.textContent = "";
+    onUsageCRM(next, { confirmed: true });
     try {
       localStorage.setItem(cacheKey(uid), JSON.stringify(next));
     } catch { /* CRM stays usable when browser storage is unavailable. */ }
@@ -314,6 +315,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   }
 
   function renderResults(batch, scope, mode, restoreFocus = true) {
+    onSearchResult({ count: batch.length, scope });
     const items = document.createDocumentFragment();
     resultButtons = new Map();
     for (const [index, lead] of batch.entries()) {
@@ -535,6 +537,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     accessStatus.textContent = message;
     accessStatus.hidden = !message;
     notice.hidden = !trialUser || !trialMode;
+    onAccess({ available: Boolean(trialUser), mode: trialMode ? "trial" : "live" });
     syncButtons();
   }
 
@@ -542,6 +545,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     const unavailable = () => {
       if (current !== revision) return;
       syncClient = undefined;
+      onUsageCRM(saved, { confirmed: false });
       syncButtons();
       crmStatus.textContent = saved.length
         ? "Não foi possível sincronizar o CRM. Exibindo os leads salvos neste navegador."
@@ -580,6 +584,8 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       stopWatching?.();
       stopWatching = undefined;
       uid = user?.uid ?? "";
+      onAccess(null);
+      onSearchResult(null);
       trialUser = undefined;
       pendingSearch?.abort();
       pendingSearch = undefined;
@@ -607,6 +613,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       const account = user.uid;
       try { legacyLeads = readSaved(`sfl:search-trial:v1:${account}`); } catch { legacyLeads = []; }
       try { saved = readSaved(cacheKey(account), legacyLeads); } catch { saved = legacyLeads; }
+      onUsageCRM(saved, { confirmed: false });
       crmStatus.textContent = saved.length ? "" : "Carregando leads…";
       renderRows();
       onCRMReady(saved.length > 0);

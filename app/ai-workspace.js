@@ -97,7 +97,7 @@ export function animateDisclosure(panel, prepareOpen) {
   return setOpen;
 }
 
-export function initializeAIWorkspace({ crmRows } = {}) {
+export function initializeAIWorkspace({ crmRows, onAvailability = () => {} } = {}) {
   const offerPane = document.querySelector("#ai-offer-panel");
   const offer = document.querySelector("#ai-offer");
   const offerButton = document.querySelector("#ai-suggest-niches");
@@ -356,6 +356,7 @@ export function initializeAIWorkspace({ crmRows } = {}) {
       cancel("leads");
       currentUser = user || null;
       availability = currentUser ? "checking" : "unavailable";
+      onAvailability(currentUser ? null : { available: false });
       unavailableMessage = "Entre na sua conta para usar a análise por IA.";
       updateControls();
       idleStatus();
@@ -372,7 +373,12 @@ export function initializeAIWorkspace({ crmRows } = {}) {
         availability = "unavailable";
         unavailableMessage = error.status ? messageFor(error.status) : messageFor(503);
       } finally {
-        if (revision === userRevision) { connection = null; updateControls(); idleStatus(); }
+        if (revision === userRevision) {
+          connection = null;
+          onAvailability({ available: availability === "ready" });
+          updateControls();
+          idleStatus();
+        }
       }
     },
   };
