@@ -73,7 +73,7 @@
   .product-app .search-field label { font-size: 14px; }
   .product-app .search-field input { min-height: 48px; font-size: 16px; }
   .product-app .search-field-help { font-size: 12px; line-height: 1.5; }
-  .product-app .crm-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-bottom: 24px; }
+  .product-app .crm-metrics:not([hidden]) { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-bottom: 24px; }
   .product-app .crm-metrics .metric-card { min-height: 140px; padding: 16px; }
   .product-app .crm-metrics .metric-card:last-child { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0,1fr) auto; align-content: center; gap: 6px 16px; min-height: 96px; }
   .product-app .crm-metrics .metric-card:last-child > p, .product-app .crm-metrics .metric-card:last-child > small { grid-column: 1; }
@@ -102,6 +102,13 @@
   .product-app .analytics-page-heading { margin-bottom: 24px; }
   .product-app .analytics-page-heading p { font-size: 14px; }
   .product-app .analytics-card { padding: 20px; }
+  .product-app .analytics-toolbar { gap: 12px; }
+  .product-app .analytics-filter { flex: 1 1 180px; }
+  .product-app .analytics-result-count { flex-basis: 100%; margin-left: 0; }
+  .product-app .analytics-funnel-scroll { overscroll-behavior-inline: contain; scroll-padding-inline: 8px; }
+  .product-app #analytics-funnel-note::after { display: block; margin-top: 8px; content: "Deslize o gráfico para ver todas as etapas."; }
+  .product-app .metrics-grid .metric-card { min-height: 136px; padding: 16px; }
+  .product-app .metrics-grid .metric-card > strong { font-size: clamp(28px, 8vw, 36px); }
   .product-app .analytics-ring { width: min(100%,180px); }
   .product-app .analytics-bars { gap: 16px; margin-top: 24px; }
   .product-app .analytics-bar-caption { font-size: 13px; gap: 12px; }
@@ -110,4 +117,7 @@
 }
 @media (max-width: 359px) {
   .product-app [data-view="home"] .home-panel { padding: 16px; }
+  .product-app .analytics-card { padding: 16px; }
+  .product-app .metrics-grid { gap: 8px; }
+  .product-app .metrics-grid .metric-card { padding: 14px 12px; }
 }

@@ -18,18 +18,19 @@
     <link rel="stylesheet" href="app.css?v=sidebar-inset" />
     <link rel="stylesheet" href="/public/app-selects.v1.css?v=crm-stage-counts" data-app-select-styles />
     <link rel="stylesheet" href="/public/workspace-analytics.v1.css?v=chart-entrance" />
-    <link rel="stylesheet" href="/public/analytics-activity.v1.css?v=heatmap-controls" />
+    <link rel="stylesheet" href="/public/analytics-activity.v1.css?v=mobile-sync-20261126" />
     <link rel="stylesheet" href="/public/app-buttons.v1.css" />
     <link rel="stylesheet" href="/public/home-quick-actions.v1.css?v=20261117-split" />
     <link rel="stylesheet" href="/public/home-onboarding.v1.css" />
-    <link rel="stylesheet" href="/public/app-mobile.v1.css?v=mobile-glass" />
+    <link rel="stylesheet" href="/public/app-mobile.v1.css?v=mobile-sync-20261126" />
     <link rel="stylesheet" href="/public/liquid-glass-tab-bar.v1.css?v=mobile-glass" media="(max-width: 767px)" />
     <link rel="stylesheet" href="/public/app-ai.v1.css?v=niche-disclosure" />
     <link rel="stylesheet" href="/public/app-settings.v1.css?v=pipeline-15" />
     <link rel="stylesheet" href="/public/search-trial.v1.css?v=step-feedback" />
-    <link rel="stylesheet" href="/public/crm-views.v1.css?v=drag-outline" />
+    <link rel="stylesheet" href="/public/crm-views.v1.css?v=mobile-sync-20261126" />
     <link rel="stylesheet" href="/public/crm-lead-drawer.v1.css" />
     <link rel="stylesheet" href="/public/plans-pricing.v1.css?v=pricing-mist" />
+    <link rel="stylesheet" href="/public/app-usage.v1.css?v=usage-20261127" />
   </head>
   <body class="product-app sidebar-ui" data-auth="checking">
     <header class="sidebar-mobile-bar">
@@ -461,7 +462,7 @@
                   <stop offset="100%" stop-color="#17795f"/>
                 </linearGradient></defs>
                 <circle cx="55" cy="55" r="44" fill="none" stroke="#303030" stroke-width="9"/>
-                <path id="analytics-contact-ring" fill="url(#analytics-contact-gradient)" fill-rule="evenodd" d=""/>
+                <path id="analytics-contact-ring" fill="none" stroke="url(#analytics-contact-gradient)" stroke-width="9" stroke-linecap="round" d=""/>
               </svg><strong id="analytics-contact-rate">—</strong></div><p class="analytics-contact-caption" id="analytics-contact-caption">Aguardando os primeiros leads</p><ul class="analytics-legend"><li><span class="stage-color-dot" data-stage-color="green" aria-hidden="true"></span>Etapas de contato<strong id="analytics-contact-yes">0</strong></li><li><span class="stage-color-dot" data-stage-color="blue" aria-hidden="true"></span>Demais etapas<strong id="analytics-not-contacted">0</strong></li></ul></section>
             <section class="analytics-card analytics-activity-card" aria-labelledby="analytics-activity-title">
               <header><h2 id="analytics-activity-title">Atividade no CRM</h2><p>Veja quantos leads foram salvos por dia nos últimos 365 dias, conforme os filtros selecionados.</p></header>
@@ -474,6 +475,7 @@
 
         <section class="app-view plans-view" data-view="plans" aria-label="Planos" hidden>
           <div id="plans-pricing-root"><p class="plans-load-status" role="status">Carregando planos…</p></div>
+          <div data-usage-panel></div>
         </section>
 
         <section class="app-view" data-view="referrals" aria-labelledby="referrals-title" hidden>
@@ -497,7 +499,7 @@
                 <div class="settings-tab-group" role="group" aria-labelledby="settings-group-account">
                   <h2 id="settings-group-account" class="settings-group-title">Conta</h2>
                   <button id="settings-tab-account" data-settings-tab="account" type="button" role="tab" aria-controls="settings-panel-account" aria-selected="false" tabindex="-1">Conta</button>
-                  <button id="settings-tab-plans" data-settings-tab="plans" type="button" role="tab" aria-controls="settings-panel-plans" aria-selected="false" tabindex="-1">Planos <span class="settings-tab-note">Em breve</span></button>
+                  <button id="settings-tab-usage" data-settings-tab="usage" type="button" role="tab" aria-controls="settings-panel-usage" aria-selected="false" tabindex="-1">Uso</button>
                 </div>
                 <div class="settings-tab-group" role="group" aria-labelledby="settings-group-sales">
                   <h2 id="settings-group-sales" class="settings-group-title">Vendas</h2>
@@ -514,7 +516,7 @@
                   <button type="button" class="settings-shortcut" data-settings-open="account"><svg class="settings-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg><strong>Conta e privacidade</strong><span>Veja seus dados e as informações legais.</span></button>
                   <button type="button" class="settings-shortcut" data-settings-open="pipeline"><svg class="settings-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18M15 3v18"/></svg><strong>Funil de vendas</strong><span>Personalize os nomes e a ordem das etapas abertas.</span></button>
                 </div>
-                <aside class="settings-card settings-plan-note"><div class="settings-plan-meta"><svg class="settings-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg><span class="settings-badge">Em breve</span></div><h3>Planos</h3><p>A área de planos está em preparação. Você poderá acompanhar as opções disponíveis por aqui.</p></aside>
+                <aside class="settings-card settings-plan-note"><div class="settings-plan-meta"><svg class="settings-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg></div><h3>Uso e limites</h3><p>Veja o acesso atual, os leads salvos e as vagas disponíveis na aba Uso.</p></aside>
               </section>
               <section id="settings-panel-profile" data-settings-panel="profile" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-profile" tabindex="0" hidden>
                 <header class="settings-panel-heading"><h2>Perfil</h2><p>Como você aparece no SearchForLeads.</p></header>
@@ -549,9 +551,8 @@
                 <section class="settings-card settings-stack"><h3>Dados da conta</h3><dl class="settings-account-details"><div><dt>Nome</dt><dd id="settings-account-name">Sua conta</dd></div><div><dt>E-mail</dt><dd id="settings-account-email">Carregando…</dd></div></dl></section>
                 <section class="settings-card settings-stack"><h3>Privacidade e informações legais</h3><nav class="settings-legal-links" aria-label="Informações legais"><a href="/politica-de-privacidade" data-settings-legal="privacy">Política de privacidade</a><a href="/politica-de-cookies" data-settings-legal="cookies">Política de cookies</a><a href="/termos-de-uso" data-settings-legal="terms">Termos de uso</a></nav></section>
               </section>
-              <section id="settings-panel-plans" data-settings-panel="plans" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-plans" tabindex="0" hidden>
-                <header class="settings-panel-heading"><h2>Planos</h2><p>Acompanhe as opções do SearchForLeads.</p></header>
-                <section class="settings-card settings-stack"><span class="settings-badge">Em breve</span><h3>Estamos preparando esta área</h3><p>As informações sobre planos e opções disponíveis aparecerão aqui.</p></section>
+              <section id="settings-panel-usage" data-settings-panel="usage" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-usage" tabindex="0" hidden>
+                <div data-usage-panel></div>
               </section>
               <section id="settings-panel-pipeline" data-settings-panel="pipeline" class="settings-panel" role="tabpanel" aria-labelledby="settings-tab-pipeline" tabindex="0" hidden>
                 <header class="settings-panel-heading"><h2>Funil de vendas</h2><p>Adicione etapas e personalize a ordem, os nomes e as cores do funil.</p></header>

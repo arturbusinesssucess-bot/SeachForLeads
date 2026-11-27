@@ -5,11 +5,36 @@ function workspace(uid) {
 }
 
 export function watchWorkspace(uid, receive, failed) {
-  return onSnapshot(workspace(uid), { includeMetadataChanges: true }, (snapshot) => {
-    if (!snapshot.metadata.fromCache && !snapshot.metadata.hasPendingWrites) {
-      receive(snapshot.data() ?? {});
-    }
-  }, failed);
+  let unsubscribe;
+  let generation = 0;
+  let stopped = false;
+  const connect = () => {
+    if (stopped) return;
+    const current = ++generation;
+    unsubscribe?.();
+    unsubscribe = onSnapshot(workspace(uid), { includeMetadataChanges: true }, (snapshot) => {
+      if (current !== generation || stopped) return;
+      if (!snapshot.metadata.fromCache && !snapshot.metadata.hasPendingWrites) {
+        receive(snapshot.data() ?? {});
+      }
+    }, (error) => {
+      if (current === generation && !stopped) failed?.(error);
+    });
+  };
+  const resume = () => { if (!document.hidden) connect(); };
+  const restore = (event) => { if (event.persisted) resume(); };
+  connect();
+  window.addEventListener("online", resume);
+  window.addEventListener("pageshow", restore);
+  document.addEventListener("visibilitychange", resume);
+  return () => {
+    stopped = true;
+    generation++;
+    unsubscribe?.();
+    window.removeEventListener("online", resume);
+    window.removeEventListener("pageshow", restore);
+    document.removeEventListener("visibilitychange", resume);
+  };
 }
 
 export function updateWorkspace(uid, change) {
