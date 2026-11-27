@@ -1,4 +1,4 @@
-const CACHE_NAME = "sfl-pwa-v13";
+const CACHE_NAME = "sfl-pwa-v14";
 const APP_SHELL = [
   "/app/",
   "/app/app.css?v=sidebar-inset",
