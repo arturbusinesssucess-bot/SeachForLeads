@@ -103,6 +103,56 @@ export function initializeAnalytics(tbody) {
   let records = [];
   let citySignature = "";
   let stageSignature = "";
+  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const ring = document.querySelector("#analytics-contact-ring");
+  const contactCard = ring.closest(".analytics-card");
+  const animatedCards = [...view.querySelectorAll(".analytics-card")]
+    .filter((card) => !card.contains(funnelHost));
+  let contactRate = 0;
+  let displayedRate = 0;
+  let ringFrame;
+
+  function drawContactRate(from = displayedRate) {
+    cancelAnimationFrame(ringFrame);
+    const target = contactRate;
+    if (motionPreference.matches || !contactCard.hasAttribute("data-chart-entered")) {
+      displayedRate = target;
+      ring.setAttribute("d", contactRingPath(target));
+      return;
+    }
+    let started;
+    function frame(time) {
+      started ??= time;
+      const progress = Math.min((time - started) / 800, 1);
+      displayedRate = from + (target - from) * (1 - (1 - progress) ** 3);
+      ring.setAttribute("d", contactRingPath(displayedRate));
+      if (progress < 1) ringFrame = requestAnimationFrame(frame);
+    }
+    ring.setAttribute("d", contactRingPath(from));
+    ringFrame = requestAnimationFrame(frame);
+  }
+
+  const entranceObserver = new IntersectionObserver((entries) => {
+    if (view.hidden || document.body.dataset.auth !== "ready") return;
+    for (const { target, isIntersecting } of entries) {
+      if (!isIntersecting || target.hasAttribute("data-chart-entered")) continue;
+      target.setAttribute("data-chart-entered", "");
+      if (target === contactCard) drawContactRate(0);
+    }
+  }, { threshold: 0.08 });
+
+  function syncChartEntrance() {
+    cancelAnimationFrame(ringFrame);
+    for (const card of animatedCards) {
+      entranceObserver.unobserve(card);
+      card.removeAttribute("data-chart-entered");
+      if (!view.hidden && document.body.dataset.auth === "ready") entranceObserver.observe(card);
+    }
+    updateCharts();
+  }
+
+  motionPreference.addEventListener("change", () => drawContactRate());
+  new MutationObserver(syncChartEntrance).observe(document.body, { attributes: true, attributeFilter: ["data-auth"] });
 
   function updateCharts() {
     if (view.hidden || (!funnelHost && !activityHost)) return;
@@ -156,8 +206,11 @@ export function initializeAnalytics(tbody) {
       : "Prévia visual do funil. Nenhum lead neste recorte.";
     updateActivity(filtered);
     updateCharts();
-    const ring = document.querySelector("#analytics-contact-ring");
-    ring.setAttribute("d", contactRingPath(summary.contactRate ?? 0));
+    const nextContactRate = summary.contactRate ?? 0;
+    if (nextContactRate !== contactRate) {
+      contactRate = nextContactRate;
+      drawContactRate();
+    }
     document.querySelector("#analytics-contact-chart").setAttribute("aria-label", summary.total ? `${number.format(summary.contacted)} de ${number.format(summary.total)} leads em etapas de contato: ${percent(summary.contactRate)}.` : "Cobertura de contato. Ainda não há leads.");
     setText("#analytics-contact-rate", percent(summary.contactRate));
     setText("#analytics-contact-caption", summary.total ? `${number.format(summary.contacted)} em etapas de contato` : "Aguardando os primeiros leads");
@@ -234,7 +287,7 @@ export function initializeAnalytics(tbody) {
     renderFiltered();
   }
 
-  new MutationObserver(updateCharts).observe(view, { attributes: true, attributeFilter: ["hidden"] });
+  new MutationObserver(syncChartEntrance).observe(view, { attributes: true, attributeFilter: ["hidden"] });
   window.addEventListener("sfl:pipeline-changed", refresh);
   stageFilter.addEventListener("change", renderFiltered);
   cityFilter.addEventListener("change", renderFiltered);
@@ -244,6 +297,7 @@ export function initializeAnalytics(tbody) {
     cityFilter.dispatchEvent(new Event("change", { bubbles: true }));
   });
   refresh();
+  syncChartEntrance();
   return { refresh };
 }
 
