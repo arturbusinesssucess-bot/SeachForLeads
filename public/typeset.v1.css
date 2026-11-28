@@ -1,0 +1,210 @@
+/* Shared typography with separate rhythm presets for reading and workspace views. */
+:root {
+  --typeset-font-body: Inter, "Segoe UI", system-ui, sans-serif;
+  --typeset-font-heading: var(--typeset-font-body);
+  --typeset-heading-weight: 650;
+  --typeset-heading-leading: 1.15;
+  --typeset-heading-tracking: -.035em;
+}
+
+.typeset-landing,
+.typeset-app {
+  font-family: var(--typeset-font-body);
+}
+
+.typeset-landing {
+  --typeset-size: 1rem;
+  --typeset-leading: 1.65;
+  --typeset-flow: 1rem;
+  --typeset-display: clamp(2.625rem, 7vw, 6rem);
+  --typeset-section: clamp(2rem, 4.3vw, 3.5rem);
+  --typeset-subheading: clamp(1.125rem, 1.7vw, 1.375rem);
+}
+
+.typeset-app {
+  --typeset-size: .9375rem;
+  --typeset-leading: 1.6;
+  --typeset-flow: .75rem;
+  --typeset-page: clamp(1.75rem, 1.45rem + .75vw, 2.375rem);
+  --typeset-section: clamp(1.375rem, 1.2rem + .6vw, 1.75rem);
+  --typeset-subheading: 1.0625rem;
+  --typeset-detail: .875rem;
+}
+
+.typeset-landing .hero #hero-title {
+  font-family: var(--typeset-font-heading);
+  font-size: var(--typeset-display);
+  font-weight: var(--typeset-heading-weight);
+  line-height: 1.05;
+  letter-spacing: -.055em;
+  text-wrap: balance;
+}
+
+.typeset-landing .hero-lede {
+  max-inline-size: 55ch;
+  margin-block-start: var(--typeset-flow);
+  font-size: clamp(1rem, .9rem + .4vw, 1.25rem);
+  line-height: var(--typeset-leading);
+  text-wrap: pretty;
+}
+
+.typeset-landing :is(.landing-product-heading, .faq-heading, .final-cta) h2 {
+  font-family: var(--typeset-font-heading);
+  font-size: var(--typeset-section);
+  font-weight: var(--typeset-heading-weight);
+  line-height: 1.1;
+  letter-spacing: var(--typeset-heading-tracking);
+  text-wrap: balance;
+}
+
+.typeset-landing .landing-preview-crm {
+  --typeset-section: clamp(1.875rem, 3.3vw, 2.875rem);
+}
+
+.typeset-landing .landing-product-heading h2 + p {
+  margin-block-start: var(--typeset-flow);
+}
+
+.typeset-landing .landing-product-heading p + p {
+  margin-block-start: calc(var(--typeset-flow) * .6);
+}
+
+.typeset-landing :is(.landing-process-list, .landing-audience-list) h3 {
+  font-size: var(--typeset-subheading);
+  font-weight: var(--typeset-heading-weight);
+  line-height: 1.3;
+  letter-spacing: -.02em;
+}
+
+.typeset-landing :is(
+  .landing-product-heading p:not(.landing-preview-label),
+  .landing-process-list p,
+  .landing-audience-list p,
+  .faq-description,
+  .faq-answer p,
+  .final-cta p
+) {
+  max-inline-size: 62ch;
+  font-size: var(--typeset-size);
+  line-height: var(--typeset-leading);
+}
+
+.typeset-landing .faq-item > summary {
+  font-size: var(--typeset-size);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.typeset-landing .landing-search-gallery figcaption {
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+.typeset-app :is(.welcome-row, .search-page-header, .analytics-page-heading, .settings-heading) h1 {
+  font-family: var(--typeset-font-heading);
+  font-size: var(--typeset-page);
+  font-weight: var(--typeset-heading-weight);
+  line-height: var(--typeset-heading-leading);
+  letter-spacing: var(--typeset-heading-tracking);
+}
+
+.typeset-app .referral-heading h1 {
+  font-family: var(--typeset-font-heading);
+  font-size: clamp(1.875rem, 1.35rem + 2vw, 2.75rem);
+  font-weight: var(--typeset-heading-weight);
+  line-height: var(--typeset-heading-leading);
+  letter-spacing: var(--typeset-heading-tracking);
+}
+
+.typeset-app :is(
+  .home-hero h2,
+  .search-intro > h2,
+  .search-editor-heading h2,
+  .settings-panel-heading h2,
+  .account-usage-heading h2
+),
+.typeset-app .search-glass-card .search-editor-heading h2,
+.typeset-app .crm-view .crm-empty h2 {
+  font-size: var(--typeset-section);
+  font-weight: var(--typeset-heading-weight);
+  line-height: var(--typeset-heading-leading);
+  letter-spacing: var(--typeset-heading-tracking);
+}
+
+.typeset-app :is(
+  .home-section-heading h2,
+  .panel-heading h2,
+  .analytics-card h2,
+  .settings-card h3,
+  .ai-result-heading,
+  .referral-invite h2
+) {
+  font-size: var(--typeset-subheading);
+  font-weight: var(--typeset-heading-weight);
+  line-height: 1.35;
+  letter-spacing: -.018em;
+}
+
+.typeset-app :is(
+  .welcome-copy,
+  .home-hero-main > p,
+  .search-intro > p,
+  .search-editor-heading p,
+  .analytics-page-heading p,
+  .settings-heading p,
+  .settings-panel-heading p,
+  .account-usage-heading p,
+  .referral-heading p
+),
+.typeset-app .search-glass-card .search-editor-heading p,
+.typeset-app .crm-view .crm-empty p {
+  max-inline-size: 62ch;
+  font-size: var(--typeset-size);
+  line-height: var(--typeset-leading);
+}
+
+.typeset-app :is(
+  .welcome-copy,
+  .analytics-page-heading h1 + p,
+  .settings-heading h1 + p,
+  .settings-panel-heading h2 + p,
+  .account-usage-heading h2 + p,
+  .referral-heading h1 + p
+) {
+  margin-block-start: var(--typeset-flow);
+}
+
+.typeset-app :is(
+  .home-section-heading p,
+  .analytics-card header > p,
+  .settings-card p,
+  .account-usage-access-description,
+  .referral-share-help,
+  .referral-balance p
+) {
+  font-size: var(--typeset-detail);
+  line-height: var(--typeset-leading);
+}
+
+/* Text content inside analysis results keeps the surrounding controls' sizing. */
+.typeset-app :is(.ai-result-summary, .ai-result-card > p, .ai-result-list) {
+  font-size: var(--typeset-size);
+  line-height: var(--typeset-leading);
+}
+
+.typeset-app .ai-result-card > h5 {
+  margin-block: var(--typeset-flow) calc(var(--typeset-flow) / 3);
+  font-size: var(--typeset-detail);
+}
+
+:is(.typeset-landing, .typeset-app) .plans-pricing-heading p {
+  font-size: var(--typeset-size);
+  line-height: var(--typeset-leading);
+}
+
+@media (max-width: 760px) {
+  .typeset-landing {
+    --typeset-display: clamp(2.375rem, 10.6vw, 3.75rem);
+    --typeset-flow: .875rem;
+  }
+}
