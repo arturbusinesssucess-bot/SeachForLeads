@@ -90,6 +90,9 @@ export function initializeAnalytics(tbody) {
   const cityFilter = document.querySelector("#analytics-city");
   if (!view || !stageFilter || !cityFilter) return null;
   const reset = document.querySelector("#analytics-reset");
+  const filtersButton = document.querySelector("#analytics-filters-toggle");
+  const filtersPanel = document.querySelector("#analytics-filters-panel");
+  const filtersCount = document.querySelector("#analytics-filters-count");
   const stageChart = document.querySelector("#analytics-stage-chart");
   const stageBars = document.querySelector("#analytics-stage-bars");
   const funnelHost = document.querySelector("#analytics-funnel");
@@ -196,7 +199,11 @@ export function initializeAnalytics(tbody) {
     setText("#analytics-lost", number.format(summary.counts.lost));
     setText("#analytics-localities", number.format(summary.cities.filter(({ label }) => label !== unspecifiedCity).length));
     setText("#analytics-result-count", `${number.format(summary.total)} de ${number.format(records.length)} leads`);
-    reset.hidden = stageFilter.value === "all" && !cityFilter.value;
+    const activeFilters = Number(stageFilter.value !== "all") + Number(Boolean(cityFilter.value));
+    reset.hidden = activeFilters === 0;
+    filtersCount.hidden = activeFilters === 0;
+    filtersCount.textContent = String(activeFilters);
+    filtersButton.setAttribute("aria-label", activeFilters ? `Filtros, ${activeFilters} ${activeFilters === 1 ? "ativo" : "ativos"}` : "Filtros");
     funnelStages = crmStages.filter((stage) => stage.key !== "other" || summary.counts.other).map((stage) => ({ id: stage.key, label: stage.label, color: stage.color, value: summary.counts[stage.key] }));
     renderBars(stageBars, funnelStages, summary.total);
     const stageDescription = funnelStages.map((stage) => `${stage.label}: ${number.format(stage.value)}`).join("; ");
@@ -287,7 +294,22 @@ export function initializeAnalytics(tbody) {
     renderFiltered();
   }
 
-  new MutationObserver(syncChartEntrance).observe(view, { attributes: true, attributeFilter: ["hidden"] });
+  filtersButton.addEventListener("click", () => {
+    if (filtersPanel.open) return;
+    filtersPanel.showModal();
+    filtersButton.setAttribute("aria-expanded", "true");
+  });
+  document.querySelector("#analytics-filters-done").addEventListener("click", () => filtersPanel.close());
+  filtersPanel.addEventListener("close", () => filtersButton.setAttribute("aria-expanded", "false"));
+  filtersPanel.addEventListener("click", (event) => {
+    if (event.target !== filtersPanel) return;
+    const bounds = filtersPanel.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) filtersPanel.close();
+  });
+  new MutationObserver(() => {
+    if (view.hidden && filtersPanel.open) filtersPanel.close();
+    syncChartEntrance();
+  }).observe(view, { attributes: true, attributeFilter: ["hidden"] });
   window.addEventListener("sfl:pipeline-changed", refresh);
   stageFilter.addEventListener("change", renderFiltered);
   cityFilter.addEventListener("change", renderFiltered);
