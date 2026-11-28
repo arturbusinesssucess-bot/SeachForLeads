@@ -1,0 +1,150 @@
+@property --sfl-orb-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.product-app[data-loading="true"] { overflow: hidden; }
+
+.app-loading {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 28px;
+  width: 100%;
+  min-height: 100svh;
+  padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #000;
+  color: #f2f3f5;
+}
+
+.app-loading[hidden],
+#app-loading-error[hidden] {
+  display: none;
+}
+
+.app-loading .siri-orb {
+  --bg: transparent;
+  --c1: #f484bd;
+  --c2: #6dd5dc;
+  --c3: #b4a5ff;
+  --animation-duration: 20s;
+  --blur-amount: 15.36px;
+  --contrast-amount: 1.8;
+  position: relative;
+  display: grid;
+  grid-template-areas: "stack";
+  width: 192px;
+  height: 192px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 255 255 / .08), rgb(255 255 255 / .02) 30%, transparent 70%), var(--bg);
+}
+
+@supports (color: oklch(75% .15 350)) {
+  .app-loading .siri-orb {
+    --c1: oklch(75% .15 350);
+    --c2: oklch(80% .12 200);
+    --c3: oklch(78% .14 280);
+  }
+}
+
+.app-loading .siri-orb::before {
+  content: "";
+  display: block;
+  grid-area: stack;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    conic-gradient(from calc(var(--sfl-orb-angle) * 1.2) at 30% 65%, var(--c3) 0deg, transparent 45deg 315deg, var(--c3) 360deg),
+    conic-gradient(from calc(var(--sfl-orb-angle) * .8) at 70% 35%, var(--c2) 0deg, transparent 60deg 300deg, var(--c2) 360deg),
+    conic-gradient(from calc(var(--sfl-orb-angle) * -1.5) at 65% 75%, var(--c1) 0deg, transparent 90deg 270deg, var(--c1) 360deg),
+    conic-gradient(from calc(var(--sfl-orb-angle) * 2.1) at 25% 25%, var(--c2) 0deg, transparent 30deg 330deg, var(--c2) 360deg),
+    conic-gradient(from calc(var(--sfl-orb-angle) * -.7) at 80% 80%, var(--c1) 0deg, transparent 45deg 315deg, var(--c1) 360deg),
+    radial-gradient(ellipse 120% 80% at 40% 60%, var(--c3) 0%, transparent 50%);
+  filter: blur(var(--blur-amount)) contrast(var(--contrast-amount)) saturate(1.2);
+  animation: sfl-orb-rotate var(--animation-duration) linear infinite;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.app-loading .siri-orb::after {
+  content: "";
+  display: block;
+  grid-area: stack;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 45% 55%, rgb(255 255 255 / .1) 0%, rgb(255 255 255 / .05) 30%, transparent 60%);
+  mix-blend-mode: overlay;
+}
+
+@keyframes sfl-orb-rotate {
+  from { --sfl-orb-angle: 0deg; }
+  to { --sfl-orb-angle: 360deg; }
+}
+
+.app-loading-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+#app-loading-error {
+  width: min(100%, 28rem);
+  text-align: center;
+}
+
+#app-loading-error p {
+  margin: 0 0 16px;
+  color: #b6becd;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.app-loading-retry {
+  min-height: 44px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: #2f6fe0;
+  box-shadow: 0 0 24px rgb(54 124 255 / .28);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.app-loading-retry:hover { background: #2c67d2; }
+.app-loading-retry:focus-visible { outline: 2px solid #a8b8ff; outline-offset: 4px; }
+
+@media (max-width: 767px) {
+  .app-loading .siri-orb {
+    --blur-amount: 11.52px;
+    width: 144px;
+    height: 144px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-loading .siri-orb::before { animation: none; will-change: auto; }
+}
+
+@media (forced-colors: active) {
+  .app-loading .siri-orb { border: 2px solid Highlight; }
+  .app-loading .siri-orb::before,
+  .app-loading .siri-orb::after { display: none; }
+}

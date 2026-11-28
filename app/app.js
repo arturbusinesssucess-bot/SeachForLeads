@@ -7,6 +7,7 @@ if ("serviceWorker" in navigator && window.isSecureContext) {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
+import { appLoading } from "./app-loading.js?v=siri-orb";
 
 import { initializeSettings } from "./settings.js?v=usage-20261127";
 import { initializeUsage } from "./usage.js?v=number-cards";
@@ -16,12 +17,12 @@ import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline
 import { initializeAIWorkspace } from "./ai-workspace.js?v=usage-20261127";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=flux-loader";
+import { initializeSearchTrial } from "./search-trial.js?v=siri-orb";
 import { initializeHomeOnboarding } from "./home-onboarding.js";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
-import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=number-cards";
+import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=siri-orb";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js?v=mobile-glass";
 const sidebar = initializeSidebar();
@@ -71,6 +72,7 @@ function showReferrals() {
   const host = document.querySelector('#referrals-root');
   if (!referralUser || referralsLoading || host.dataset.referralUser === referralUser.uid) return;
   const user = referralUser;
+  const finishLoading = appLoading.begin('referrals');
   host.dataset.referralUser = user.uid;
   referralsLoading = import('../public/app-referrals.v1.js?v=referral-gradient-card')
     .then(({ mountReferrals }) => mountReferrals(host, user))
@@ -78,7 +80,7 @@ function showReferrals() {
       delete host.dataset.referralUser;
       host.textContent = 'Não foi possível carregar seus convites. Abra esta aba novamente para tentar.';
     })
-    .finally(() => { referralsLoading = null; });
+    .finally(() => { referralsLoading = null; finishLoading(); });
 }
 
 function showPlansPricing() {
@@ -86,17 +88,20 @@ function showPlansPricing() {
   const host = document.querySelector("#plans-pricing-root");
   const status = host.querySelector("[role=status]");
   status.textContent = "Carregando planos…";
+  const finishLoading = appLoading.begin('plans');
   loadingPlans = import("../public/plans-pricing.v1.js?v=usage-20261127")
     .then(({ renderPlansPricing }) => renderPlansPricing(host))
     .catch(() => {
       loadingPlans = undefined;
       status.textContent = "Não foi possível carregar os planos. Abra esta aba novamente para tentar.";
-    });
+    })
+    .finally(finishLoading);
 }
 
 function showView(name, updateUrl = true) {
   const view = viewNames[name] ? name : "home";
   activeView = view;
+  appLoading.setView(view);
   mobileNavigation?.setView(view);
   if (view !== "crm") document.querySelector("#crm-lead-drawer")?.close();
   if (view !== "search" && searchScreen === "form" && searchFormReturn === "results") {
@@ -381,6 +386,7 @@ if (isFirebaseConfigured) {
   onAuthStateChanged(auth, (user) => {
     referralUser = user;
     if (!user) {
+      appLoading.restartStartup();
       const host = document.querySelector('#referrals-root');
       delete host.dataset.referralUser;
       host.replaceChildren();
@@ -406,8 +412,10 @@ if (isFirebaseConfigured) {
     setPipelineUser(user.uid);
     settingsWorkspace?.setUser(user);
     aiWorkspace?.setUser(user);
-    searchTrial.setUser(user);
-  });
+    const finishSearchLoading = appLoading.begin('search');
+    searchTrial.setUser(user).finally(finishSearchLoading);
+    appLoading.finishStartup();
+  }, () => appLoading.failStartup());
 } else {
   window.location.replace("/auth?mode=login");
 }

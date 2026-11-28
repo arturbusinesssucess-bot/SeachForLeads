@@ -1,4 +1,5 @@
 import { contactRingPath } from "./contact-ring.mjs";
+import { appLoading } from "./app-loading.js?v=siri-orb";
 import { classifyStage, decorateRowStage, getAnalyticsStages, getStageColor, isCustomStage, resolveRowStage } from "./pipeline.js?v=mobile-sync-20261126";
 
 const unspecifiedCity = "Localização não informada";
@@ -171,6 +172,7 @@ export function initializeAnalytics(tbody) {
       }
       if (activityHost) charts.renderAnalyticsActivity(activityHost, activity);
     } else if (!loadingCharts) {
+      const finishLoading = appLoading.begin('analytics');
       loadingCharts = import("/public/analytics-funnel.v2.js?v=mobile-sync-20261126")
         .then((module) => {
           charts = module;
@@ -180,7 +182,7 @@ export function initializeAnalytics(tbody) {
           const status = activityHost?.querySelector('[role="status"]');
           if (status) status.textContent = "Não foi possível carregar o mapa de calor.";
         })
-        .finally(() => { loadingCharts = null; });
+        .finally(() => { loadingCharts = null; finishLoading(); });
     }
   }
 

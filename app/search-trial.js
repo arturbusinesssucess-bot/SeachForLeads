@@ -1,5 +1,6 @@
 import { dialLeadPhone, leadMapURL, readLeadContact } from "../shared/lead-contact.mjs";
 import { getDefaultPipeline, getPipeline } from "./pipeline.js?v=mobile-sync-20261126";
+import { appLoading } from "./app-loading.js?v=siri-orb";
 
 const limit = 10;
 const trialLoadingMs = 10000;
@@ -538,7 +539,9 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   }
 
   async function connectCRM(account, current) {
+    const finishLoading = appLoading.begin(['home', 'crm', 'analytics', 'settings', 'plans']);
     const unavailable = () => {
+      finishLoading();
       if (current !== revision) return;
       syncClient = undefined;
       onUsageCRM(saved, { confirmed: false });
@@ -549,7 +552,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     };
     try {
       const sync = await import("./workspace-sync.js?v=mobile-sync-20261126");
-      if (current !== revision) return;
+      if (current !== revision) { finishLoading(); return; }
       const backup = legacyLeads;
       if (backup.length) {
         await sync.updateWorkspace(account, ({ leads }) => {
@@ -559,14 +562,16 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
           return missing.length ? { leads: [...existing, ...missing] } : null;
         }).catch(() => { /* An old local backup must not block the live CRM subscription. */ });
       }
-      if (current !== revision) return;
-      stopWatching = sync.watchWorkspace(account, ({ leads }) => {
+      if (current !== revision) { finishLoading(); return; }
+      const stop = sync.watchWorkspace(account, ({ leads }) => {
         if (current !== revision) return;
+        finishLoading();
         snapshotVersion++;
         syncClient = sync;
         receiveLeads(readLeads(leads));
         syncButtons();
       }, unavailable);
+      stopWatching = () => { finishLoading(); stop(); };
     } catch {
       unavailable();
     }

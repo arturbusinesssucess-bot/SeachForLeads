@@ -39,6 +39,7 @@
   to { opacity: 1; }
 }
 .product-app:not([data-auth="ready"]) :is(.card-odometer-tape, .card-odometer-reels) { animation-play-state: paused; }
+.product-app[data-loading="true"] :is(.card-odometer-tape, .card-odometer-reels) { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   .card-odometer-tape, .card-odometer-reels { animation: none; }
 }
