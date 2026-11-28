@@ -114,10 +114,11 @@ export function initializeUsage() {
           progress.append(fill);
           article.append(progress);
         }
-        const footer = element('div', 'account-usage-card-footer');
-        footer.append(element('p', 'account-usage-detail', card.detail));
-        if (card.note) footer.append(element('p', 'account-usage-note', card.note));
-        article.append(footer);
+        if (!card.progress || card.state === 'pending') {
+          const footer = element('div', 'account-usage-card-footer');
+          footer.append(element('p', 'account-usage-detail', card.detail));
+          article.append(footer);
+        }
         content.append(article);
       }
       grid.replaceChildren(content);

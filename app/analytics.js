@@ -50,7 +50,10 @@ export function summarizeCRM(records) {
 
 const number = new Intl.NumberFormat("pt-BR");
 const percentage = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
-function setText(selector, value) { const element = document.querySelector(selector); if (element) element.textContent = value; }
+function setText(selector, value) {
+  const element = document.querySelector(selector);
+  if (element && element.textContent !== value) element.textContent = value;
+}
 function percent(value) { return value === null ? "—" : `${percentage.format(value)}%`; }
 
 

@@ -9,7 +9,8 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { firebaseConfig, isFirebaseConfigured } from "../firebase-config.js";
 
 import { initializeSettings } from "./settings.js?v=usage-20261127";
-import { initializeUsage } from "./usage.js?v=usage-cards-referrals";
+import { initializeUsage } from "./usage.js?v=number-cards";
+import { initializeNumberCards } from "./number-cards.js?v=number-cards";
 import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline.js?v=mobile-sync-20261126";
 
 import { initializeAIWorkspace } from "./ai-workspace.js?v=usage-20261127";
@@ -20,12 +21,13 @@ import { initializeHomeOnboarding } from "./home-onboarding.js";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
 import { initializeCRMViews } from "./crm-views.js?v=board-drag";
-import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=combined-filters";
+import { readCRMRecords, initializeAnalytics } from "./analytics.js?v=number-cards";
 
 import { initializeSidebar } from "../public/app-sidebar.v1.js?v=mobile-glass";
 const sidebar = initializeSidebar();
 initializeAppSelects();
 const usageWorkspace = initializeUsage();
+initializeNumberCards();
 
 const authView = document.body;
 const views = [...document.querySelectorAll("[data-view]")];
@@ -35,7 +37,7 @@ const searchCriteria = initializeSearchCriteria(searchForm);
 const viewNames = { home: "Home", search: "Busca", crm: "CRM", analytics: "Analytics", plans: "Planos", referrals: "Indique e ganhe", settings: "Configurações" };
 const mobileViewport = window.matchMedia("(max-width: 767px)");
 const tabBarHost = document.querySelector("#mobile-tab-bar");
-let activeView = "home";
+let activeView = viewNames[location.hash.slice(1)] ? location.hash.slice(1) : "home";
 let mobileNavigation;
 
 async function syncMobileNavigation() {

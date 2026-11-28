@@ -55,11 +55,9 @@
 .account-usage-progress { overflow: hidden; height: 6px; margin-top: 18px; border-radius: 999px; background: var(--usage-track); }
 .account-usage-progress > span { display: block; height: 100%; border-radius: inherit; background: var(--usage-accent); }
 .account-usage-card[data-state="full"] .account-usage-progress > span { background: var(--usage-warning); }
-.account-usage-card[data-state="full"] .account-usage-detail { color: var(--usage-warning); }
 .account-usage-card[data-state="pending"] .account-usage-progress { opacity: .55; }
 .account-usage-card-footer { margin-top: auto; padding-top: 18px; }
 .account-usage-detail { margin: 0; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
-.account-usage-note { margin: 5px 0 0; color: var(--usage-muted); font-size: 11px; line-height: 1.6; }
 .account-usage-card[data-usage-card="access"] {
   grid-column: 1 / -1;
   display: grid;
