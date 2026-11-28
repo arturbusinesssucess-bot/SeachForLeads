@@ -9,6 +9,7 @@ await build({
     "app-sidebar.v1": "app/sidebar.ts",
     "mobile-navigation.v1": "app/mobile-navigation.tsx",
     "app-referrals.v1": "app/referrals.js",
+    "search-flux-loader.v1": "app/search-flux-loader.tsx",
   },
   outdir: "public",
   format: "esm",

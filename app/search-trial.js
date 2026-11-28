@@ -74,12 +74,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   const status = document.querySelector("#search-status");
   const searchSubmit = form.querySelector('button[type="submit"]');
   const notice = document.querySelector("#trial-search-notice");
-  const loadingDescription = document.querySelector("#trial-search-loading-description");
-  const loadingMode = document.querySelector("#trial-search-mode");
-  const loadingProgress = document.querySelector("#trial-search-progress");
-  const loadingPosition = document.querySelector("#trial-search-step-position");
-  const loadingStatus = document.querySelector("#trial-search-step-status");
-  const loadingSteps = [...document.querySelector("#trial-search-steps").children];
+  const loaderHost = document.querySelector("#trial-search-flux");
   const accessStatus = document.querySelector("#trial-search-access-status");
   const selectAll = document.querySelector("#trial-select-all");
   const saveSelected = document.querySelector("#trial-save-selected");
@@ -99,6 +94,9 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   let trialUser;
   let trialMode = true;
   let pendingSearch;
+  let loaderModule;
+  let loader;
+  let loaderProgress;
   let savingResults = false;
   let syncClient;
   let stopWatching;
@@ -112,22 +110,28 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   let resultButtons = new Map();
   let revision = 0;
 
-  function showSearchStep(index, demo, message) {
-    const total = loadingSteps.length;
-    const percent = Math.round(100 * (index + 1) / total);
-    loadingMode.textContent = demo ? "Modo de teste" : "Busca em tempo real";
-    loadingPosition.textContent = `Etapa ${index + 1} de ${total}`;
-    loadingStatus.textContent = message;
-    loadingSteps.forEach((step, position) => {
-      step.dataset.state = position < index ? "completed" : position === index ? "active" : "pending";
-      if (position === index) step.setAttribute("aria-current", "step");
-      else step.removeAttribute("aria-current");
+  function updateSearchLoader(label, value) {
+    loaderProgress = { label, value };
+    if (loader) {
+      loader.update(loaderProgress);
+      return;
+    }
+    loaderModule ??= import("../public/search-flux-loader.v1.js?v=flux-loader")
+      .catch(() => {
+        loaderModule = undefined;
+        // The HTML progress indicator stays visible if the animation bundle is unavailable.
+      });
+    loaderModule.then((module) => {
+      if (module && loaderProgress && !loader) {
+        loader = module.mountSearchFluxLoader(loaderHost, loaderProgress);
+      }
     });
-    const indeterminate = !demo && index < total - 1;
-    loadingProgress.toggleAttribute("data-indeterminate", indeterminate);
-    loadingProgress.style.setProperty("--search-progress", percent / 100);
-    if (indeterminate) loadingProgress.removeAttribute("aria-valuenow");
-    else loadingProgress.setAttribute("aria-valuenow", String(percent));
+  }
+
+  function stopSearchLoader() {
+    loaderProgress = undefined;
+    loader?.unmount();
+    loader = undefined;
   }
 
   function syncButtons() {
@@ -363,12 +367,6 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
   saveSelected.addEventListener("click", () => {
     saveResults([...resultButtons.values()].filter(({ choice }) => choice.checked && !choice.disabled).map(({ lead }) => lead));
   });
-  document.querySelector("#trial-cancel-search").addEventListener("click", () => {
-    pendingSearch?.abort();
-    pendingSearch = undefined;
-    showSearchScreen("form");
-  });
-
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!trialUser) return;
@@ -386,18 +384,15 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
     const controller = new AbortController();
     pendingSearch = controller;
     status.textContent = "";
-    loadingDescription.textContent = scope;
     const startedAt = performance.now();
     const demoExpected = trialMode;
-    showSearchStep(0, demoExpected, "Preparando os filtros de segmento e localização…");
+    updateSearchLoader("Preparando filtros", demoExpected ? 8 : undefined);
     showSearchScreen("loading");
     try {
       const token = await trialUser.getIdToken();
       if (pendingSearch !== controller) return;
       if (demoExpected) await waitForTrialStep(startedAt, 1100, controller.signal);
-      showSearchStep(1, demoExpected, demoExpected
-        ? "Buscando empresas de demonstração para o perfil escolhido…"
-        : "Consultando a fonte de empresas com os filtros escolhidos…");
+      updateSearchLoader("Buscando empresas", demoExpected ? 34 : undefined);
       const response = await fetch("/api/search-trial", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -410,12 +405,10 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       if (!Array.isArray(leads) || leads.length > limit || !["trial", "live"].includes(mode)) throw new Error("search-results");
       const demo = mode === "trial";
       if (demo) await waitForTrialStep(startedAt, 3500, controller.signal);
-      showSearchStep(2, demo, demo
-        ? "Organizando os resultados de demonstração…"
-        : "Organizando os resultados e dados de contato disponíveis…");
+      updateSearchLoader("Organizando resultados", 68);
       const batch = readLeads(leads);
       if (demo) await waitForTrialStep(startedAt, 7000, controller.signal);
-      showSearchStep(3, demo, foundLeadCount(batch.length));
+      if (demo) updateSearchLoader("Preparando resultados", 92);
       if (demo) await waitForTrialStep(startedAt, trialLoadingMs, controller.signal);
       try {
         localStorage.setItem(lastSearchKey(uid), JSON.stringify({ leads: batch, scope, mode }));
@@ -426,7 +419,10 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       status.textContent = "Não foi possível concluir a busca. Verifique sua conexão e tente novamente.";
       showSearchScreen("form");
     } finally {
-      if (pendingSearch === controller) pendingSearch = undefined;
+      if (pendingSearch === controller) {
+        pendingSearch = undefined;
+        stopSearchLoader();
+      }
     }
   });
 
@@ -589,6 +585,7 @@ export function initializeSearchTrial({ form, criteria, rows, showSearchScreen, 
       trialUser = undefined;
       pendingSearch?.abort();
       pendingSearch = undefined;
+      stopSearchLoader();
       savingResults = false;
       savingStage = false;
       syncClient = undefined;

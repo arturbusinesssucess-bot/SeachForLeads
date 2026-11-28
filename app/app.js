@@ -15,7 +15,7 @@ import { setPipelineUser, resolveRowStage, getAnalyticsStages } from "./pipeline
 import { initializeAIWorkspace } from "./ai-workspace.js?v=usage-20261127";
 
 import { initializeSearchCriteria } from "./search-criteria.js?v=crm-trial";
-import { initializeSearchTrial } from "./search-trial.js?v=usage-20261127";
+import { initializeSearchTrial } from "./search-trial.js?v=flux-loader";
 import { initializeHomeOnboarding } from "./home-onboarding.js";
 import { initializeAppSelects } from "../public/app-selects.v1.js?v=crm-stage-counts";
 import { initializeLeadDetails } from "./crm-lead-details.js?v=crm-lead-drawer";
