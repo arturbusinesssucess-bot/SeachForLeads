@@ -12,7 +12,6 @@ export async function mountReferrals(host, user) {
   const url = `https://searchforleads.vercel.app/?ref=${code}`;
   host.innerHTML = `
     <header class="referral-heading"><h1 id="referrals-title">Boas conexões.<br><span>Mais dias para prospectar.</span></h1><p>Convide novos clientes para o SearchForLeads e ganhe 30 dias grátis quando a primeira assinatura deles for confirmada.</p></header>
-    <aside class="referral-notice"><strong>Programa em preparação</strong><p>Seu link e QR Code já estão disponíveis. O registro de novos clientes, a confirmação de pagamentos e o resgate de bônus ainda não estão ativos.</p></aside>
     <section class="referral-invite" aria-labelledby="referral-share-title">
       <div class="referral-invite-main">
         <div class="referral-qr">
