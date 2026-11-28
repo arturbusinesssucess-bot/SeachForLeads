@@ -15,25 +15,23 @@ export async function mountReferrals(host, user) {
     <aside class="referral-notice"><strong>Programa em preparação</strong><p>Seu link e QR Code já estão disponíveis. O registro de novos clientes, a confirmação de pagamentos e o resgate de bônus ainda não estão ativos.</p></aside>
     <section class="referral-invite" aria-labelledby="referral-share-title">
       <div class="referral-invite-main">
+        <div class="referral-qr">
+          <canvas id="referral-qr-canvas" width="768" height="768" role="img" aria-label="QR Code do seu link pessoal"></canvas>
+        </div>
         <div class="referral-share">
-          <h2 id="referral-share-title">Compartilhe seu convite</h2>
-          <p>Envie para quem ainda não tem conta no SearchForLeads.</p>
-          <label for="referral-link">Seu link pessoal</label>
-          <div class="referral-link-row">
-            <input id="referral-link" readonly type="url" spellcheck="false">
+          <h2 id="referral-share-title"><label for="referral-link">Seu link de indicação</label></h2>
+          <input id="referral-link" readonly type="url" spellcheck="false">
+          <div class="referral-share-actions">
             <button type="button" class="app-button app-button--primary" id="referral-copy">
               <span class="app-button-label">Copiar link</span>
             </button>
-          </div>
-          <p class="referral-feedback" id="referral-copy-feedback" role="status"></p>
-        </div>
-
-        <div class="referral-qr">
-          <canvas id="referral-qr-canvas" width="768" height="768" role="img" aria-label="QR Code do seu link pessoal"></canvas>
-          <div class="referral-qr-actions">
+            <a class="app-button referral-whatsapp" id="referral-whatsapp" target="_blank" rel="noopener noreferrer">
+              <span class="app-button-label">Compartilhar no WhatsApp</span>
+            </a>
             <button class="referral-secondary" id="referral-download" type="button" disabled>Baixar QR Code</button>
-            <p class="referral-feedback" id="referral-qr-feedback" role="status"></p>
           </div>
+          <p class="referral-share-help">Envie o convite para quem ainda não tem conta no SearchForLeads.</p>
+          <p class="referral-feedback" id="referral-feedback" role="status"></p>
         </div>
       </div>
 
@@ -56,24 +54,34 @@ export async function mountReferrals(host, user) {
     <div class="referral-summary"><article><span>Novos clientes</span><strong>—</strong><small>Aguardando ativação</small></article><article><span>Pagamentos confirmados</span><strong>—</strong><small>Aguardando ativação</small></article><article><span>Dias resgatados</span><strong>—</strong><small>Aguardando ativação</small></article></div>
     `;
   const giftIcon = document.querySelector('[data-view-link="referrals"] svg');
-  for (const button of host.querySelectorAll('.app-button')) {
-    if (giftIcon) { const icon = giftIcon.cloneNode(true); icon.setAttribute('class', 'app-button-icon'); icon.setAttribute('aria-hidden', 'true'); button.prepend(icon); }
+  for (const button of host.querySelectorAll('.app-button--primary')) {
+    if (giftIcon) {
+      const icon = giftIcon.cloneNode(true);
+      icon.setAttribute('class', 'app-button-icon');
+      icon.setAttribute('aria-hidden', 'true');
+      button.prepend(icon);
+    }
   }
+
   const input = host.querySelector('#referral-link');
-  const copyFeedback = host.querySelector('#referral-copy-feedback');
-  const qrFeedback = host.querySelector('#referral-qr-feedback');
+  const feedback = host.querySelector('#referral-feedback');
   const canvas = host.querySelector('#referral-qr-canvas');
   const download = host.querySelector('#referral-download');
+  const whatsapp = host.querySelector('#referral-whatsapp');
+  const whatsappIcon = document.querySelector('#trial-result-template')?.content.querySelector('[data-result-whatsapp] svg');
+  if (whatsappIcon) whatsapp.prepend(whatsappIcon.cloneNode(true));
+
   input.value = url;
+  whatsapp.href = `https://wa.me/?text=${encodeURIComponent(`Conheça o SearchForLeads pelo meu link de indicação: ${url}`)}`;
 
   host.querySelector('#referral-copy').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(url);
-      copyFeedback.textContent = 'Link copiado.';
+      feedback.textContent = 'Link copiado.';
     } catch {
       input.focus();
       input.select();
-      copyFeedback.textContent = 'Copie o link selecionado.';
+      feedback.textContent = 'Copie o link selecionado.';
     }
   });
 
@@ -82,7 +90,7 @@ export async function mountReferrals(host, user) {
     link.download = 'searchforleads-convite.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
-    qrFeedback.textContent = 'Download iniciado.';
+    feedback.textContent = 'Download iniciado.';
   });
 
   try {
@@ -92,9 +100,12 @@ export async function mountReferrals(host, user) {
       errorCorrectionLevel: 'H',
       color: { dark: '#000000', light: '#ffffff' },
     });
+    // Keep the PNG resolution independent from the size of the preview.
+    canvas.style.removeProperty('width');
+    canvas.style.removeProperty('height');
     download.disabled = false;
   } catch {
     canvas.hidden = true;
-    qrFeedback.textContent = 'Não foi possível gerar o QR Code. Recarregue a página para tentar novamente.';
+    feedback.textContent = 'Não foi possível gerar o QR Code. Recarregue a página para tentar novamente.';
   }
 }
