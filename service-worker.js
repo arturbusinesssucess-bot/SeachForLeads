@@ -1,8 +1,8 @@
-const CACHE_NAME = "sfl-pwa-v19";
+const CACHE_NAME = "sfl-pwa-v20";
 const APP_SHELL = [
   "/app/",
   "/app/app.css?v=sidebar-inset",
-  "/app/app.js?v=referrals-clean-cards",
+  "/app/app.js?v=referral-gradient-card",
   "/public/app-sidebar.v1.js?v=mobile-glass",
   "/public/app-mobile.v1.css?v=mobile-more-20261127",
   "/styles.css",

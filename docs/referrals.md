@@ -2,7 +2,7 @@
 
 ## Entregue
 
-A aba Indique e ganhe oferece um link para a landing com `?ref=`, QR Code preto em fundo branco gerado localmente e download PNG. O código estável é SHA-256 de `sfl-referral-v1:{uid}`, truncado a 128 bits. Não contém email nem o UID em claro. Esse código ainda não está registrado no servidor. A página informa expressamente que o programa está em preparação, usa `—` para saldos desconhecidos e mantém o resgate desabilitado.
+A aba Indique e ganhe oferece um link para a landing com `?ref=`, que pode ser copiado ou compartilhado pelo WhatsApp. O código estável é SHA-256 de `sfl-referral-v1:{uid}`, truncado a 128 bits. Não contém email nem o UID em claro. Esse código ainda não está registrado no servidor. A área de recompensas usa `—` para saldos desconhecidos e mantém o resgate desabilitado.
 
 **Não há atribuição de cadastros, saldo real, trial de 14 dias nem cancelamento automático implementados nesta entrega.** O parâmetro da landing ainda não é persistido ou validado. Copiar um link não garante indicação ou recompensa.
 
